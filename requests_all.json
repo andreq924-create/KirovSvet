@@ -72,10 +72,18 @@
     "address": "153 Октябский пр",
     "type": "",
     "problemDescription": "",
-    "items": [],
+    "items": [
+      {
+        "name": "Светильник Gelllious 100",
+        "qty": 1,
+        "img": "images/Светильник Gelllious 50.png"
+      }
+    ],
     "status": "Новая",
     "createdAt": "2026-04-28T12:32:45.826Z",
-    "expectedCallTime": "2026-04-28T12:37:45.826Z"
+    "expectedCallTime": "2026-04-28T12:37:45.826Z",
+    "callDate": "",
+    "completionDate": ""
   },
   {
     "username": "111",
