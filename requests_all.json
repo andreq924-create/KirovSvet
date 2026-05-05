@@ -1,76 +1,20 @@
 [
-  {
-    "username": "111",
-    "date": "28.04.2026, 15:32:45",
-    "lastname": "Пестова",
-    "firstname": "Татьяна",
-    "phone": "+7(912)719-24-24",
-    "email": "andreq924@gmail.com",
-    "address": "153 Октябский пр",
-    "type": "",
-    "problemDescription": "",
-    "items": [
-      {
-        "name": "Светильник Gelllious 100",
-        "qty": 1,
-        "img": "images/Светильник Gelllious 50.png"
-      }
-    ],
-    "status": "Новая",
-    "createdAt": "2026-04-28T12:32:45.826Z",
-    "expectedCallTime": "2026-04-28T12:37:45.826Z",
-    "callDate": "",
-    "completionDate": ""
-  },
-  {
-    "username": "111",
-    "date": "28.04.2026, 15:33:11",
-    "lastname": "Пестова",
-    "firstname": "Татьяна",
-    "phone": "+7(912)719-24-24",
-    "email": "andreq924@gmail.com",
-    "address": "153 Октябский пр",
-    "type": "repair",
-    "problemDescription": "устарнить обрыв освешения",
-    "items": [],
-    "status": "Новая",
-    "createdAt": "2026-04-28T12:33:11.736Z",
-    "expectedCallTime": "2026-04-28T12:38:11.736Z"
-  },
-  {
+   {
     "username": "111",
     "date": "02.05.2026, 11:15:31",
-    "lastname": "Сергеевич",
-    "firstname": "Артем",
+    "lastname": "���������",
+    "firstname": "�����",
     "phone": "+7(154)213-53-42",
     "email": "Artem@gmail.com",
-    "address": "73, улица Труда, Октябрьский район, Киров, городской округ Киров, Кировская область,",
-    "type": "both",
+    "address": "73, ����� �����, ����������� �����, �����, ��������� ����� �����, ��������� �������,",
     "problemDescription": "",
     "items": [
       {
-        "name": "Светильник Gelllious 200",
+        "name": "���������� Gelllious 200",
         "qty": 1,
-        "img": "images/Светильник Gelllious 50.png"
+        "img": "images/���������� Gelllious 50.png"
       }
     ],
-    "status": "Новая",
-    "createdAt": "2026-05-02T08:15:31.773Z",
-    "expectedCallTime": "2026-05-02T08:20:31.773Z"
-  },
-  {
-    "username": "укпц435",
-    "date": "03.05.2026, 00:55:00",
-    "lastname": "Пестова",
-    "firstname": "Татьяна",
-    "phone": "+7(912)719-24-24",
-    "email": "andreq924@gmail.com",
-    "address": "153 Октябский пр",
-    "type": "repair",
-    "problemDescription": "евньр5764ш",
-    "items": [],
-    "status": "Новая",
-    "createdAt": "2026-05-02T21:55:00.380Z",
-    "expectedCallTime": "2026-05-02T22:00:00.380Z"
+    "status": "�����",
   }
 ]

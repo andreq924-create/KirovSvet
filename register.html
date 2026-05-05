@@ -341,13 +341,39 @@
                 font-size: 24px;
             }
         }
+
+
+		@media (max-width: 640px) {
+    header {
+        flex-direction: row; /* остаётся в строку */
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    header h1 {
+        font-size: 18px;
+        white-space: nowrap;
+    }
+
+    nav ul {
+        gap: 10px;
+        flex-wrap: nowrap;
+    }
+
+    nav a {
+        font-size: 14px;
+    }
+}
     </style>
 </head>
 <body>
 
 <header>
-    <h1>Регистрация</h1>
-    <nav>
+    <div class="header-left">
+        <h1>Регистрация</h1>
+    </div>
+
+    <nav class="header-right">
         <ul>
             <li><a href="index.html">Главная</a></li>
             <li><a href="login.html">Войти</a></li>
@@ -393,9 +419,7 @@
     </div>
 </main>
 
-<footer>
-    <p>&copy; 2026 МКУ "Кировсвет". Все права защищены.</p>
-</footer>
+ 
 
 <!-- МОДАЛЬНОЕ ОКНО -->
 <div id="modal">

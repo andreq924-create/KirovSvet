@@ -77,21 +77,21 @@ body::before {
     padding: 0; 
 }
 
-.nav-menu a { 
-    color: white; 
-    text-decoration: none; 
-    padding: 8px 10px; 
-    transition: 0.3s; 
-    font-weight: bold;
-    letter-spacing: .2px;
-    border-radius: 999px;
+.nav-menu a {
+    position: relative !important;
+    display: inline-block !important;
+    color: #fff !important;
+    text-decoration: none !important;
+    font-weight: 700 !important; /* жирный */
+    padding: 8px 10px !important;
 }
-.nav-menu a:hover { 
-    color: #FFD700;
-    background: transparent;
-    box-shadow: none;
+.nav-menu a:hover {
+    color: #FFD700 !important;
 }
-
+#loginLink a,
+#registerLink a {
+    font-weight: bold !important;
+}
 #mainHeader {
     position: fixed;
     top: 0;
@@ -713,21 +713,24 @@ footer a:hover { color: #FFC300; }
     display: none;
     cursor: pointer;
     flex-direction: column;
-    margin-top: 1px;
+    gap: 4px; /* расстояние между полосками */
+	    position: absolute;
+    right: 10px;
+     
+
 }
+
 .menu-bar {
-     height: 3px;
-     width: 28px;
-     background-color: #fff;
-     margin-left: -50px;
-     border-radius: 999px;
-     box-shadow: 0 2px 6px rgba(0,0,0,.25);
- }
+    width: 18px;   /* 👈 уменьшаешь тут */
+    height: 2px;   /* 👈 толщина */
+    background-color: #fff;
+    border-radius: 2px;
+}
 
 .mobile-menu {
     display: none;
     position: fixed;
-    top: 50px;
+    top: 36px;
     left: 0;
     width: 100%;
     background: rgba(30, 42, 56, 0.96);
@@ -768,11 +771,9 @@ footer a:hover { color: #FFC300; }
     }
 
     .header-right {
-        gap: 5px;
-        transform: translateX(65px);
-        font-size: 14px;
-        justify-content: flex-end;
-        width: 100%;
+        transform: translateX(-10px);
+         justify-content: flex-end;
+        width: 75%;
     }
 
     .phone {
@@ -888,12 +889,14 @@ footer a:hover { color: #FFC300; }
         margin: 0;
     }
 
-    .nav-menu a {
-        color: white;
-        text-decoration: none;
-        padding: 5px;
-        transition: 0.3s;
-    }
+.nav-menu a {
+    position: relative;
+    display: inline-block;
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold; /* 🔥 жирный как у входа */
+    padding: 8px 10px;
+}
 
     .nav-menu a:hover {
         color: #FFD700;
@@ -929,13 +932,79 @@ footer a:hover { color: #FFC300; }
 .mobile-menu.show {
     display: block;
 }
- 
 
+ @media (max-width: 768px) {
+
+    .hero-content h2 {
+        font-size: 30px;
+        font-weight: 900;
+    }
+
+    .hero-content h3 {
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .hero-content ul li {
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 1.5;
+    }
+
+    .hero-buttons button {
+        font-size: 14px;
+        font-weight: 800;
+    }
+}
+@media (max-width: 768px) {
+
+    /* общий блок */
+    .why-section {
+        padding: 50px 20px;
+        text-align: center;
+    }
+
+    /* заголовок */
+    .why-section h2 {
+        font-size: 28px;
+        margin-bottom: 25px;
+    }
+
+    /* сетка → в 1 колонку (самое важное) */
+    .why-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    /* карточки */
+    .why-item {
+        max-width: 100%;
+        padding: 18px 14px;
+    }
+
+    /* иконки */
+    .why-item img {
+        width: 70px;
+        height: 70px;
+    }
+
+    /* заголовок внутри карточки */
+    .why-title {
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    /* описание */
+    .why-desc {
+        font-size: 13px;
+        line-height: 1.4;
+    }
+}
 .logo {
     width: 80px;
     position: absolute;
     left: 10px;
-    top: 11px;
+    top: 4px;
 }
 
     .nav-menu a {
@@ -979,7 +1048,7 @@ footer a:hover { color: #FFC300; }
         width: 100% !important;
         height: 200px !important;
         max-width: 100% !important;
-        margin-left: -40px;
+        margin-left: -45px;
     }
 
     .video-text-section {
@@ -989,8 +1058,8 @@ footer a:hover { color: #FFC300; }
         width: 100%;
     }
 
-	   .video-text-section .video-text {
-        margin-left: -80px;
+	 
+         
     }
 }
 
@@ -999,14 +1068,21 @@ footer a:hover { color: #FFC300; }
     display: inline-block;
 }
 
+.nav-menu a {
+    position: relative;
+    display: inline-block;
+    color: white;
+    text-decoration: none;
+}
+
 .nav-menu a::after {
     content: "";
     position: absolute;
     left: 50%;
-    bottom: 1px;
-    width: 80%;
-    height: 1px;
-    background-color: white;
+    bottom: 4px; /* 🔥 ниже поднято/опущено — регулируй тут */
+    width: 70%;
+    height: 2px;
+    background: #fff;
     transform: translateX(-50%) scaleX(0);
     transform-origin: center;
     transition: transform 0.3s ease;
@@ -1311,16 +1387,16 @@ footer a:hover { color: #FFC300; }
 <section class="install-section" id="installSection">
     <h2>Что мы устанавливаем</h2>
     <div class="install-buttons">
-        <button class="install-button poles" onclick="location.href='poles.html'">
-            <div class="img dark" style="background-image: url('sait1/photo1.jpg');"></div>
-            <div class="img color" style="background-image: url('sait1/photo1Rgb.jpg');"></div>
-            <span>Опоры</span>
-        </button>
-        <button class="install-button lights" onclick="location.href='light.html'">
-            <div class="img dark" style="background-image: url('sait1/photo2.jpg');"></div>
-            <div class="img color" style="background-image: url('sait1/photo2Rgb.jpg');"></div>
-            <span>Светильники</span>
-        </button>
+<button class="install-button poles" onclick="window.location.href='poles.html?from=index'">
+    <div class="img dark" style="background-image: url('sait1/photo1.jpg');"></div>
+    <div class="img color" style="background-image: url('sait1/photo1Rgb.jpg');"></div>
+    <span>Опоры</span>
+</button>
+<button class="install-button lights" onclick="location.href='light.html?from=index'">
+    <div class="img dark" style="background-image: url('sait1/photo2.jpg');"></div>
+    <div class="img color" style="background-image: url('sait1/photo2Rgb.jpg');"></div>
+    <span>Светильники</span>
+</button>
     </div>
 </section>
 
@@ -1401,7 +1477,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const observer = new IntersectionObserver(handleIntersection, {
-        threshold: 0.5
+        threshold: 0.4
     });
 
     installButtons.forEach(button => {
@@ -1427,7 +1503,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const observer = new IntersectionObserver(handleIntersection, {
-        threshold: 0.5
+        threshold: 0.4
     });
 
     caseButtons.forEach((button, index) => {
@@ -1450,7 +1526,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const observer = new IntersectionObserver(handleIntersection, {
-        threshold: 0.5
+        threshold: 0.4
     });
 
     whyItems.forEach(item => observer.observe(item));

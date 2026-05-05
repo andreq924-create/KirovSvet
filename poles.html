@@ -887,22 +887,12 @@ function handleAction(parentIndex, childIndex) {
         return;
     }
 
-    if (fromIndex) {
-        localStorage.setItem("requestItem", JSON.stringify({
-            name: child.name,
-            price: child.price,
-            img: child.img || parent.img
-        }));
-
-        window.location.href = "submit_request.html";
-        return;
-    }
-
     if (child.qty < 1) {
         alert("Нет в наличии");
         return;
     }
 
+    // Добавляем товар в selectedItems
     let selected = JSON.parse(localStorage.getItem("selectedItems")) || [];
     let exist = selected.find(i => i.name === child.name);
 
@@ -911,6 +901,21 @@ function handleAction(parentIndex, childIndex) {
 
     localStorage.setItem("selectedItems", JSON.stringify(selected));
 
+    // Проверка на fromIndex и выполнение редиректа
+if (fromIndex) {
+    let selected = JSON.parse(localStorage.getItem("selectedItems")) || [];
+    let exist = selected.find(i => i.name === child.name);
+
+    if (exist) exist.qty += 1;
+    else selected.push({ name: child.name, price: child.price, qty: 1, img: child.img || parent.img });
+
+    localStorage.setItem("selectedItems", JSON.stringify(selected));
+
+    window.location.href = "submit_request.html";
+    return;
+}
+
+    // Обработка для администратора
     if (isAdmin) {
         let request = JSON.parse(localStorage.getItem("currentAdminRequest")) || {};
         request.items = Array.isArray(request.items) ? request.items : [];
@@ -929,7 +934,7 @@ function handleAction(parentIndex, childIndex) {
     }
 
     // Лучше не закрывать вкладку автоматически
-     window.close();
+    window.close();
     loadGrid();
 }
 

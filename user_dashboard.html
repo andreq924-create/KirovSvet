@@ -85,7 +85,17 @@
         nav a:hover {
             color: var(--accent);
         }
+		@media (max-width: 768px) {
+    .font-controls {
+        display: none !important;
+    }
+}
 
+@media (max-width: 480px) {
+    .font-controls {
+        display: none !important;
+    }
+}
         .menu-panel {
             position: absolute;
             top: -100%;
@@ -414,9 +424,7 @@
     <button type="button" onclick="changeFont(1)">A+</button>
 </div>
 
-<footer>
-    <p>&copy; 2026 МКУ "Кировсвет". Все права защищены.</p>
-</footer>
+ 
 
 <script>
     let currentFilter = 'all';
