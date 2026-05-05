@@ -375,6 +375,34 @@
 .request-card {
     overflow-wrap: anywhere;
 }
+@media (max-width: 480px) {
+    .filter-buttons {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 6px;
+    }
+
+    .filter-button {
+        flex: 1 1 0;
+        min-width: 0;
+        padding: 8px 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        border-radius: 20px;
+    }
+}
+@media (max-width: 480px) {
+    .status {
+        position: static;
+        display: inline-block;
+        margin-top: 10px;
+        align-self: flex-start;
+    }
+
+    .request-card {
+        position: relative;
+    }
+}
     </style>
 
 </head>

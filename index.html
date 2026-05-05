@@ -232,7 +232,7 @@ pointer-events: none;
     transform: translateX(-120%);
     transition: transform .6s ease;
 }
-
+ 
 .hero-buttons button:hover::after,
 .cases-buttons button:hover::after {
     transform: translateX(120%);
@@ -530,6 +530,8 @@ pointer-events: none;
     position: relative;
     overflow: hidden;
 }
+
+
 .video-text-section::before {
     content: "";
     position: absolute;
@@ -651,7 +653,7 @@ pointer-events: none;
 .login-btn:hover { background-color: #2f3f52; }
 .register-btn { background-color: #FFD700; color: #000; }
 .register-btn:hover { background-color: #FFC300; }
-
+ 
 #loginLink a, #registerLink a {
     color: white;
     text-decoration: none;
@@ -730,7 +732,7 @@ footer a:hover { color: #FFC300; }
 .mobile-menu {
     display: none;
     position: fixed;
-    top: 36px;
+    top: 67px;
     left: 0;
     width: 100%;
     background: rgba(30, 42, 56, 0.96);
@@ -865,7 +867,7 @@ footer a:hover { color: #FFC300; }
         left: 0;
         width: 100%;
         z-index: 1000;
-        padding: 10px 15px;
+        padding: 10px 20px;
         transition: none;
     }
     .header-inner {
@@ -1004,7 +1006,7 @@ footer a:hover { color: #FFC300; }
     width: 80px;
     position: absolute;
     left: 10px;
-    top: 4px;
+    top: 18px;
 }
 
     .nav-menu a {
@@ -1013,6 +1015,10 @@ footer a:hover { color: #FFC300; }
 
     #userInfo {
         font-size: 14px;
+ 
+         transform: translateY(-5px); /* 👈 визуально вниз */
+
+
     }
 
     .header-inner > div > div:first-child {
@@ -1048,14 +1054,16 @@ footer a:hover { color: #FFC300; }
         width: 100% !important;
         height: 200px !important;
         max-width: 100% !important;
-        margin-left: -45px;
-    }
+     }
+
 
     .video-text-section {
         display: flex;
         justify-content: flex-start;
         align-items: center;
         width: 100%;
+		    display: flex;
+    justify-content: center;
     }
 
 	 
@@ -1079,7 +1087,7 @@ footer a:hover { color: #FFC300; }
     content: "";
     position: absolute;
     left: 50%;
-    bottom: 4px; /* 🔥 ниже поднято/опущено — регулируй тут */
+    bottom:4px; /* 🔥 ниже поднято/опущено — регулируй тут */
     width: 70%;
     height: 2px;
     background: #fff;
@@ -1288,6 +1296,81 @@ footer a:hover { color: #FFC300; }
 
 .install-buttons button:hover .color {
     opacity: 1;
+}
+@media (max-width: 768px) {
+
+    #mainHeader {
+        padding: 8px 10px;
+		     padding-left: 1px;
+      
+    }
+ 
+    .header-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+        gap: 6px;
+    }
+
+    /* ЛОГО */
+    .logo {
+        position: static !important;
+        width: 85px;
+        height: auto;
+        flex-shrink: 0;
+    }
+
+    /* правая зона — разрешаем сжиматься */
+    .header-right {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 6px;
+        margin-left: auto;
+        flex-wrap: nowrap;
+        min-width: 0; /* важно */
+    }
+
+    /* телефон */
+    .phone {
+        font-size: 10px;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    /* вход/регистрация — чтобы не раздували шапку */
+    #loginLink a,
+    #registerLink a {
+        font-size: 10px;
+        padding: 3px 5px;
+        white-space: nowrap;
+    }
+
+    /* гамбургер ВСЕГДА внутри */
+    .menu-toggle {
+        display: flex;
+        flex-shrink: 0;
+        margin-left: 4px;
+    }
+
+    /* user блок если есть */
+    #userInfo {
+        flex-shrink: 0;
+        margin: 0;
+        transform: none;
+		    margin-left: 10px;
+
+    }
+
+    body {
+        overflow-x: hidden;
+    }
+}
+@media (max-width: 768px) {
+    #mainHeader .header-inner > div {
+        gap: 5px !important;
+    }
 }
 </style>
 </head>
