@@ -142,7 +142,7 @@
     "lastname": "Артем",
     "firstname": "Сергеевич",
     "phone": "+7(913)412-32-22",
-    "email": "Artem@gmail.com",
+    "email": "",
     "address": "Вятский колледж управления и новых технологий, 56, Пятницкая улица, Дымково, Октябрьский район, Киров, городской округ Киров, Кировская область,",
     "type": "both",
     "problemDescription": "",
@@ -158,8 +158,10 @@
         "img": "images/oporaНФГ.png"
       }
     ],
-    "status": "Новая",
+    "status": "В процессе",
     "createdAt": "2026-05-05T06:53:04.170Z",
-    "expectedCallTime": "2026-05-05T06:58:04.170Z"
+    "expectedCallTime": "2026-05-05T06:58:04.170Z",
+    "callDate": "2026-05-05",
+    "completionDate": "2026-05-06"
   }
 ]
