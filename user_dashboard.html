@@ -403,22 +403,31 @@
         margin-bottom: 10px;
         align-self: flex-start;
         font-size: 0.9em;
-    }
-
-    /* Усиливаем отображение "новой" заявки */
-    .status.new {
-        background-color: var(--status-new);
-        color: #fff;
         font-weight: 700;
         padding: 6px 12px;
     }
 
     .status.new::before {
-        content: "Новая заявка: ";
-        font-weight: 700;
+        content: "Статус заявки: Новая";
+    }
+
+    .status.in_progress::before {
+        content: "Статус заявки: В процессе";
+    }
+
+    .status.completed::before {
+        content: "Статус заявки: Завершена";
+    }
+
+    /* убираем дублирующий текст внутри span */
+    .status {
+        font-size: 0;
+    }
+
+    .status::before {
+        font-size: 14px;
     }
 }
-    </style>
 
 </head>
 <body>
@@ -510,8 +519,7 @@
             return requests;
         } catch (error) {
             console.error('Ошибка при загрузке данных:', error);
-            alert('Ошибка при загрузке данных. Проверьте консоль для подробностей.');
-            return [];
+             return [];
         }
     }
 
