@@ -740,6 +740,7 @@ img.preview{
 </div>
 
 <script>
+let activeTypeFilter = '';
 let currentRequestCopy = null;
 let editIndex = null;
 let productChildren = []; // дочерние элементы товара
@@ -802,24 +803,20 @@ window.addEventListener('DOMContentLoaded', function() {
     showTable('new', document.getElementById('newRequestsBtn')); // активная под-вкладка "Новые"
 });
 function showTable(name, btn) {
-    // 🔥 СБРОС ПОИСКА
- 
-    // 🔥 СБРОС ФИЛЬТРА ТИПА
-    document.querySelectorAll('select').forEach(s => {
-        if (s.onchange) s.value = '';
+
+    document.querySelectorAll('.requestsTable').forEach(t => {
+        t.style.display = 'none';
     });
 
-    // скрываем таблицы
-    document.querySelectorAll('.requestsTable').forEach(t => t.style.display = 'none');
-
-    // показываем нужную
     document.getElementById(name + 'RequestsTable').style.display = 'table';
 
-    // активные кнопки
     document.querySelectorAll('#requestsSection .tabs button')
         .forEach(b => b.classList.remove('active'));
 
     if (btn) btn.classList.add('active');
+
+    // 🔥 важно: пересчёт фильтра
+    applyFilters();
 }
 // При загрузке страницы кнопка 'Новые' уже активна
 window.onload = function() {
@@ -1107,49 +1104,35 @@ function deleteMonth(monthKey) {
     loadRequests();
 }
 function filterByType(value) {
+    activeTypeFilter = value;
+    applyFilters();
+}
+
+function applyFilters() {
     const tables = [
         'newRequestsTable',
-        'pendingRequestsTable',
-        'completedRequestsTable'
+        'pendingRequestsTable'
+   
     ];
 
     tables.forEach(tableId => {
         const table = document.getElementById(tableId);
-        const rows = Array.from(table.querySelectorAll('tbody tr'));
+        if (!table) return;
 
-        let currentParent = null;
-        let parentHasMatch = false;
+        const rows = table.querySelectorAll('tbody tr');
 
         rows.forEach(row => {
+            if (row.dataset.role === "parent") return;
 
-            const isParent = row.dataset.role === "parent";
-
-            // ===== ПАРЕНТ =====
-            if (isParent) {
-
-                // показываем родителя всегда
-                row.style.display = '';
-
-                currentParent = row;
-                parentHasMatch = false;
-                return;
-            }
-
-            // ===== ДЕТИ =====
             const typeCell = row.children[2];
             const typeText = typeCell ? typeCell.innerText.trim() : '';
 
-            const match = !value || typeText === value;
+            const matchType =
+                !activeTypeFilter ||
+                typeText === activeTypeFilter;
 
-            row.style.display = match ? '' : 'none';
-
-            if (match) parentHasMatch = true;
+            row.style.display = matchType ? '' : 'none';
         });
-
-        // (опционально) можно скрывать пустые группы
-        if (currentParent && !parentHasMatch) {
-            // ничего не делаем — родитель остаётся видимым
-        }
     });
 }
 
