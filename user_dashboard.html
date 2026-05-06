@@ -392,19 +392,32 @@
     }
 }
 @media (max-width: 480px) {
+
+    .request-card {
+        padding-top: 15px;
+    }
+
     .status {
         position: static;
         display: inline-block;
-        margin-top: 10px;
+        margin-bottom: 10px;
         align-self: flex-start;
+        font-size: 0.9em;
     }
 
-    .request-card {
-        position: relative;
+    /* Усиливаем отображение "новой" заявки */
+    .status.new {
+        background-color: var(--status-new);
+        color: #fff;
+        font-weight: 700;
+        padding: 6px 12px;
+    }
+
+    .status.new::before {
+        content: "Новая заявка: ";
+        font-weight: 700;
     }
 }
-    </style>
-
 </head>
 <body>
 
@@ -610,7 +623,7 @@ const completionDate = request.completionDate
             });
         } catch (error) {
             console.error('Ошибка при отображении заявок:', error);
-            alert('Не удалось загрузить заявки. Попробуйте позже.');
+         
         }
     }
 
