@@ -1,7 +1,6 @@
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
 
-  // Только POST
   if (req.method !== 'POST') {
     return res.status(405).json({
       success: false,
@@ -10,10 +9,12 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Получаем данные
-    const { username, password } = req.body;
+    let { username, password } = req.body || {};
 
-    // Проверка
+    // защита от пробелов
+    username = String(username || '').trim();
+    password = String(password || '').trim();
+
     if (!username || !password) {
       return res.status(400).json({
         success: false,
@@ -21,12 +22,12 @@ export default async function handler(req, res) {
       });
     }
 
-    // Загружаем users.json из GitHub
+    // загрузка users.json
     const response = await fetch(
-      'https://raw.githubusercontent.com/andreq924-create/admin-panel/main/users.json'
+      'https://raw.githubusercontent.com/andreq924-create/admin-panel/main/users.json?nocache=' + Date.now(),
+      { cache: 'no-store' }
     );
 
-    // Если ошибка загрузки
     if (!response.ok) {
       return res.status(500).json({
         success: false,
@@ -34,17 +35,14 @@ export default async function handler(req, res) {
       });
     }
 
-    // Получаем пользователей
     const users = await response.json();
 
-    // Ищем пользователя
-    const user = users.find(
-      u =>
-        u.username === username &&
-        u.password === password
+    // поиск пользователя
+    const user = users.find(u =>
+      String(u.username).trim() === username &&
+      String(u.password).trim() === password
     );
 
-    // Если не найден
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -52,10 +50,10 @@ export default async function handler(req, res) {
       });
     }
 
-    // Успешный вход
     return res.status(200).json({
       success: true,
-      username: user.username
+      username: user.username,
+      role: user.role || 'user'
     });
 
   } catch (error) {

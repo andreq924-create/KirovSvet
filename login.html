@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <link rel="icon" href="favicon.png" type="image/png">
     <meta charset="UTF-8">
@@ -7,6 +8,7 @@
     <title>Вход</title>
 
     <style>
+        /* Ваши стили остаются прежними */
         :root {
             --bg-1: #1e2a38;
             --bg-2: #2f3f52;
@@ -19,7 +21,9 @@
             --shadow: 0 20px 50px rgba(0, 0, 0, 0.42);
         }
 
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             margin: 0;
@@ -62,7 +66,9 @@
             transition: color 0.2s ease, opacity 0.2s ease;
         }
 
-        nav a:hover { color: #FFD700; }
+        nav a:hover {
+            color: #FFD700;
+        }
 
         main {
             display: flex;
@@ -154,11 +160,6 @@
             transform: translateY(-1px);
         }
 
-        form button:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-
         footer {
             background: #000;
             text-align: center;
@@ -166,6 +167,7 @@
             font-size: 14px;
         }
 
+        /* МОДАЛКА */
         #modal {
             position: fixed;
             top: 0;
@@ -191,8 +193,13 @@
             border-top: 6px solid transparent;
         }
 
-        #modalBox.success { border-top: 6px solid #28a745; }
-        #modalBox.error { border-top: 6px solid #dc3545; }
+        #modalBox.success {
+            border-top: 6px solid #28a745;
+        }
+
+        #modalBox.error {
+            border-top: 6px solid #dc3545;
+        }
 
         #modalBox button {
             margin-top: 15px;
@@ -204,9 +211,12 @@
             font-weight: bold;
         }
 
-        #modalBox button:hover { background: #FFC300; }
+        #modalBox button:hover {
+            background: #FFC300;
+        }
     </style>
 </head>
+
 <body>
 
 <header>
@@ -222,7 +232,7 @@
 <main>
     <div class="form-container">
         <h2 class="form-title">Добро пожаловать!</h2>
- 
+
         <form id="loginForm" autocomplete="off" novalidate>
             <div class="field">
                 <label for="username">Имя пользователя:</label>
@@ -239,6 +249,9 @@
     </div>
 </main>
 
+ 
+
+<!-- МОДАЛЬНОЕ ОКНО -->
 <div id="modal">
     <div id="modalBox">
         <div id="modalText"></div>
@@ -249,66 +262,166 @@
 <script>
 const loginForm = document.getElementById('loginForm');
 const closeModalBtn = document.getElementById('closeModalBtn');
-const submitBtn = document.getElementById('submitBtn');
 
+// Модалка
 function showModal(message, type = "error") {
     const modal = document.getElementById('modal');
     const box = document.getElementById('modalBox');
     const text = document.getElementById('modalText');
 
     text.innerText = message;
+
     box.classList.remove('success', 'error');
     box.classList.add(type);
+
     modal.style.display = "flex";
 }
 
+// Закрытие модалки
 function closeModal() {
     document.getElementById('modal').style.display = "none";
 }
 
 loginForm.addEventListener('submit', async (event) => {
+
     event.preventDefault();
 
-    const username = document.getElementById('username').value.trim();
-    const password = document.getElementById('password').value.trim();
+    const username = document
+        .getElementById('username')
+        .value
+        .trim();
 
+    const password = document
+        .getElementById('password')
+        .value
+        .trim();
+
+    // Проверка полей
     if (!username || !password) {
-        showModal('Пожалуйста, заполните все поля!', 'error');
+
+        showModal(
+            'Пожалуйста, заполните все поля!',
+            'error'
+        );
+
         return;
     }
 
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Проверка...';
+    // Защита от перебора
+    let failedAttempts =
+        parseInt(
+            sessionStorage.getItem('failedAttempts')
+        ) || 0;
+
+    let blockTime =
+        parseInt(
+            sessionStorage.getItem('blockTime')
+        ) || 0;
+
+    const currentTime = Date.now();
+
+    // Проверка блокировки
+    if (blockTime > currentTime) {
+
+        const remainingTime = Math.floor(
+            (blockTime - currentTime) / 1000
+        );
+
+        showModal(
+            `Вы заблокированы на ${remainingTime} секунд!`,
+            'error'
+        );
+
+        return;
+    }
 
     try {
+
+        // Отправка запроса на API Vercel
         const response = await fetch('/api/login', {
+
             method: 'POST',
+
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ username, password })
+
+            body: JSON.stringify({
+                username,
+                password
+            })
+
         });
 
         const data = await response.json();
 
+        // Успешный вход
         if (response.ok && data.success) {
-            sessionStorage.setItem('username', data.username);
-            window.location.href = data.role === 'admin'
+
+            sessionStorage.setItem(
+                'username',
+                data.username
+            );
+
+            // Переход
+            window.location.href =
+                data.role === 'admin'
                 ? 'admin_dashboard.html'
                 : 'user_dashboard.html';
+
         } else {
-            showModal(data.message || 'Неверный логин или пароль!', 'error');
+
+            // Ошибка логина
+            failedAttempts++;
+
+            sessionStorage.setItem(
+                'failedAttempts',
+                failedAttempts
+            );
+
+            // Блокировка
+            if (failedAttempts >= 5) {
+
+                blockTime =
+                    currentTime + 10000;
+
+                sessionStorage.setItem(
+                    'blockTime',
+                    blockTime
+                );
+
+                showModal(
+                    'Превышено количество попыток! Блокировка на 10 секунд.',
+                    'error'
+                );
+
+            } else {
+
+                showModal(
+                    data.message ||
+                    'Неверный логин или пароль!',
+                    'error'
+                );
+            }
         }
+
     } catch (error) {
+
         console.error(error);
-        showModal('Ошибка соединения с сервером', 'error');
-    } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Войти';
+
+        showModal(
+            'Ошибка соединения с сервером',
+            'error'
+        );
     }
 });
 
-closeModalBtn.addEventListener('click', closeModal);
+// Закрытие окна
+closeModalBtn.addEventListener(
+    'click',
+    closeModal
+);
 </script>
 </body>
+
 </html>
