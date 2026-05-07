@@ -249,8 +249,6 @@
     </div>
 </main>
 
- 
-
 <!-- МОДАЛЬНОЕ ОКНО -->
 <div id="modal">
     <div id="modalBox">
@@ -303,51 +301,42 @@ loginForm.addEventListener('submit', async (event) => {
         return;
     }
 
-    // Проверка специальных пользователей
-    if ((username === '111' && password === '111') || (username === 'Admin' && password === 'Admin')) {
-        sessionStorage.setItem('username', username);
-        window.location.href = username === 'Admin' ? "admin_dashboard.html" : "user_dashboard.html";
-        return;
-    }
+    try {
+        const res = await fetch('/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username,
+                password
+            })
+        });
 
-    // Задержка 1 секунда перед загрузкой пользователей
-    setTimeout(async () => {
-        let users = [];
-        try {
-            // Добавляем уникальный параметр времени к запросу
-            const res = await fetch('users.json?' + new Date().getTime());
+        const data = await res.json();
 
-            if (!res.ok) throw new Error('Не удалось загрузить users.json');
-            users = await res.json();
-        } catch (e) {
-            console.error(e);
-            showModal('Не удалось загрузить пользователей', 'error');
-            return;
-        }
-
-        // Проверка логина по JSON
-        const user = users.find(u => u.username === username && u.password === password);
-
-        if (user) {
-            sessionStorage.setItem('username', user.username);
-            window.location.href = "user_dashboard.html";
+        if (data.success) {
+            sessionStorage.setItem('username', data.username || username);
+            window.location.href = data.role === 'admin' ? "admin_dashboard.html" : "user_dashboard.html";
         } else {
             failedAttempts++;
             sessionStorage.setItem('failedAttempts', failedAttempts);
 
             if (failedAttempts >= 5) {
-                blockTime = currentTime + 10000; // блокировка 10 секунд
+                blockTime = currentTime + 10000;
                 sessionStorage.setItem('blockTime', blockTime);
                 showModal('Превышено количество попыток! Блокировка на 10 секунд.', 'error');
             } else {
                 showModal('Неверный логин или пароль!', 'error');
             }
         }
-    }, 1000); // Задержка 1 секунда
+    } catch (e) {
+        console.error(e);
+        showModal('Ошибка сервера', 'error');
+    }
 });
 
 closeModalBtn.addEventListener('click', closeModal);
 </script>
 </body>
-
 </html>
