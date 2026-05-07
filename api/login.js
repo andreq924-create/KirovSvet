@@ -1,6 +1,7 @@
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
 
+  // Только POST
   if (req.method !== 'POST') {
     return res.status(405).json({
       success: false,
@@ -9,8 +10,10 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { username, password } = req.body || {};
+    // Получаем данные
+    const { username, password } = req.body;
 
+    // Проверка
     if (!username || !password) {
       return res.status(400).json({
         success: false,
@@ -23,10 +26,15 @@ export default async function handler(req, res) {
       'https://raw.githubusercontent.com/andreq924-create/admin-panel/main/users.json'
     );
 
+    // Если ошибка загрузки
     if (!response.ok) {
-      throw new Error('Не удалось загрузить users.json');
+      return res.status(500).json({
+        success: false,
+        message: 'Не удалось загрузить users.json'
+      });
     }
 
+    // Получаем пользователей
     const users = await response.json();
 
     // Ищем пользователя
@@ -36,7 +44,7 @@ export default async function handler(req, res) {
         u.password === password
     );
 
-    // Если пользователь не найден
+    // Если не найден
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -47,12 +55,11 @@ export default async function handler(req, res) {
     // Успешный вход
     return res.status(200).json({
       success: true,
-      username: user.username,
-      role: user.role || 'user'
+      username: user.username
     });
 
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error(error);
 
     return res.status(500).json({
       success: false,
