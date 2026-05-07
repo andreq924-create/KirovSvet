@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({
       success: false,
-      message: 'Метод не разрешён'
+      message: 'РњРµС‚РѕРґ РЅРµ СЂР°Р·СЂРµС€С‘РЅ'
     });
   }
 
@@ -14,41 +14,41 @@ export default async function handler(req, res) {
     if (!username || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Заполните все поля'
+        message: 'Р—Р°РїРѕР»РЅРёС‚Рµ РІСЃРµ РїРѕР»СЏ'
       });
     }
 
-    // Тестовые пользователи
-    const users = [
-      {
-        username: 'Admin',
-        password: 'Admin',
-        role: 'admin'
-      },
-      {
-        username: '111',
-        password: '111',
-        role: 'user'
-      }
-    ];
+    // Р—Р°РіСЂСѓР¶Р°РµРј users.json РёР· GitHub
+    const response = await fetch(
+      'https://raw.githubusercontent.com/andreq924-create/admin-panel/main/users.json'
+    );
 
+    if (!response.ok) {
+      throw new Error('РќРµ СѓРґР°Р»РѕСЃСЊ Р·Р°РіСЂСѓР·РёС‚СЊ users.json');
+    }
+
+    const users = await response.json();
+
+    // РС‰РµРј РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
     const user = users.find(
       u =>
         u.username === username &&
         u.password === password
     );
 
+    // Р•СЃР»Рё РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ РЅРµ РЅР°Р№РґРµРЅ
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Неверный логин или пароль'
+        message: 'РќРµРІРµСЂРЅС‹Р№ Р»РѕРіРёРЅ РёР»Рё РїР°СЂРѕР»СЊ'
       });
     }
 
+    // РЈСЃРїРµС€РЅС‹Р№ РІС…РѕРґ
     return res.status(200).json({
       success: true,
       username: user.username,
-      role: user.role
+      role: user.role || 'user'
     });
 
   } catch (err) {
@@ -56,7 +56,7 @@ export default async function handler(req, res) {
 
     return res.status(500).json({
       success: false,
-      message: 'Ошибка сервера'
+      message: 'РћС€РёР±РєР° СЃРµСЂРІРµСЂР°'
     });
   }
 }
