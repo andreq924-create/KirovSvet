@@ -16,7 +16,6 @@ export default async function handler(req, res) {
 
     const { username } = req.query;
 
-    // 1. читаем файл
     const response = await fetch(
       `https://api.github.com/repos/${REPO}/contents/${FILE_PATH}?ref=${BRANCH}`,
       {
@@ -30,23 +29,37 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       const text = await response.text();
-      throw new Error(text);
+      console.error('GitHub error:', text);
+      return res.status(500).json({ error: 'GitHub fetch failed' });
     }
 
     const data = await response.json();
 
-    // 2. декод base64 → JSON
-    const json = JSON.parse(
-      Buffer.from(data.content, 'base64').toString('utf8')
-    );
+    // 🔥 защита от пустого файла
+    if (!data.content) {
+      return res.status(200).json([]);
+    }
 
-    // 3. нормализация username (ВАЖНО)
+    let json;
+
+    try {
+      json = JSON.parse(
+        Buffer.from(data.content, 'base64').toString('utf8')
+      );
+    } catch (e) {
+      console.error('JSON parse error:', e);
+      return res.status(200).json([]);
+    }
+
+    if (!Array.isArray(json)) {
+      return res.status(200).json([]);
+    }
+
     const normalize = (v) =>
       (v || '').toString().trim().toLowerCase();
 
     let result = json;
 
-    // 4. фильтр если username передан
     if (username) {
       const u = normalize(username);
       result = json.filter(
@@ -57,7 +70,7 @@ export default async function handler(req, res) {
     return res.status(200).json(result);
 
   } catch (err) {
-    console.error(err);
+    console.error('SERVER ERROR:', err);
     return res.status(500).json({ error: err.message });
   }
 }
