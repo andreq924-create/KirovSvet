@@ -2,12 +2,20 @@ export default async function handler(req, res) {
 
   try {
 
-    // Загружаем requests_all.json с GitHub
+    // Получаем username
+    const { username } = req.query;
+
+    if (!username) {
+      return res.status(400).json({
+        error: 'Username required'
+      });
+    }
+
+    // Загружаем requests_all.json
     const response = await fetch(
       'https://raw.githubusercontent.com/andreq924-create/admin-panel/main/requests_all.json'
     );
 
-    // Проверка загрузки
     if (!response.ok) {
 
       return res.status(500).json({
@@ -16,12 +24,10 @@ export default async function handler(req, res) {
 
     }
 
-    // Получаем текст файла
     const text = await response.text();
 
     let requests = [];
 
-    // Парсим JSON
     try {
 
       requests = JSON.parse(text);
@@ -34,8 +40,12 @@ export default async function handler(req, res) {
 
     }
 
-    // Возвращаем заявки
-    return res.status(200).json(requests);
+    // Только заявки пользователя
+    const filteredRequests = requests.filter(
+      request => request.username === username
+    );
+
+    return res.status(200).json(filteredRequests);
 
   } catch (err) {
 

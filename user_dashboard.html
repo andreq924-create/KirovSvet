@@ -508,19 +508,32 @@
         localStorage.setItem('requestsFontSize', currentFontSize);
     }
 
-    async function loadRequests() {
-        try {
-            const response = await fetch('/api/getRequests');
-            if (!response.ok) {
-                throw new Error('Не удалось загрузить данные');
-            }
-            const requests = await response.json();
-            return requests;
-        } catch (error) {
-            console.error('Ошибка при загрузке данных:', error);
-            return [];
+async function loadRequests() {
+
+    try {
+
+        const currentUsername =
+            sessionStorage.getItem('username');
+
+        const response = await fetch(
+            `/api/getRequests?username=${encodeURIComponent(currentUsername)}`
+        );
+
+        if (!response.ok) {
+            throw new Error('Не удалось загрузить данные');
         }
+
+        const requests = await response.json();
+
+        return requests;
+
+    } catch (error) {
+
+        console.error('Ошибка при загрузке данных:', error);
+
+        return [];
     }
+}
 
     function normalizeStatus(status) {
         const s = (status || '').toString().trim().toLowerCase();
