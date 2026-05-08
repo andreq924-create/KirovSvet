@@ -81,23 +81,24 @@
             text-decoration: none;
             transition: 0.2s;
 			font-weight: bold;
-
         }
 
         nav a:hover {
             color: var(--accent);
         }
-		@media (max-width: 768px) {
-    .font-controls {
-        display: none !important;
-    }
-}
 
-@media (max-width: 480px) {
-    .font-controls {
-        display: none !important;
-    }
-}
+		@media (max-width: 768px) {
+            .font-controls {
+                display: none !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .font-controls {
+                display: none !important;
+            }
+        }
+
         .menu-panel {
             position: absolute;
             top: -100%;
@@ -121,8 +122,7 @@
             font-size: 18px;
             text-decoration: none;
             transition: color 0.2s ease;
-			    font-weight: bold;
-
+			font-weight: bold;
         }
 
         .menu-panel a:hover {
@@ -156,28 +156,26 @@
             flex-wrap: wrap;
         }
 
-.filter-button {
-    padding: 10px 20px;
-    border-radius: 30px;
-    background-color: #333; /* ТЁМНЫЕ */
-    color: #fff;
-    border: 2px solid #333;
-    font-size: 16px;
-    cursor: pointer;
-    transition: 0.2s;
-}
+        .filter-button {
+            padding: 10px 20px;
+            border-radius: 30px;
+            background-color: #333;
+            color: #fff;
+            border: 2px solid #333;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
 
+        .filter-button:hover {
+            background-color: #444;
+        }
 
-.filter-button:hover {
-    background-color: #444;
-}
-
-/* АКТИВНАЯ кнопка */
-.filter-button.active {
-    background-color: #FFD700; /* ЖЁЛТАЯ */
-    border-color: #FFD700;
-    color: #000;
-}
+        .filter-button.active {
+            background-color: #FFD700;
+            border-color: #FFD700;
+            color: #000;
+        }
 
         .no-requests-message {
             color: var(--muted);
@@ -369,69 +367,68 @@
             }
         }
 
-
 		.request-card p,
-.item p {
-    word-break: break-word;
-    overflow-wrap: anywhere;
-}
+        .item p {
+            word-break: break-word;
+            overflow-wrap: anywhere;
+        }
 
-.request-card {
-    overflow-wrap: anywhere;
-}
-@media (max-width: 480px) {
-    .filter-buttons {
-        display: flex;
-        flex-wrap: nowrap;
-        gap: 6px;
-    }
+        .request-card {
+            overflow-wrap: anywhere;
+        }
 
-    .filter-button {
-        flex: 1 1 0;
-        min-width: 0;
-        padding: 8px 4px;
-        font-size: 12px;
-        white-space: nowrap;
-        border-radius: 20px;
-    }
-}
-@media (max-width: 480px) {
+        @media (max-width: 480px) {
+            .filter-buttons {
+                display: flex;
+                flex-wrap: nowrap;
+                gap: 6px;
+            }
 
-    .request-card {
-        padding-top: 15px;
-    }
+            .filter-button {
+                flex: 1 1 0;
+                min-width: 0;
+                padding: 8px 4px;
+                font-size: 12px;
+                white-space: nowrap;
+                border-radius: 20px;
+            }
+        }
 
-    .status {
-        position: static;
-        display: inline-block;
-        margin-bottom: 10px;
-        align-self: flex-start;
-        font-size: 0.9em;
-        font-weight: 700;
-        padding: 6px 12px;
-    }
+        @media (max-width: 480px) {
+            .request-card {
+                padding-top: 15px;
+            }
 
-    .status.new::before {
-        content: "Статус заявки: Новая";
-    }
+            .status {
+                position: static;
+                display: inline-block;
+                margin-bottom: 10px;
+                align-self: flex-start;
+                font-size: 0.9em;
+                font-weight: 700;
+                padding: 6px 12px;
+            }
 
-    .status.in_progress::before {
-        content: "Статус заявки: В процессе";
-    }
+            .status.new::before {
+                content: "Статус заявки: Новая";
+            }
 
-    .status.completed::before {
-        content: "Статус заявки: Завершена";
-    }
+            .status.in_progress::before {
+                content: "Статус заявки: В процессе";
+            }
 
-    /* убираем дублирующий текст внутри span */
-    .status {
-        font-size: 0;
-    }
+            .status.completed::before {
+                content: "Статус заявки: Завершена";
+            }
 
-    .status::before {
-        font-size: 14px;
-    }
-}
+            .status {
+                font-size: 0;
+            }
+
+            .status::before {
+                font-size: 14px;
+            }
+        }
     </style>
 
 </head>
@@ -481,8 +478,6 @@
     <button type="button" onclick="changeFont(1)">A+</button>
 </div>
 
- 
-
 <script>
     let currentFilter = 'all';
     let currentFontSize = 16;
@@ -516,7 +511,7 @@
 
     async function loadRequests() {
         try {
-            const response = await fetch('requests_all.json');
+            const response = await fetch('/api/getRequests');
             if (!response.ok) {
                 throw new Error('Не удалось загрузить данные');
             }
@@ -524,7 +519,7 @@
             return requests;
         } catch (error) {
             console.error('Ошибка при загрузке данных:', error);
-             return [];
+            return [];
         }
     }
 
@@ -597,9 +592,10 @@
                 }
 
                 const createdAt = new Date(request.createdAt);
-const completionDate = request.completionDate
-    ? new Date(request.completionDate).toLocaleDateString('ru-RU')
-    : '—';
+                const completionDate = request.completionDate
+                    ? new Date(request.completionDate).toLocaleDateString('ru-RU')
+                    : '—';
+
                 const normalizedStatus = normalizeStatus(request.status);
                 let statusClass = 'new';
 
@@ -620,7 +616,7 @@ const completionDate = request.completionDate
                     <p><strong>Адрес:</strong> 📍 ${request.address}</p>
                     ${itemsText ? `<p><strong>Описание товаров:</strong> 🛍️ ${itemsText}</p>` : ''}
                     ${problemText ? `<p><strong>Описание проблемы:</strong> 📝 ${request.problemDescription}</p>` : ''}
-                 <p><strong>Дата завершения:</strong> 🕒 ${completionDate}</p>
+                    <p><strong>Дата завершения:</strong> 🕒 ${completionDate}</p>
 
                     <span class="status ${statusClass}">${statusText}</span>
 
@@ -638,7 +634,6 @@ const completionDate = request.completionDate
             });
         } catch (error) {
             console.error('Ошибка при отображении заявок:', error);
-  
         }
     }
 
@@ -658,7 +653,6 @@ const completionDate = request.completionDate
 
     function logout() {
         sessionStorage.removeItem('username');
-     
         window.location.href = 'index.html';
     }
 
