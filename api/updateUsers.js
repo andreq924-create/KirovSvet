@@ -8,10 +8,10 @@
       ? JSON.parse(req.body)
       : req.body;
 
-    const { users } = body;
+    const { username, password } = body;
 
-    if (!users || !Array.isArray(users)) {
-      return res.status(400).json({ error: 'Invalid users data' });
+    if (!username || !password) {
+      return res.status(400).json({ error: 'Missing username or password' });
     }
 
     const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
@@ -23,7 +23,6 @@
     const FILE_PATH = 'users.json';
     const BRANCH = 'main';
 
-    // 1️⃣ Получаем SHA
     const getResponse = await fetch(
       `https://api.github.com/repos/${REPO}/contents/${FILE_PATH}?ref=${BRANCH}`,
       {
@@ -43,12 +42,29 @@
     const getData = await getResponse.json();
     const sha = getData.sha;
 
-    // 2️⃣ Кодируем данные
+    const currentUsers = JSON.parse(
+      Buffer.from(getData.content, 'base64').toString('utf8')
+    );
+
+    if (!Array.isArray(currentUsers)) {
+      throw new Error('users.json is not an array');
+    }
+
+    const exists = currentUsers.find(user => user.username === username);
+
+    if (exists) {
+      return res.status(400).json({ error: 'Пользователь уже существует' });
+    }
+
+    currentUsers.push({
+      username,
+      password
+    });
+
     const content = Buffer.from(
-      JSON.stringify(users, null, 2)
+      JSON.stringify(currentUsers, null, 2)
     ).toString('base64');
 
-    // 3️⃣ Обновляем файл
     const putResponse = await fetch(
       `https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`,
       {

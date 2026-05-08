@@ -664,29 +664,15 @@ registerForm.addEventListener('submit', async function(event) {
     try {
         registerAttempt();
 
-        const newUser = {
-            username: username,
-            password: password
-        };
-
-        let users = JSON.parse(localStorage.getItem('users')) || [];
-
-        const existingUser = users.find(user => user.username === username);
-        if (existingUser) {
-            showModal('Пользователь уже существует!', 'error');
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Зарегистрироваться';
-            return;
-        }
-
-        users.push(newUser);
-
         const response = await fetch(API_ENDPOINT, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ users: users })
+            body: JSON.stringify({
+                username: username,
+                password: password
+            })
         });
 
         let result = {};
@@ -703,9 +689,6 @@ registerForm.addEventListener('submit', async function(event) {
             return;
         }
 
-        localStorage.setItem('users', JSON.stringify(users));
-
-        // Показываем сообщение об успешной регистрации и переводим на index.html после нажатия ОК
         sessionStorage.setItem('username', username);
         afterCloseAction = () => {
             window.location.href = 'index.html';
