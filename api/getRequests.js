@@ -6,17 +6,27 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       return res.status(500).json({
-        error: 'Не удалось загрузить заявки'
+        error: 'Не удалось загрузить requests_all.json'
       });
     }
 
-    const requests = await response.json();
+    const text = await response.text();
+
+    let requests = [];
+
+    try {
+      const cleanText = text.replace(/^\uFEFF/, '');
+      requests = JSON.parse(cleanText);
+    } catch (e) {
+      console.error('JSON parse error:', e);
+      return res.status(500).json({
+        error: 'Ошибка чтения JSON'
+      });
+    }
 
     return res.status(200).json(requests);
-
-  } catch (error) {
-    console.error(error);
-
+  } catch (err) {
+    console.error(err);
     return res.status(500).json({
       error: 'Ошибка сервера'
     });
