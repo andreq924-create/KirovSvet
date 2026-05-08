@@ -662,11 +662,7 @@ async function loadRequests() {
 
         displayRequests();
     }
-	document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') {
-        displayRequests();
-    }
-});
+
     function logout() {
         sessionStorage.removeItem('username');
         window.location.href = 'index.html';
