@@ -1258,14 +1258,20 @@ function editRequest(createdAt){
     // ===== кнопка статуса =====
     const statusBtn = document.getElementById('statusActionBtn');
 
-    if(currentRequestCopy.status === 'Новая'){
-        statusBtn.textContent = 'Отправить в ожидание';
-        statusBtn.onclick = sendToPending;
-    }
-    else if(currentRequestCopy.status === 'В процессе'){
-        statusBtn.textContent = 'Выполнено';
-        statusBtn.onclick = sendToCompleted;
-    }
+if (currentRequestCopy.status === 'Новая') {
+    statusBtn.textContent = 'Отправить в ожидание';
+
+    statusBtn.onclick = () => {
+        checkItemsBeforeAction(sendToPending);
+    };
+}
+else if (currentRequestCopy.status === 'В процессе') {
+    statusBtn.textContent = 'Выполнено';
+
+    statusBtn.onclick = () => {
+        checkItemsBeforeAction(sendToCompleted);
+    };
+}
 
     // =========================
     // 🔒 ОГРАНИЧЕНИЯ ДАТ
@@ -1968,7 +1974,7 @@ async function deleteChildFromPopup() {
 }
 
 
-function saveChildEdit() {
+async function saveChildEdit() {
     if (currentChildIndex === null || editIndex === null) return;
 
     const data = JSON.parse(localStorage.getItem('warehouse')) || [];
@@ -1985,6 +1991,10 @@ function saveChildEdit() {
     }
 
     localStorage.setItem('warehouse', JSON.stringify(data));
+
+    // 🔥 ВОТ ЭТОГО НЕ ХВАТАЛО
+    await saveWarehouseToGitHub(data);
+
     renderProductChildren();
     loadWarehouse();
     closeChildEditPopup();
@@ -2060,7 +2070,61 @@ function addProductChild() {
     clearChildInputs();
 }
 
+function showWarningPanel(messages, onConfirm) {
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.background = 'rgba(0,0,0,0.5)';
+    overlay.style.display = 'flex';
+    overlay.style.justifyContent = 'center';
+    overlay.style.alignItems = 'center';
+    overlay.style.zIndex = '9999';
 
+    const box = document.createElement('div');
+    box.style.width = '400px';
+    box.style.background = '#fff';
+    box.style.borderRadius = '12px';
+    box.style.padding = '20px';
+    box.style.boxShadow = '0 10px 30px rgba(0,0,0,0.3)';
+    box.style.fontFamily = 'Arial';
+
+    const text = document.createElement('div');
+    text.style.whiteSpace = 'pre-line';
+    text.style.marginBottom = '20px';
+    text.innerHTML = messages.join('\n');
+
+    const btnWrap = document.createElement('div');
+    btnWrap.style.display = 'flex';
+    btnWrap.style.justifyContent = 'space-between';
+
+    const cancelBtn = document.createElement('button');
+    cancelBtn.textContent = 'Отмена';
+    cancelBtn.style.background = '#ccc';
+    cancelBtn.style.padding = '8px 12px';
+    cancelBtn.onclick = () => overlay.remove();
+
+    const okBtn = document.createElement('button');
+    okBtn.textContent = 'Продолжить';
+    okBtn.style.background = '#4CAF50';
+    okBtn.style.color = '#fff';
+    okBtn.style.padding = '8px 12px';
+    okBtn.onclick = () => {
+        overlay.remove();
+        onConfirm();
+    };
+
+    btnWrap.appendChild(cancelBtn);
+    btnWrap.appendChild(okBtn);
+
+    box.appendChild(text);
+    box.appendChild(btnWrap);
+    overlay.appendChild(box);
+
+    document.body.appendChild(overlay);
+}
 
 async function saveProduct() {
     const name = productName.value.trim();
@@ -2098,6 +2162,7 @@ async function saveProduct() {
         children: children
     };
 
+
     const data = JSON.parse(localStorage.getItem('warehouse')) || [];
     if (editIndex !== null) {
         data[editIndex] = product;
@@ -2119,6 +2184,29 @@ function clearChildInputs(){
     document.getElementById('productChildQty').value='';
      document.getElementById('productChildInfo').value=''; // очистка нового поля
     document.getElementById('productChildFile').value='';
+}
+
+function checkItemsBeforeAction(onConfirm) {
+    if (!currentRequestCopy?.items) return onConfirm();
+
+    const warnings = [];
+
+    currentRequestCopy.items.forEach(item => {
+        const words = item.name.trim().split(/\s+/);
+
+        // 🔥 если 4+ слова
+        if (words.length >= 4) {
+            warnings.push(
+                `⚠️ "${item.name}" может не подойти для опоры.`
+            );
+        }
+    });
+
+    if (warnings.length > 0) {
+        showWarningPanel(warnings, onConfirm);
+    } else {
+        onConfirm();
+    }
 }
 function removeProductChild(i){ productChildren.splice(i,1); renderProductChildren(); }
 // Функция для удаления заявки
