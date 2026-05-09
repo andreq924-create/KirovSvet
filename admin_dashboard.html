@@ -1923,7 +1923,9 @@ function editChildSettings(parentIndex, childIndex) {
 
     document.getElementById('childEditPopup').style.display = 'flex';
 }
-async function changeChildQty(add = true) {
+function changeChildQty(add = true) {
+    if (currentChildIndex === null || editIndex === null) return;
+
     const delta = parseInt(document.getElementById('childQtyChange').value) || 0;
     if (delta === 0) return;
 
@@ -1936,8 +1938,13 @@ async function changeChildQty(add = true) {
     if (add) child.qty += delta;
     else child.qty = Math.max(1, child.qty - delta);
 
-    await saveWarehouse(data);   // 👈 ВАЖНО
+    // Обновляем поле в попапе
+    document.getElementById('childEditQty').value = child.qty;
 
+    // Сохраняем сразу
+    localStorage.setItem('warehouse', JSON.stringify(data));
+
+    // Обновляем визуально
     renderProductChildren();
     loadWarehouse();
 }
@@ -1950,7 +1957,8 @@ async function deleteChildFromPopup() {
 
     const data = JSON.parse(localStorage.getItem('warehouse')) || [];
     data[editIndex].children.splice(currentChildIndex, 1);
-await saveWarehouse(data);
+    localStorage.setItem('warehouse', JSON.stringify(data));
+
     // Сохраняем на GitHub (ждём!)
     await saveWarehouseToGitHub(data);
 
@@ -1960,7 +1968,9 @@ await saveWarehouse(data);
 }
 
 
-async function saveChildEdit() {
+function saveChildEdit() {
+    if (currentChildIndex === null || editIndex === null) return;
+
     const data = JSON.parse(localStorage.getItem('warehouse')) || [];
     const child = data[editIndex].children[currentChildIndex];
 
@@ -1974,8 +1984,7 @@ async function saveChildEdit() {
         child.imgFileName = fileInput.files[0].name;
     }
 
-    await saveWarehouse(data);   // 👈 ВАЖНО
-
+    localStorage.setItem('warehouse', JSON.stringify(data));
     renderProductChildren();
     loadWarehouse();
     closeChildEditPopup();
@@ -2012,7 +2021,8 @@ async function deleteChild(parentIndex, childIndex){
 
   const data = JSON.parse(localStorage.getItem('warehouse'))||[];
   data[parentIndex].children.splice(childIndex,1);
-await saveWarehouse(data);
+  localStorage.setItem('warehouse', JSON.stringify(data));
+
   // Сохраняем на GitHub
   await saveWarehouseToGitHub(data);
 
@@ -2095,17 +2105,15 @@ async function saveProduct() {
         data.push(product);
     }
 
-await saveWarehouse(data);
+    localStorage.setItem('warehouse', JSON.stringify(data));
+
     // ⏳ ЖДЁМ сохранение
     await saveWarehouseToGitHub(data);
 
     closeProductPopup();
     loadWarehouse();
 }
-async function saveWarehouse(data) {
-    localStorage.setItem('warehouse', JSON.stringify(data));
-    await saveWarehouseToGitHub(data);
-}
+
 function clearChildInputs(){
     document.getElementById('productChildSize').value='';
     document.getElementById('productChildQty').value='';
@@ -2396,7 +2404,8 @@ async function deleteProduct(i){
 
   const data = JSON.parse(localStorage.getItem('warehouse')) || []; 
   data.splice(i,1); 
-await saveWarehouse(data);
+  localStorage.setItem('warehouse', JSON.stringify(data)); 
+
   // ⏳ ЖДЁМ сохранение
   await saveWarehouseToGitHub(data);
 
@@ -2512,7 +2521,8 @@ async function loadWarehouseFromJSON() {
         });
 
         // Сохраняем в localStorage
-await saveWarehouse(data);
+        localStorage.setItem('warehouse', JSON.stringify(data));
+
         // Загружаем склад на страницу
         loadWarehouse();
 
