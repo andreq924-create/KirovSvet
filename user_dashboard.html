@@ -45,15 +45,12 @@
             align-items: center;
             flex-wrap: wrap;
             position: relative;
-                  z-index: 2000;
-
-
+            z-index: 10;
         }
 
         header h1 {
             margin: 0;
             font-size: 22px;
- 
         }
 
         .menu-button {
@@ -64,7 +61,6 @@
             width: 30px;
             height: 30px;
             justify-content: space-between;
- 
         }
 
         .menu-button span {
@@ -110,22 +106,15 @@
         }
 
         .menu-panel {
-            position: fixed;
-            top: -100%;
-            left: 0;
-            right: 0;
+            position: static;
             width: 100%;
             background-color: var(--panel-bg);
-            padding: 60px 20px 20px 20px;
-            display: flex;
+            padding: 20px;
+            display: none;
             flex-direction: column;
             gap: 20px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-            transition: top 0.3s ease-in-out;
-                z-index: 1500;
-
-            overflow-y: auto;
-            max-height: 100vh;
+            z-index: 5;
         }
 
         .menu-panel a {
@@ -145,7 +134,7 @@
         }
 
         .menu-panel.active {
-            top: 0;
+            display: flex;
         }
 
         main {
