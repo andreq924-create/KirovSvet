@@ -515,7 +515,16 @@
 
     <button class="submitBtn" onclick="submitRequest()">Оставить заявку</button>
 </div>
-
+<div class="modal-overlay" id="incompatibilityModal" aria-hidden="true">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="incompatibilityModalTitle">
+        <h3 class="modal-title" id="incompatibilityModalTitle">Внимание</h3>
+        <p class="modal-text" id="incompatibilityModalText"></p>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button class="modal-ok" type="button" onclick="confirmSubmission()">Подтвердить</button>
+            <button class="modal-ok" style="background:#f44336; color:#fff;" type="button" onclick="cancelSubmission()">Отказаться</button>
+        </div>
+    </div>
+</div>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.6/dist/inputmask.min.js"></script>
 <script>
@@ -570,7 +579,49 @@
         const regex = /^[a-zA-Zа-яА-ЯёЁ]+$/;
         return regex.test(name);
     }
+	let pendingRequest = null; // сюда будем сохранять данные заявки при проверке
 
+function checkCompatibility(items) {
+    // Проверка: есть светильник Street 30 и нет подходящей опоры
+    const hasStreet30 = items.some(item => item.name.includes("Street 30"));
+    const hasAnyPole = items.some(item => item.name.toLowerCase().includes("опора") || item.name.toLowerCase().includes("столб"));
+
+    return hasStreet30 && !hasAnyPole;
+}
+
+function showIncompatibilityModal(message, requestData) {
+    pendingRequest = requestData; // сохраняем данные для возможной отправки
+    const modal = document.getElementById('incompatibilityModal');
+    const modalText = document.getElementById('incompatibilityModalText');
+
+    modalText.textContent = message;
+    modal.classList.add('show');
+    document.getElementById('pageContent').classList.add('page-dim');
+    modal.setAttribute('aria-hidden', 'false');
+}
+
+function confirmSubmission() {
+    // Пользователь согласен отправить
+    const modal = document.getElementById('incompatibilityModal');
+    modal.classList.remove('show');
+    document.getElementById('pageContent').classList.remove('page-dim');
+    modal.setAttribute('aria-hidden', 'true');
+
+    if (pendingRequest) {
+        const summary = encodeURIComponent(JSON.stringify(pendingRequest));
+        window.location.href = `confirmation.html?data=${summary}`;
+    }
+}
+
+function cancelSubmission() {
+    // Пользователь отменил отправку
+    const modal = document.getElementById('incompatibilityModal');
+    modal.classList.remove('show');
+    document.getElementById('pageContent').classList.remove('page-dim');
+    modal.setAttribute('aria-hidden', 'true');
+
+    pendingRequest = null;
+}
     const phoneInput = document.getElementById("phone");
     const phoneMask = new Inputmask("+7(999)999-99-99");
     phoneMask.mask(phoneInput);
@@ -776,35 +827,44 @@ if (savedItems.length > 0) {
             formValid = false;
         }
 
-        if (!formValid) {
-            showErrorModal("Пожалуйста, исправьте ошибки перед отправкой.");
-            return;
-        }
+if (!formValid) {
+    showErrorModal("Пожалуйста, исправьте ошибки перед отправкой.");
+    return;
+}
 
-        const request = {
-            username,
-            date: new Date().toLocaleString(),
-            lastname,
-            firstname,
-            phone,
-            email,
-            address,
-            type: workType,
-            problemDescription,   // <-- добавили сюда
-            items,
-            status: "Новая",
-            createdAt: new Date().toISOString(),
-            expectedCallTime: new Date(Date.now() + 5 * 60 * 1000).toISOString()
-        };
+const request = {
+    username,
+    date: new Date().toLocaleString(),
+    lastname,
+    firstname,
+    phone,
+    email,
+    address,
+    type: workType,
+    problemDescription,
+    items,
+    status: "Новая",
+    createdAt: new Date().toISOString(),
+    expectedCallTime: new Date(Date.now() + 5 * 60 * 1000).toISOString()
+};
 
-        const storedRequests = JSON.parse(localStorage.getItem("requests")) || [];
-        storedRequests.push(request);
-        localStorage.setItem("requests", JSON.stringify(storedRequests));
+// Проверка совместимости
+if (checkCompatibility(items)) {
+    showIncompatibilityModal(
+        "Светильник Street 30 не подходит ни к одной опоре. Он потолочный. Продолжить?",
+        request
+    );
+    return; // останавливаем стандартную отправку до решения пользователя
+}
 
-        saveAllRequests();
+// обычная отправка заявки
+const storedRequests = JSON.parse(localStorage.getItem("requests")) || [];
+storedRequests.push(request);
+localStorage.setItem("requests", JSON.stringify(storedRequests));
+saveAllRequests();
 
-        const summary = encodeURIComponent(JSON.stringify(request));
-        window.location.href = `confirmation.html?data=${summary}`;
+const summary = encodeURIComponent(JSON.stringify(request));
+window.location.href = `confirmation.html?data=${summary}`;
     }
 
     function saveAllRequests() {
