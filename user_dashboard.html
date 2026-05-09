@@ -19,6 +19,7 @@
             --status-new: #1E90FF;
             --status-progress: #FFA500;
             --status-completed: #28a745;
+            --header-height: 68px;
         }
 
         *, *::before, *::after {
@@ -45,7 +46,7 @@
             align-items: center;
             flex-wrap: wrap;
             position: relative;
-            z-index: 10;
+            z-index: 1100;
         }
 
         header h1 {
@@ -106,22 +107,23 @@
         }
 
         .menu-panel {
-            position: absolute;
-            top: -100%;
+            position: fixed;
+            top: var(--header-height);
             left: 0;
             right: 0;
-            width: auto;
+            width: 100%;
             background-color: var(--panel-bg);
-            height: auto;
-            padding: 60px 20px 20px 20px;
             display: flex;
             flex-direction: column;
             gap: 20px;
+            padding: 20px 20px 20px 20px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-            transition: top 0.3s ease-in-out;
-            z-index: 5;
-            overflow: hidden;
-            max-height: 80vh;
+            transition: transform 0.3s ease-in-out;
+            z-index: 1000;
+            overflow-y: auto;
+            max-height: calc(100vh - var(--header-height));
+            transform: translateY(-120%);
+            pointer-events: none;
         }
 
         .menu-panel a {
@@ -141,7 +143,8 @@
         }
 
         .menu-panel.active {
-            top: 0;
+            transform: translateY(0);
+            pointer-events: auto;
         }
 
         main {
@@ -345,17 +348,13 @@
                 display: none;
             }
 
-            .menu-panel {
-                top: -100%;
-            }
-
-            .menu-panel.active {
-                top: 0;
-            }
-
             .font-controls {
                 right: 12px;
                 bottom: 12px;
+            }
+
+            :root {
+                --header-height: 64px;
             }
         }
 
@@ -377,6 +376,10 @@
             .font-controls button {
                 padding: 9px 12px;
                 min-width: 48px;
+            }
+
+            :root {
+                --header-height: 60px;
             }
         }
 
@@ -679,9 +682,7 @@
 
     function toggleMenu() {
         const menuPanel = document.querySelector('.menu-panel');
-        const mainContent = document.querySelector('main');
         menuPanel.classList.toggle('active');
-        mainContent.style.marginTop = menuPanel.classList.contains('active') ? '200px' : '40px';
     }
 
     loadFontSize();

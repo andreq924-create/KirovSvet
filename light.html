@@ -722,6 +722,18 @@
 .detail-section-title {
     margin-left: 10px;
 }
+
+ @media (max-width: 600px) {
+    h2 {
+        white-space: normal;      /* разрешаем перенос строк */
+        text-align: center;
+        max-width: 100%;
+        padding: 0 10px;
+        font-size: 1.1rem;
+        line-height: 1.2;
+        word-break: break-word;   /* ломает длинные слова */
+    }
+}
     </style>
 </head>
 
