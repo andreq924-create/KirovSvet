@@ -285,21 +285,23 @@
     "email": "andre8123@gmail.com",
     "address": "Вятский колледж управления и новых технологий, 56, Пятницкая улица, Дымково, Октябрьский район, Киров, городской округ Киров, Кировская область,",
     "type": "both",
-    "problemDescription": "",
+    "problemDescription": "нужно заменть там опоры",
     "items": [
       {
         "name": "Опоры ОТФ 6",
-        "qty": 23,
+        "qty": 3,
         "img": "images/OporaOTF.png"
       },
       {
         "name": "Светодиодный светильник Street 480",
-        "qty": 23,
+        "qty": 3,
         "img": "images/Светильники Street.png"
       }
     ],
-    "status": "Новая",
+    "status": "В процессе",
     "createdAt": "2026-05-09T09:28:39.479Z",
-    "expectedCallTime": "2026-05-09T09:33:39.479Z"
+    "expectedCallTime": "2026-05-09T09:33:39.479Z",
+    "callDate": "2026-05-09",
+    "completionDate": "2026-05-20"
   }
 ]
