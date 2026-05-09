@@ -66,8 +66,10 @@
         "img": "images/Светильники Street.png"
       }
     ],
-    "status": "Новая",
+    "status": "В процессе",
     "createdAt": "2026-05-09T19:20:28.344Z",
-    "expectedCallTime": "2026-05-09T19:25:28.344Z"
+    "expectedCallTime": "2026-05-09T19:25:28.344Z",
+    "callDate": "2026-05-09",
+    "completionDate": "2026-05-29"
   }
 ]
