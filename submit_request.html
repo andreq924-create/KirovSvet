@@ -693,6 +693,8 @@
         });
     }
 
+
+
     function plus(i) {
         let data = getData();
         data[i].qty++;
@@ -716,8 +718,16 @@
         render();
     }
 
-    window.addEventListener("focus", render);
-    render();
+ window.addEventListener("focus", render);
+render();
+
+// Автовыбор типа работы если уже есть выбранные товары
+const savedItems = JSON.parse(localStorage.getItem("selectedItems")) || [];
+
+if (savedItems.length > 0) {
+    document.getElementById("workType").value = "both";
+    toggleInputs();
+}
 
     function validatePhone(phone) {
         const phonePattern = /^\+7\(\d{3}\)\d{3}-\d{2}-\d{2}$/;

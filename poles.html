@@ -354,34 +354,82 @@
             flex: 0 1 600px;
             padding: 22px 18px;
             background:
-                linear-gradient(180deg, rgba(255,255,255,0.04), transparent 18%),
+                linear-gradient(180deg, rgba(255,255,255,0.05), transparent 16%),
                 linear-gradient(180deg, rgba(36, 43, 56, 0.98), rgba(24, 29, 38, 0.98));
-            border: 1px solid var(--border);
-            border-radius: 18px;
+            border: 1px solid rgba(255, 215, 77, 0.14);
+            border-radius: 20px;
             animation: fadeScale 0.35s ease;
             min-width: 0;
             overflow-wrap: anywhere;
             box-shadow: var(--shadow-lg);
         }
 
+        .detail-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .detail-name {
+            margin: 0;
+            font-size: 1.35rem;
+            line-height: 1.35;
+            font-weight: 900;
+            color: #fff7c2;
+            text-shadow: 0 1px 0 rgba(0,0,0,0.35);
+        }
+
+        .detail-stock {
+            flex: 0 0 auto;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-2));
+            color: #111;
+            font-size: 14px;
+            font-weight: 900;
+            box-shadow: 0 10px 18px rgba(0, 0, 0, 0.22);
+            white-space: nowrap;
+        }
+
+        .detail-section-title {
+            margin: 0 0 10px;
+            font-size: 15px;
+            font-weight: 800;
+            color: #ffd84d;
+            letter-spacing: 0.2px;
+        }
+
         .details-container table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
+            margin-top: 0;
             table-layout: fixed;
             background: rgba(255,255,255,0.02);
-            border-radius: 14px;
+            border-radius: 16px;
             overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.06);
         }
 
         .details-container td {
             word-break: break-word;
             overflow-wrap: anywhere;
             vertical-align: top;
-            padding: 8px 8px;
+            padding: 11px 10px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            color: var(--muted);
             line-height: 1.45;
+            color: #fff;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .details-container tr:nth-child(even) td {
+            background: rgba(255,255,255,0.015);
+        }
+
+        .details-container tr:hover td {
+            background: rgba(255, 216, 77, 0.05);
         }
 
         .details-container tr:last-child td {
@@ -389,9 +437,10 @@
         }
 
         .details-container td:first-child {
-            width: 180px;
-            font-weight: bold;
+            width: 42%;
+            font-weight: 800;
             color: var(--gold);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .details-container .info > button {
@@ -427,96 +476,96 @@
             z-index: 1000;
             animation: fadeSoft 0.25s ease;
         }
-.modal-content {
-    background:
-        linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)),
-        linear-gradient(180deg, rgba(31, 38, 52, 0.98), rgba(20, 24, 33, 0.98));
-    border: 1px solid rgba(255, 216, 77, 0.22);
-    padding: 26px 22px 22px;
-    border-radius: 22px;
-    text-align: center;
-    color: #eee;
-    width: min(380px, calc(100vw - 24px));
-    animation: scaleIn 0.25s ease;
-    position: relative;
-    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
-    backdrop-filter: blur(14px);
-}
+        .modal-content {
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)),
+                linear-gradient(180deg, rgba(31, 38, 52, 0.98), rgba(20, 24, 33, 0.98));
+            border: 1px solid rgba(255, 216, 77, 0.22);
+            padding: 26px 22px 22px;
+            border-radius: 22px;
+            text-align: center;
+            color: #eee;
+            width: min(380px, calc(100vw - 24px));
+            animation: scaleIn 0.25s ease;
+            position: relative;
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(14px);
+        }
 
-.auth-icon {
-    font-size: 42px;
-    margin-bottom: 8px;
-    text-shadow: 0 0 20px rgba(255, 216, 77, 0.35);
-}
+        .auth-icon {
+            font-size: 42px;
+            margin-bottom: 8px;
+            text-shadow: 0 0 20px rgba(255, 216, 77, 0.35);
+        }
 
-.modal-content h3 {
-    color: #fff1a8;
-    margin: 0 0 8px;
-    font-size: 24px;
-    font-weight: 900;
-    letter-spacing: 0.3px;
-}
+        .modal-content h3 {
+            color: #fff1a8;
+            margin: 0 0 8px;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 0.3px;
+        }
 
-.auth-text {
-    margin: 0;
-    font-size: 16px;
-    line-height: 1.5;
-    color: #c8d0dc;
-}
+        .auth-text {
+            margin: 0;
+            font-size: 16px;
+            line-height: 1.5;
+            color: #c8d0dc;
+        }
 
-.modal-buttons {
-    margin-top: 20px;
-    display: flex;
-    gap: 10px;
-}
+        .modal-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
 
-.modal-buttons button {
-    flex: 1;
-    padding: 13px 14px;
-    border-radius: 14px;
-    border: none;
-    font-weight: 800;
-    font-size: 14px;
-    cursor: pointer;
-    transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
-    margin-top: 0;
-}
+        .modal-buttons button {
+            flex: 1;
+            padding: 13px 14px;
+            border-radius: 14px;
+            border: none;
+            font-weight: 800;
+            font-size: 14px;
+            cursor: pointer;
+            transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+            margin-top: 0;
+        }
 
-.btn-secondary {
-    background: rgba(255,255,255,0.06);
-    color: #fff;
-    border: 1px solid rgba(255,255,255,0.12);
-}
+        .btn-secondary {
+            background: rgba(255,255,255,0.06);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.12);
+        }
 
-.btn-secondary:hover {
-    background: rgba(255,255,255,0.10);
-    transform: translateY(-1px);
-}
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.10);
+            transform: translateY(-1px);
+        }
 
-.btn-primary {
-    background: linear-gradient(135deg, #ffd84d, #ffb703);
-    color: #111;
-    box-shadow: 0 10px 22px rgba(255, 216, 77, 0.18);
-}
+        .btn-primary {
+            background: linear-gradient(135deg, #ffd84d, #ffb703);
+            color: #111;
+            box-shadow: 0 10px 22px rgba(255, 216, 77, 0.18);
+        }
 
-.btn-primary:hover {
-    transform: translateY(-1px);
-    filter: brightness(1.03);
-    box-shadow: 0 14px 28px rgba(255, 216, 77, 0.26);
-}
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.03);
+            box-shadow: 0 14px 28px rgba(255, 216, 77, 0.26);
+        }
 
-.close-btn {
-    position: absolute;
-    top: 12px;
-    right: 14px;
-    cursor: pointer;
-    font-size: 20px;
-    color: #aab2bf;
-}
+        .close-btn {
+            position: absolute;
+            top: 12px;
+            right: 14px;
+            cursor: pointer;
+            font-size: 20px;
+            color: #aab2bf;
+        }
 
-.close-btn:hover {
-    color: #fff;
-}
+        .close-btn:hover {
+            color: #fff;
+        }
 
         @keyframes scaleIn {
             from { transform: scale(0.9); opacity: 0; }
@@ -689,6 +738,15 @@
                 font-size: 1rem;
             }
         }
+.details-container td {
+    text-align: justify;
+    color: #ffffff;
+}
+.detail-name,
+.detail-section-title {
+    margin-left: 10px;
+}
+
     </style>
 </head>
 
@@ -702,20 +760,20 @@
 
         <div class="grid" id="grid"></div>
 
-       <div id="authModal" class="modal hidden">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closeAuthModal()">✖</span>
+        <div id="authModal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeAuthModal()">✖</span>
 
-        <div class="auth-icon">🔐</div>
-        <h3>Требуется авторизация</h3>
-        <p class="auth-text">Чтобы оставить заявку, войдите в аккаунт или создайте новый.</p>
+                <div class="auth-icon">🔐</div>
+                <h3>Требуется авторизация</h3>
+                <p class="auth-text">Чтобы оставить заявку, войдите в аккаунт или создайте новый.</p>
 
-        <div class="modal-buttons">
-            <button class="btn-secondary" onclick="goToRegister()">Создать аккаунт</button>
-            <button class="btn-primary" onclick="goToLogin()">Войти</button>
+                <div class="modal-buttons">
+                    <button class="btn-secondary" onclick="goToRegister()">Создать аккаунт</button>
+                    <button class="btn-primary" onclick="goToLogin()">Войти</button>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
     </div>
 
     <script>
@@ -838,34 +896,40 @@
             const parent = currentPoles[parentIndex];
             const child = parent.children[childIndex];
 
-            let infoTableHTML = '<table>';
-
+            let infoRowsHTML = '';
+			document.querySelector('h2').textContent = `${child.name}`;
             if (child.info) {
                 child.info.split('\n').forEach(line => {
                     if (!line.trim()) return;
                     const parts = line.split(':');
                     if (parts.length >= 2) {
-                        infoTableHTML += `<tr><td>${parts[0]}</td><td>${parts.slice(1).join(':')}</td></tr>`;
+                        infoRowsHTML += `<tr><td>${parts[0].trim()}</td><td>${parts.slice(1).join(':').trim()}</td></tr>`;
                     } else {
-                        infoTableHTML += `<tr><td colspan="2">${line}</td></tr>`;
+                        infoRowsHTML += `<tr><td colspan="2">${line.trim()}</td></tr>`;
                     }
                 });
             } else {
-                infoTableHTML += '<tr><td colspan="2">Информация отсутствует</td></tr>';
+                infoRowsHTML = '<tr><td colspan="2">Информация отсутствует</td></tr>';
             }
-
-            infoTableHTML += '</table>';
 
             grid.innerHTML = `
                 <div class="details-container">
                     <div class="image">
                         <img src="${child.img || parent.img}">
                     </div>
+
                     <div class="info">
-                        <p><strong>Название:</strong> ${child.name}</p>
-                        <p><strong>В наличии:</strong> ${child.qty}</p>
-                        <p><strong>Информация:</strong></p>
-                        ${infoTableHTML}
+                        <div class="detail-top">
+                            <h3 class="detail-name">${child.name}</h3>
+                            <div class="detail-stock">В наличии: ${child.qty}</div>
+                        </div>
+
+                        <div class="detail-section-title">Информация</div>
+
+                        <table>
+                            ${infoRowsHTML}
+                        </table>
+
                         <button onclick="handleAction(${parentIndex}, ${childIndex})">
                             ${fromIndex ? "Оставить заявку" : "Выбрать"}
                         </button>
@@ -874,69 +938,64 @@
             `;
         }
 
-function handleAction(parentIndex, childIndex) {
-    const parent = currentPoles[parentIndex];
-    if (!parent) return alert("Ошибка: родительский элемент не найден");
+        function handleAction(parentIndex, childIndex) {
+            const parent = currentPoles[parentIndex];
+            if (!parent) return alert("Ошибка: родительский элемент не найден");
 
-    const child = parent.children?.[childIndex];
-    if (!child) return alert("Ошибка: дочерний элемент не найден");
+            const child = parent.children?.[childIndex];
+            if (!child) return alert("Ошибка: дочерний элемент не найден");
 
-    // СНАЧАЛА проверяем авторизацию
-    if (!isUserLoggedIn()) {
-        openAuthModal();
-        return;
-    }
+            if (!isUserLoggedIn()) {
+                openAuthModal();
+                return;
+            }
 
-    if (child.qty < 1) {
-        alert("Нет в наличии");
-        return;
-    }
+            if (child.qty < 1) {
+                alert("Нет в наличии");
+                return;
+            }
 
-    // Добавляем товар в selectedItems
-    let selected = JSON.parse(localStorage.getItem("selectedItems")) || [];
-    let exist = selected.find(i => i.name === child.name);
+            let selected = JSON.parse(localStorage.getItem("selectedItems")) || [];
+            let exist = selected.find(i => i.name === child.name);
 
-    if (exist) exist.qty += 1;
-    else selected.push({ name: child.name, price: child.price, qty: 1, img: parent.img });
+            if (exist) exist.qty += 1;
+            else selected.push({ name: child.name, price: child.price, qty: 1, img: parent.img });
 
-    localStorage.setItem("selectedItems", JSON.stringify(selected));
+            localStorage.setItem("selectedItems", JSON.stringify(selected));
 
-    // Проверка на fromIndex и выполнение редиректа
-if (fromIndex) {
-    let selected = JSON.parse(localStorage.getItem("selectedItems")) || [];
-    let exist = selected.find(i => i.name === child.name);
+            if (fromIndex) {
+                let selected = JSON.parse(localStorage.getItem("selectedItems")) || [];
+                let exist = selected.find(i => i.name === child.name);
 
-    if (exist) exist.qty += 1;
-    else selected.push({ name: child.name, price: child.price, qty: 1, img: child.img || parent.img });
+                if (exist) exist.qty += 1;
+                else selected.push({ name: child.name, price: child.price, qty: 1, img: child.img || parent.img });
 
-    localStorage.setItem("selectedItems", JSON.stringify(selected));
+                localStorage.setItem("selectedItems", JSON.stringify(selected));
 
-    window.location.href = "submit_request.html";
-    return;
-}
+                window.location.href = "submit_request.html";
+                return;
+            }
 
-    // Обработка для администратора
-    if (isAdmin) {
-        let request = JSON.parse(localStorage.getItem("currentAdminRequest")) || {};
-        request.items = Array.isArray(request.items) ? request.items : [];
+            if (isAdmin) {
+                let request = JSON.parse(localStorage.getItem("currentAdminRequest")) || {};
+                request.items = Array.isArray(request.items) ? request.items : [];
 
-        let exist2 = request.items.find(i => i.name === child.name);
+                let exist2 = request.items.find(i => i.name === child.name);
 
-        if (exist2) exist2.qty += 1;
-        else request.items.push({ name: child.name, price: child.price, qty: 1, img: parent.img });
+                if (exist2) exist2.qty += 1;
+                else request.items.push({ name: child.name, price: child.price, qty: 1, img: parent.img });
 
-        localStorage.setItem("currentAdminRequest", JSON.stringify(request));
-        alert(`Добавлено: ${child.name}`);
+                localStorage.setItem("currentAdminRequest", JSON.stringify(request));
+                alert(`Добавлено: ${child.name}`);
 
-        if (window.opener && typeof window.opener.refreshAdminUI === "function") {
-            window.opener.refreshAdminUI();
+                if (window.opener && typeof window.opener.refreshAdminUI === "function") {
+                    window.opener.refreshAdminUI();
+                }
+            }
+
+            window.close();
+            loadGrid();
         }
-    }
-
-    // Лучше не закрывать вкладку автоматически
-    window.close();
-    loadGrid();
-}
 
         loadWarehouse();
     </script>

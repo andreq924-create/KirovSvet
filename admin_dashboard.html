@@ -447,9 +447,15 @@ table button:hover{
 img.preview{
   width:52px;
   height:52px;
+
+  object-fit:contain; /* картинка уменьшается внутри рамки */
+  padding:4px;
+
   border-radius:14px;
-  object-fit:cover;
   border:1px solid var(--line);
+
+  background:#fff;
+
   box-shadow:0 8px 18px rgba(15,23,42,0.08);
 }
 
@@ -672,7 +678,8 @@ img.preview{
     <label>Телефон</label><input type="text" id="editPhone">
     <label>E-mail</label><input type="email" id="editEmail">
     <label>Адрес</label><input type="text" id="editAddress">
-    <label>Тип работы</label><input type="text" id="editWorkType">
+    <label style="display:none;">Тип работы</label>
+<input type="text" id="editWorkType" style="display:none;">
     <label>Дата звонка</label><input type="date" id="editCallDate">
     <label>Дата завершения</label><input type="date" id="editCompletionDate">
 
@@ -2683,7 +2690,7 @@ async function saveRequestsAll(requestsData) {
 
         if (!response.ok) {
             console.error('Ошибка сервера:', result.error || result);
-            alert('Не удалось сохранить заявки');
+            
             return;
         }
 
