@@ -4,15 +4,16 @@
     "password": "iIHmTjSAmIdtz"
   },
   {
+  "username": "Adminn",
+  "password": "Adminn",
+  "role": "admin"
+  },
+  {
     "username": "Артем",
     "password": "4O39RB3IsKvWa"
   },
   {
     "username": "Сергей",
     "password": "fdmFz16rHXQxC"
-  },
-  {
-    "username": "Андрей123",
-    "password": "1234567фыв123"
   }
 ]

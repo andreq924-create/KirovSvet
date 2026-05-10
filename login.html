@@ -249,8 +249,6 @@
     </div>
 </main>
 
- 
-
 <!-- МОДАЛЬНОЕ ОКНО -->
 <div id="modal">
     <div id="modalBox">
@@ -305,21 +303,6 @@ loginForm.addEventListener('submit', async (event) => {
     if (blockTime > currentTime) {
         const remainingTime = Math.floor((blockTime - currentTime) / 1000);
         showModal(`Вы заблокированы на ${remainingTime} секунд!`, 'error');
-        return;
-    }
-
-    // =========================
-    // 🔥 ЛОКАЛЬНЫЕ АККАУНТЫ
-    // =========================
-    if (username === '111' && password === '111') {
-        sessionStorage.setItem('username', '111');
-        window.location.href = "user_dashboard.html";
-        return;
-    }
-
-    if (username === 'Admin' && password === 'Admin') {
-        sessionStorage.setItem('username', 'Admin');
-        window.location.href = "admin_dashboard.html";
         return;
     }
 
@@ -380,5 +363,4 @@ loginForm.addEventListener('submit', async (event) => {
 closeModalBtn.addEventListener('click', closeModal);
 </script>
 </body>
-
 </html>
