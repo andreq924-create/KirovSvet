@@ -81,7 +81,7 @@
     "email": "Andrey@gmail.com",
     "address": "Вятский колледж управления и новых технологий, Пятницкая улица, Октябрьский район, Киров, городской округ Киров, Кировская область,",
     "type": "both",
-    "problemDescription": "",
+    "problemDescription": "Нуэно токо поменять светильник",
     "items": [
       {
         "name": "Опроы СТ 3",
@@ -89,8 +89,10 @@
         "img": "images/oporaCT.png"
       }
     ],
-    "status": "Новая",
+    "status": "В процессе",
     "createdAt": "2026-05-10T08:46:28.567Z",
-    "expectedCallTime": "2026-05-10T08:51:28.567Z"
+    "expectedCallTime": "2026-05-10T08:51:28.567Z",
+    "callDate": "2026-05-10",
+    "completionDate": "2026-05-15"
   }
 ]
