@@ -727,6 +727,12 @@ let editIndex = null;
 let productChildren = [];  
 let productName, productCategory, productQty;
 
+
+if (sessionStorage.getItem('role') !== 'admin') {
+    window.location.href = 'login.html';
+}
+
+
 function buildWarehouseIndex(warehouse) {
     const map = {};
 
@@ -800,26 +806,46 @@ function showTable(name, btn) {
 function loadRequests() {
     const requests = JSON.parse(localStorage.getItem('requests')) || [];
     const today = new Date().toISOString().split('T')[0];
-    
-     requests.forEach(r => { 
-        if (r.status === 'В процессе' && r.completionDate && r.completionDate <= today) {
+
+    requests.forEach(r => {
+        if (
+            r.status === 'В процессе' &&
+            r.completionDate &&
+            r.completionDate <= today
+        ) {
             r.status = 'Завершена';
         }
     });
 
-     localStorage.setItem('requests', JSON.stringify(requests));
+    localStorage.setItem('requests', JSON.stringify(requests));
 
-     const newR = requests.filter(r => r.status === 'Новая');
-    const pendingR = requests.filter(r => r.status === 'В процессе');
-    const completedR = requests.filter(r => r.status === 'Завершена');
+    const sortByNewest = (a, b) =>
+        new Date(b.createdAt) - new Date(a.createdAt);
 
-     document.getElementById('newRequestsCount').textContent = newR.length;
+    const newR = requests
+        .filter(r => r.status === 'Новая')
+        .sort(sortByNewest);
+
+    const pendingR = requests
+        .filter(r => r.status === 'В процессе')
+        .sort(sortByNewest);
+
+    const completedR = requests
+        .filter(r => r.status === 'Завершена')
+        .sort(sortByNewest);
+
+    document.getElementById('newRequestsCount').textContent = newR.length;
     document.getElementById('pendingRequestsCount').textContent = pendingR.length;
     document.getElementById('completedRequestsCount').textContent = completedR.length;
 
-     renderRequests(newR, 'newRequestsTable');
+    renderRequests(newR, 'newRequestsTable');
     renderRequests(pendingR, 'pendingRequestsTable');
-  renderCompletedByMonth(completedR, 'completedRequestsTable');
+
+    renderCompletedByMonth(
+        completedR,
+        'completedRequestsTable'
+    );
+
     showTable('new');
 }
 

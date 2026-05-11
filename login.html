@@ -322,6 +322,7 @@ loginForm.addEventListener('submit', async (event) => {
         if (response.ok && data.success) {
 
             sessionStorage.setItem('username', data.username);
+			sessionStorage.setItem('role', data.role);
 
             window.location.href =
                 data.role === 'admin'

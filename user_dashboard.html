@@ -554,9 +554,11 @@
             const requests = await loadRequests();
             const currentUsername = sessionStorage.getItem('username');
 
-            const userRequests = requests.filter(request => request.username === currentUsername);
+const userRequests = requests
+    .filter(request => request.username === currentUsername)
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-            const filteredRequests = userRequests.filter(request => {
+const filteredRequests = userRequests.filter(request => {
                 if (currentFilter === 'all') return true;
                 return normalizeStatus(request.status) === currentFilter;
             });
