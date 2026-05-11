@@ -88,9 +88,11 @@ export default async function handler(req, res) {
       throw new Error(`Update file error: ${text}`);
     }
 
-    const data = await putResponse.json();
+await putResponse.json();
 
-    return res.status(200).json(data);
+return res.status(200).json({
+  success: true
+});
 
   } catch (err) {
     console.error(err);
