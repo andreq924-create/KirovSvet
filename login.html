@@ -1,40 +1,14 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <link rel="icon" href="favicon.png" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Базовые security-настройки для страницы -->
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="Referrer-Policy" content="no-referrer">
-    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=()">
-    <meta http-equiv="X-Frame-Options" content="DENY">
-    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-
-    <!-- CSP для single-file страницы.
-         В идеале CSP задавать заголовком на сервере, а не meta. -->
-    <meta http-equiv="Content-Security-Policy"
-          content="
-            default-src 'self';
-            base-uri 'none';
-            object-src 'none';
-            frame-ancestors 'none';
-            form-action 'self';
-            img-src 'self' data:;
-            style-src 'self' 'unsafe-inline';
-            script-src 'self' 'unsafe-inline';
-            connect-src 'self';
-            upgrade-insecure-requests
-          ">
-
-    <meta name="color-scheme" content="dark light">
     <title>Вход</title>
 
     <style>
-        :root {
+         :root {
             --bg-1: #1e2a38;
             --bg-2: #2f3f52;
             --card-border: rgba(255, 255, 255, 0.10);
@@ -48,11 +22,6 @@
 
         * {
             box-sizing: border-box;
-        }
-
-        html, body {
-            width: 100%;
-            min-height: 100%;
         }
 
         body {
@@ -173,12 +142,6 @@
             box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.14);
         }
 
-        form input:disabled {
-            background: #f3f4f6;
-            cursor: not-allowed;
-            opacity: 0.9;
-        }
-
         form button {
             margin-top: 10px;
             padding: 13px 14px;
@@ -194,13 +157,6 @@
         form button:hover {
             background: linear-gradient(135deg, #ffe24d, #ffc300);
             transform: translateY(-1px);
-        }
-
-        form button:disabled {
-            cursor: not-allowed;
-            opacity: 0.7;
-            transform: none;
-            filter: grayscale(0.15);
         }
 
         footer {
@@ -244,10 +200,6 @@
             border-top: 6px solid #dc3545;
         }
 
-        #modalText {
-            word-break: break-word;
-        }
-
         #modalBox button {
             margin-top: 15px;
             padding: 10px 15px;
@@ -261,37 +213,17 @@
         #modalBox button:hover {
             background: #FFC300;
         }
-
-        @media (max-width: 560px) {
-            header {
-                padding: 14px 16px;
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            nav ul {
-                gap: 14px;
-                flex-wrap: wrap;
-            }
-
-            form {
-                padding: 22px;
-            }
-
-            .form-title {
-                font-size: 24px;
-            }
-        }
     </style>
 </head>
 
 <body>
+
 <header>
     <h1>Вход</h1>
     <nav>
         <ul>
-            <li><a href="index.html" rel="noopener">Главная</a></li>
-            <li><a href="register.html" rel="noopener">Регистрация</a></li>
+            <li><a href="index.html">Главная</a></li>
+            <li><a href="register.html">Регистрация</a></li>
         </ul>
     </nav>
 </header>
@@ -299,35 +231,16 @@
 <main>
     <div class="form-container">
         <h2 class="form-title">Добро пожаловать!</h2>
- 
-        <form id="loginForm" autocomplete="off" novalidate spellcheck="false">
+
+        <form id="loginForm" autocomplete="off" novalidate>
             <div class="field">
                 <label for="username">Имя пользователя:</label>
-                <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    required
-                    minlength="3"
-                    maxlength="64"
-                    autocomplete="off"
-                    autocapitalize="off"
-                    spellcheck="false"
-                    inputmode="text"
-                >
+                <input type="text" id="username" required>
             </div>
 
             <div class="field">
                 <label for="password">Пароль:</label>
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    required
-                    minlength="8"
-                    maxlength="128"
-                    autocomplete="off"
-                >
+                <input type="password" id="password" required>
             </div>
 
             <button type="submit" id="submitBtn">Войти</button>
@@ -336,178 +249,117 @@
 </main>
 
 <!-- МОДАЛЬНОЕ ОКНО -->
-<div id="modal" aria-hidden="true">
-    <div id="modalBox" role="dialog" aria-modal="true" aria-labelledby="modalText">
+<div id="modal">
+    <div id="modalBox">
         <div id="modalText"></div>
         <button type="button" id="closeModalBtn">Ок</button>
     </div>
 </div>
 
 <script>
-(function () {
-    'use strict';
+const loginForm = document.getElementById('loginForm');
+const closeModalBtn = document.getElementById('closeModalBtn');
 
-    // Лёгкая защита от запуска внутри iframe.
-    // Это не замена серверной защите, но убирает часть простых атак.
+// Модалка
+function showModal(message, type = "error") {
+    const modal = document.getElementById('modal');
+    const box = document.getElementById('modalBox');
+    const text = document.getElementById('modalText');
+
+    text.innerText = message;
+
+    box.classList.remove('success', 'error');
+    box.classList.add(type);
+
+    modal.style.display = "flex";
+}
+
+ function closeModal() {
+    document.getElementById('modal').style.display = "none";
+}
+
+loginForm.addEventListener('submit', async (event) => {
+
+    event.preventDefault();
+
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
+
+    if (!username || !password) {
+        showModal('Пожалуйста, заполните все поля!', 'error');
+        return;
+    }
+
+    let failedAttempts =
+        parseInt(sessionStorage.getItem('failedAttempts')) || 0;
+
+    let blockTime =
+        parseInt(sessionStorage.getItem('blockTime')) || 0;
+
+    const currentTime = Date.now();
+
+    if (blockTime > currentTime) {
+        const remainingTime = Math.floor((blockTime - currentTime) / 1000);
+        showModal(`Вы заблокированы на ${remainingTime} секунд!`, 'error');
+        return;
+    }
+
     try {
-        if (window.top !== window.self) {
-            window.top.location = window.location.href;
-        }
-    } catch (_) {
-        // Игнорируем, если доступ к top запрещён политиками браузера.
-    }
 
-    const loginForm = document.getElementById('loginForm');
-    const closeModalBtn = document.getElementById('closeModalBtn');
-    const submitBtn = document.getElementById('submitBtn');
-    const usernameInput = document.getElementById('username');
-    const passwordInput = document.getElementById('password');
+        const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username,
+                password
+            })
+        });
 
-    let isSubmitting = false;
+        const data = await response.json();
 
-    function setFormDisabled(disabled) {
-        submitBtn.disabled = disabled;
-        usernameInput.disabled = disabled;
-        passwordInput.disabled = disabled;
-    }
+        if (response.ok && data.success) {
 
-    function showModal(message, type = 'error') {
-        const modal = document.getElementById('modal');
-        const box = document.getElementById('modalBox');
-        const text = document.getElementById('modalText');
+            sessionStorage.setItem('username', data.username);
+			sessionStorage.setItem('role', data.role);
 
-        text.textContent = String(message);
+            window.location.href =
+                data.role === 'admin'
+                ? 'admin_dashboard.html'
+                : 'user_dashboard.html';
 
-        box.classList.remove('success', 'error');
-        box.classList.add(type);
+        } else {
 
-        modal.style.display = 'flex';
-        modal.setAttribute('aria-hidden', 'false');
-        closeModalBtn.focus();
-    }
+            failedAttempts++;
+            sessionStorage.setItem('failedAttempts', failedAttempts);
 
-    function closeModal() {
-        const modal = document.getElementById('modal');
-        modal.style.display = 'none';
-        modal.setAttribute('aria-hidden', 'true');
-    }
+            if (failedAttempts >= 5) {
 
-    function isValidUsername(value) {
-        // Разрешаем обычные символы имени пользователя; при желании можно ужесточить на сервере.
-        return /^[\p{L}\p{N}._@-]{3,64}$/u.test(value);
-    }
+                blockTime = currentTime + 10000;
+                sessionStorage.setItem('blockTime', blockTime);
 
-    function isValidPassword(value) {
-        return typeof value === 'string' && value.length >= 8 && value.length <= 128;
-    }
+                showModal(
+                    'Превышено количество попыток! Блокировка на 10 секунд.',
+                    'error'
+                );
 
-    loginForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-
-        if (isSubmitting) return;
-
-        const username = usernameInput.value.trim();
-        const password = passwordInput.value;
-
-        if (!username || !password) {
-            showModal('Пожалуйста, заполните все поля!', 'error');
-            return;
-        }
-
-        if (!isValidUsername(username)) {
-            showModal('Имя пользователя содержит недопустимые символы.', 'error');
-            return;
-        }
-
-  
-        const currentTime = Date.now();
-        const failedAttempts = parseInt(sessionStorage.getItem('failedAttempts') || '0', 10);
-        const blockTime = parseInt(sessionStorage.getItem('blockTime') || '0', 10);
-
-        if (blockTime > currentTime) {
-            const remainingTime = Math.ceil((blockTime - currentTime) / 1000);
-            showModal(`Вы заблокированы на ${remainingTime} секунд!`, 'error');
-            return;
-        }
-
-        isSubmitting = true;
-        setFormDisabled(true);
-        submitBtn.textContent = 'Проверка...';
-
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
-
-        try {
-            const response = await fetch('/api/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                credentials: 'include',
-                cache: 'no-store',
-                redirect: 'error',
-                signal: controller.signal,
-                body: JSON.stringify({
-                    username,
-                    password
-                })
-            });
-
-            clearTimeout(timeoutId);
-
-            let data = null;
-            const contentType = response.headers.get('content-type') || '';
-
-            if (contentType.includes('application/json')) {
-                data = await response.json();
-            }
-
-            if (response.ok && data && data.success) {
-                sessionStorage.removeItem('failedAttempts');
-                sessionStorage.removeItem('blockTime');
-
-                // ВАЖНО:
-                // Роль, полученная на клиенте, нельзя считать доверенной.
-                // Для реальной защиты dashboard-страниц сервер должен проверять сессию/токен и роль.
-                sessionStorage.setItem('username', data.username || username);
-
-                window.location.href =
-                    data.role === 'admin'
-                        ? 'admin_dashboard.html'
-                        : 'user_dashboard.html';
-                return;
-            }
-
-            const nextFailedAttempts = failedAttempts + 1;
-            sessionStorage.setItem('failedAttempts', String(nextFailedAttempts));
-
-            if (nextFailedAttempts >= 5) {
-                const blockUntil = currentTime + 10000;
-                sessionStorage.setItem('blockTime', String(blockUntil));
-                showModal('Превышено количество попыток! Блокировка на 10 секунд.', 'error');
             } else {
-                showModal((data && data.message) || 'Неверный логин или пароль!', 'error');
+
+                showModal(
+                    data.message || 'Неверный логин или пароль!',
+                    'error'
+                );
             }
-        } catch (error) {
-            clearTimeout(timeoutId);
-            console.error(error);
-            showModal('Ошибка соединения с сервером', 'error');
-        } finally {
-            isSubmitting = false;
-            setFormDisabled(false);
-            submitBtn.textContent = 'Войти';
         }
-    });
 
-    closeModalBtn.addEventListener('click', closeModal);
+    } catch (error) {
+        console.error(error);
+        showModal('Ошибка соединения с сервером', 'error');
+    }
+});
 
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            closeModal();
-        }
-    });
-})();
+closeModalBtn.addEventListener('click', closeModal);
 </script>
 </body>
 </html>
