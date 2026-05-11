@@ -64,7 +64,7 @@ body::before {
     transition: transform .35s ease, filter .35s ease;
 }
 .logo:hover {
-  transform: scale(1.02); /* Только легкое увеличение */
+  transform: scale(1.02);
   filter: drop-shadow(0 8px 22px rgba(0,0,0,.45));
 }
 .nav-menu { 
@@ -81,7 +81,7 @@ body::before {
     display: inline-block !important;
     color: #fff !important;
     text-decoration: none !important;
-    font-weight: 700 !important; /* жирный */
+    font-weight: 700 !important;
     padding: 8px 10px !important;
 }
 .nav-menu a:hover {
@@ -999,12 +999,7 @@ footer a:hover { color: #FFC300; }
         line-height: 1.4;
     }
 }
-.logo {
-    width: 80px;
-    position: absolute;
-    left: 10px;
-    top: 18px;
-}
+ 
 
     .nav-menu a {
         font-size: 14px;
@@ -1287,80 +1282,182 @@ footer a:hover { color: #FFC300; }
 .install-buttons button:hover .color {
     opacity: 1;
 }
-@media (max-width: 768px) {
 
+/* ===== FIX HEADER RESPONSIVE ===== */
+#mainHeader .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: nowrap;
+}
+
+#mainHeader .header-inner > div:first-child {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+#mainHeader .logo {
+    position: static !important;
+    width: clamp(110px, 10vw, 220px) !important;
+    height: auto;
+    flex-shrink: 0;
+    margin: 0;
+}
+
+#mainHeader nav {
+    min-width: 0;
+}
+
+#mainHeader nav .nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: nowrap;
+    min-width: 0;
+}
+
+#mainHeader nav .nav-menu a {
+    white-space: nowrap;
+}
+
+#mainHeader .header-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: nowrap;
+    margin-left: auto;
+    min-width: 0;
+}
+
+#mainHeader .phone,
+#mainHeader #loginLink a,
+#mainHeader #registerLink a {
+    white-space: nowrap;
+			    top: -1px;
+				    font-weight: 700; /* 700 = bold, 400 = normal */
+
+}
+
+#mainHeader .menu-toggle {
+    display: none;
+    flex-shrink: 0;
+    position: static;
+}
+
+#mobileMenu {
+    display: none;
+    position: fixed;
+    top: 72px;
+    left: 0;
+    width: 100%;
+    z-index: 999;
+}
+
+#mobileMenu.show {
+    display: block;
+}
+
+/* до 950px показываем бургер, прячем меню в шапке */
+@media (max-width: 950px) {
+    #mainHeader nav .nav-menu {
+        display: none !important;
+    }
+
+    #mainHeader .menu-toggle {
+        display: flex !important;
+    }
+
+    #mainHeader .logo {
+        width: 130px !important;
+    }
+}
+
+/* до 768px фиксируем шапку и размеры */
+@media (max-width: 768px) {
     #mainHeader {
-        padding: 8px 10px;
-		     padding-left: 1px;
-      
+        padding: 8px 10px !important;
     }
+
+    #mainHeader .header-inner {
+        flex-wrap: nowrap !important;
+        gap: 8px !important;
+    }
+
+    #mainHeader .header-inner > div:first-child {
+        gap: 10px !important;
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+    }
+
+    #mainHeader .logo {
+        width: 110px !important;
+    }
+
+    #mainHeader .header-right {
+        gap: 6px !important;
+        margin-left: auto !important;
+    }
+
+    #mainHeader .phone {
+        font-size: 10px !important;
+				font-weight: 1000 !important; /* делаем текст жирным */
+
+    }
+
+    #mainHeader #loginLink a,
+    #mainHeader #registerLink a {
+        font-size: 10px !important;
+        padding: 3px 5px !important;
+		    top: -1px;
+         font-weight: 1000 !important; /* делаем текст жирным */
+
+    }
+
+    #mainHeader #userInfo {
+        margin-left: 0 !important;
+        transform: none !important;
+    }
+
+    #mobileMenu {
+        top: 56px;
+    }
+}
+
+/* очень маленькие экраны */
+@media (max-width: 420px) {
+    #mainHeader {
+        padding: 6px 8px !important;
+    }
+
+    #mainHeader .logo {
+        width: 80px !important;
+    }
+
+    #mainHeader .phone {
+        font-size: 9px !important;
+
+    }
+
+    #mainHeader #loginLink a,
+    #mainHeader #registerLink a {
+        font-size: 9px !important;
+        padding: 2px 4px !important;
+				    
  
-    .header-inner {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: nowrap;
-        gap: 6px;
+ 
     }
 
-     .logo {
-        position: static !important;
-        width: 85px;
-        height: auto;
-        flex-shrink: 0;
-    }
-
-     .header-right {
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        gap: 6px;
-        margin-left: auto;
-        flex-wrap: nowrap;
-        min-width: 0; /* важно */
-    }
-
-     .phone {
-        font-size: 10px;
-        white-space: nowrap;
-        flex-shrink: 0;
-    }
-
-     #loginLink a,
-    #registerLink a {
-        font-size: 10px;
-        padding: 3px 5px;
-        white-space: nowrap;
-      
-    }
-	    #loginLink,
-    #registerLink {
-        margin-top: -4px;
-    }
-
-     .menu-toggle {
-        display: flex;
-        flex-shrink: 0;
-        margin-left: 4px;
-    }
-
-     #userInfo {
-        flex-shrink: 0;
-        margin: 0;
-        transform: none;
-		    margin-left: 10px;
-
-    }
-
-    body {
-        overflow-x: hidden;
+    #mainHeader .menu-bar {
+        width: 20px;
     }
 }
-@media (max-width: 768px) {
-    #mainHeader .header-inner > div {
-        gap: 5px !important;
-    }
-}
+
+ 
 </style>
 </head>
 <body>
@@ -1605,20 +1702,35 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 <script>
-if(sessionStorage.getItem('username')){
+document.addEventListener('DOMContentLoaded', () => {
     const username = sessionStorage.getItem('username');
-    document.getElementById('loginLink').style.display = 'none';
-    document.getElementById('registerLink').style.display = 'none';
-    const userInfo = document.getElementById('userInfo');
-    userInfo.style.display = 'flex';
-    document.getElementById('username').textContent = username;
+    const role = sessionStorage.getItem('role');
 
-    if(username === 'Admin'){
-        document.getElementById('userImage').src = 'sait1/admin-icon.png';
+    const loginLink = document.getElementById('loginLink');
+    const registerLink = document.getElementById('registerLink');
+    const userInfo = document.getElementById('userInfo');
+    const usernameEl = document.getElementById('username');
+    const userImage = document.getElementById('userImage');
+
+    if (username && role) {
+        if (loginLink) loginLink.style.display = 'none';
+        if (registerLink) registerLink.style.display = 'none';
+        if (userInfo) userInfo.style.display = 'flex';
+        if (usernameEl) usernameEl.textContent = username;
+
+        if (userImage) {
+            userImage.src = role === 'admin'
+                ? 'sait1/admin-icon.png'
+                : 'sait1/user-icon.png';
+        }
     } else {
-        document.getElementById('userImage').src = 'sait1/user-icon.png';
+        sessionStorage.removeItem('username');
+        sessionStorage.removeItem('role');
+        if (userInfo) userInfo.style.display = 'none';
+        if (loginLink) loginLink.style.display = 'block';
+        if (registerLink) registerLink.style.display = 'block';
     }
-}
+});
 
 function handleRequestClick(event){
     event.preventDefault();
@@ -1653,12 +1765,16 @@ window.addEventListener('scroll', function() {
     }
 });
 
-function goToDashboard(){
-    const username = sessionStorage.getItem('username');
-    if(username){
-        if(username === 'Admin') window.location.href="admin_dashboard.html";
-        else window.location.href="user_dashboard.html";
-    } else alert("Пожалуйста, войдите в систему.");
+function goToDashboard() {
+    const role = sessionStorage.getItem('role');
+
+    if (role === 'admin') {
+        window.location.href = "admin_dashboard.html";
+    } else if (role === 'user') {
+        window.location.href = "user_dashboard.html";
+    } else {
+        alert("Пожалуйста, войдите в систему.");
+    }
 }
 
 window.onclick = function(event){
