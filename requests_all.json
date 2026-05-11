@@ -38,7 +38,7 @@
     "type": "repair",
     "problemDescription": "нужно поченить оборвноые провыода и заменить светилник",
     "items": [],
-    "status": "В процессе",
+    "status": "Завершена",
     "createdAt": "2026-05-11T11:47:13.181Z",
     "expectedCallTime": "2026-05-11T11:52:13.181Z",
     "callDate": "2026-06-01",
