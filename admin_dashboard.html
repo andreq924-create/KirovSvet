@@ -59,8 +59,7 @@ body{
     linear-gradient(135deg, var(--bg-1), var(--bg-2) 45%, var(--bg-3));
 }
 
-/* мягкий “дорогой” фон */
-body::before{
+ body::before{
   content:'';
   position:fixed;
   inset:0;
@@ -73,14 +72,12 @@ body::before{
   mask-image: linear-gradient(to bottom, rgba(0,0,0,0.95), rgba(0,0,0,0.55), rgba(0,0,0,0.95));
 }
 
-/* ================= CONTAINER ================= */
-.container{
+ .container{
   max-width: 1480px;
   margin: 0 auto;
 }
 
-/* ================= TOP BAR ================= */
-.top-bar{
+ .top-bar{
   display:flex;
   justify-content:space-between;
   align-items:center;
@@ -106,8 +103,7 @@ body::before{
   letter-spacing:-0.03em;
 }
 
-/* ================= BUTTONS ================= */
-button{
+ button{
   border:none;
   border-radius:14px;
   padding:12px 16px;
@@ -146,8 +142,7 @@ button:active{
   background:#fff;
 }
 
-/* ================= TABS ================= */
-.tabs{
+ .tabs{
   display:flex;
   gap:12px;
   margin:18px 0;
@@ -170,8 +165,7 @@ button:active{
   box-shadow:0 14px 28px rgba(15,23,42,0.08);
 }
 
-/* ================= INPUTS ================= */
-input, select, textarea{
+ input, select, textarea{
   width:100%;
   padding:13px 14px;
 
@@ -193,8 +187,7 @@ textarea:focus{
   box-shadow:0 0 0 4px rgba(79,158,227,0.14);
 }
 
-/* labels */
-label{
+ label{
   display:block;
   margin:10px 0 6px;
   font-weight:700;
@@ -202,8 +195,7 @@ label{
   font-size:14px;
 }
 
-/* ================= MAIN AREAS ================= */
-#requestsSection,
+ #requestsSection,
 #warehouseSection{
   margin-top:18px;
 }
@@ -215,8 +207,7 @@ label{
   letter-spacing:-0.02em;
 }
 
-/* ================= TABLES ================= */
-table{
+ table{
   width:100%;
   border-collapse:separate;
   border-spacing:0 12px;
@@ -292,8 +283,7 @@ tbody tr:hover td:first-child::before{
   opacity:1;
 }
 
-/* ================= NESTED / GROUP ROWS ================= */
-tr[data-role="parent"] td{
+ tr[data-role="parent"] td{
   background:#f8fbff !important;
   font-weight:800;
   color:#1e293b;
@@ -313,8 +303,7 @@ tr[data-role="parent"] td:first-child{
   font-weight:600;
 }
 
-/* ================= TABLE BUTTONS ================= */
-table button{
+ table button{
   padding:8px 12px;
   font-size:13px;
   border-radius:10px;
@@ -331,8 +320,7 @@ table button:hover{
   transform:none;
 }
 
-/* ================= STATUS ================= */
-.status{
+ .status{
   display:inline-flex;
   align-items:center;
   gap:6px;
@@ -398,8 +386,7 @@ table button:hover{
   font-size:18px;
 }
 
-/* ================= BLOCKS ================= */
-.problem-box,
+ .problem-box,
 .selected-items div,
 #productChildrenList div{
   background:rgba(248,250,252,0.95);
@@ -415,8 +402,7 @@ table button:hover{
   gap:12px;
 }
 
-/* ================= MONTH LIST ================= */
-#monthsList{
+ #monthsList{
   max-height:320px;
   overflow-y:auto;
 
@@ -443,8 +429,7 @@ table button:hover{
   border:1px solid var(--line);
 }
 
-/* ================= IMAGES ================= */
-img.preview{
+ img.preview{
   width:52px;
   height:52px;
 
@@ -459,8 +444,7 @@ img.preview{
   box-shadow:0 8px 18px rgba(15,23,42,0.08);
 }
 
-/* ================= SCROLLBAR ================= */
-::-webkit-scrollbar{
+ ::-webkit-scrollbar{
   width:10px;
   height:10px;
 }
@@ -481,8 +465,7 @@ img.preview{
   z-index:1;
 }
 
-/* ================= MOBILE ================= */
-@media(max-width:900px){
+ @media(max-width:900px){
   body{
     padding:14px;
   }
@@ -560,8 +543,7 @@ img.preview{
   <button id="requestsTab" class="active" onclick="showMainTab('requests')">Заявки</button>
   <button id="warehouseTab" onclick="showMainTab('warehouse')">Склад</button>
 </div>
-<!-- Попап редактирования дочернего объекта -->
-<div id="childEditPopup" class="overlay">
+ <div id="childEditPopup" class="overlay">
   <div class="popup">
      <h3>Редактировать дочерний объект</h3>
   
@@ -577,8 +559,7 @@ img.preview{
   <label>Изображение PNG</label>
   <input type="file" id="childEditFile" accept="image/png">
 
-  <!-- Новый блок для изменения количества -->
-  <label>Изменить количество:</label>
+   <label>Изменить количество:</label>
   <div style="display:flex; gap:5px; align-items:center; margin-bottom:10px;">
       <input type="number" id="childQtyChange" value="1" style="width:60px; padding:5px; border-radius:4px; border:1px solid #ccc;">
       <button onclick="changeChildQty(true)">➕ Добавить</button>
@@ -591,8 +572,7 @@ img.preview{
   <button onclick="deleteChildFromPopup()">🗑 Удалить</button>
   </div>
 </div>
-<!-- ================= ЗАЯВКИ ================= -->
-
+ 
 <input 
     type="text" 
     id="requestSearch" 
@@ -647,8 +627,7 @@ img.preview{
   </table>
 </div>
 
-<!-- ================= СКЛАД ================= -->
-<div id="warehouseSection" style="display:none;">
+ <div id="warehouseSection" style="display:none;">
 <h3>Склад</h3>
 <button onclick="openProductPopup()">+ Добавить товар</button>
 <button onclick="downloadWarehouse()">💾 Скачать JSON</button>
@@ -661,8 +640,7 @@ img.preview{
 </table>
 </div>
 
-<!-- ====== Попап редактирования заявки ====== -->
-<div id="overlay" class="overlay">
+ <div id="overlay" class="overlay">
   <div class="popup">
     <h3>Редактировать заявку</h3>
 <h4>Выбранные предметы:</h4>
@@ -694,13 +672,11 @@ img.preview{
     <button id="statusActionBtn"></button>
     <button onclick="closePopup()">Отмена</button>
 
-    <!-- Кнопка для удаления заявки -->
-    <button onclick="deleteRequest()">🗑 Удалить заявку</button>
+     <button onclick="deleteRequest()">🗑 Удалить заявку</button>
   </div>
 </div>
 
-<!-- ====== Попап товара для склада ====== -->
-<div id="productPopup" class="overlay">
+ <div id="productPopup" class="overlay">
 <div class="popup">
 <h3>Товар</h3>
 
@@ -718,8 +694,7 @@ img.preview{
  
 <label>PNG с компьютера</label><input type="file" id="productFile" accept="image/png">
  
-<!-- Дочерние объекты (редактирование) -->
-<div id="productChildrenContainer">
+ <div id="productChildrenContainer">
   <h4>Дочерние объекты</h4>
   <div id="productChildrenList"></div>
 
@@ -737,8 +712,7 @@ img.preview{
 </div>
 </div>
 
-<!-- ====== Выбор товара для заявки ====== -->
-<div id="warehouseSelectPopup" class="overlay">
+ <div id="warehouseSelectPopup" class="overlay">
 <div class="popup">
 <h3>Выбрать товар со склада</h3>
 <div id="warehouseSelectList"></div>
@@ -750,7 +724,7 @@ img.preview{
 let activeTypeFilter = '';
 let currentRequestCopy = null;
 let editIndex = null;
-let productChildren = []; // дочерние элементы товара
+let productChildren = [];  
 let productName, productCategory, productQty;
 
 function buildWarehouseIndex(warehouse) {
@@ -767,8 +741,7 @@ function buildWarehouseIndex(warehouse) {
     return map;
 }
 
-// 🔥 ПОИСК ДОЧЕРНЕГО ТОВАРА ПО ИМЕНИ
-function findChildByName(warehouse, name) {
+ function findChildByName(warehouse, name) {
     for (let parent of warehouse) {
         if (!parent.children) continue;
 
@@ -781,22 +754,18 @@ function findChildByName(warehouse, name) {
     return null;
 }
 
-// ==== Табы ====
-// Функция для переключения верхних вкладок: Заявки / Склад
+ 
 function showMainTab(tab) {
-    // Скрываем оба раздела
-    document.getElementById('requestsSection').style.display = 'none';
+     document.getElementById('requestsSection').style.display = 'none';
     document.getElementById('warehouseSection').style.display = 'none';
 
-    // Снимаем активность со всех верхних вкладок
-    document.querySelectorAll('.tabs > button').forEach(b => b.classList.remove('active'));
+     document.querySelectorAll('.tabs > button').forEach(b => b.classList.remove('active'));
 
     if (tab === 'requests') {
         document.getElementById('requestsSection').style.display = 'block';
         document.getElementById('requestsTab').classList.add('active');
 
-        // **Ставим активной под-вкладку "Новые"**
-        showTable('new', document.getElementById('newRequestsBtn'));
+         showTable('new', document.getElementById('newRequestsBtn'));
     }
     if (tab === 'warehouse') {
         document.getElementById('warehouseSection').style.display = 'block';
@@ -804,10 +773,9 @@ function showMainTab(tab) {
     }
 	updateSearchPlaceholder(tab);
 }
-// При загрузке страницы делаем активной вкладку "Заявки"
-window.addEventListener('DOMContentLoaded', function() {
-    showMainTab('requests');  // по умолчанию активна "Заявки"
-    showTable('new', document.getElementById('newRequestsBtn')); // активная под-вкладка "Новые"
+ window.addEventListener('DOMContentLoaded', function() {
+    showMainTab('requests');  
+    showTable('new', document.getElementById('newRequestsBtn'));  
 });
 function showTable(name, btn) {
 
@@ -822,48 +790,40 @@ function showTable(name, btn) {
 
     if (btn) btn.classList.add('active');
 
-    // 🔥 важно: пересчёт фильтра
+    
     applyFilters();
 }
-// При загрузке страницы кнопка 'Новые' уже активна
-window.onload = function() {
+ window.onload = function() {
   document.getElementById('newRequestsBtn').classList.add('active');
 };
-// ==== Заявки ====
-// Функция загрузки заявок
+ 
 function loadRequests() {
     const requests = JSON.parse(localStorage.getItem('requests')) || [];
     const today = new Date().toISOString().split('T')[0];
     
-    // Обновляем статус заявки, если дата завершения прошла
-    requests.forEach(r => { 
+     requests.forEach(r => { 
         if (r.status === 'В процессе' && r.completionDate && r.completionDate <= today) {
             r.status = 'Завершена';
         }
     });
 
-    // Обновляем localStorage
-    localStorage.setItem('requests', JSON.stringify(requests));
+     localStorage.setItem('requests', JSON.stringify(requests));
 
-    // Разделяем заявки по статусам
-    const newR = requests.filter(r => r.status === 'Новая');
+     const newR = requests.filter(r => r.status === 'Новая');
     const pendingR = requests.filter(r => r.status === 'В процессе');
     const completedR = requests.filter(r => r.status === 'Завершена');
 
-    // Обновляем количество заявок в разделе
-    document.getElementById('newRequestsCount').textContent = newR.length;
+     document.getElementById('newRequestsCount').textContent = newR.length;
     document.getElementById('pendingRequestsCount').textContent = pendingR.length;
     document.getElementById('completedRequestsCount').textContent = completedR.length;
 
-    // Отображаем заявки в таблицах
-    renderRequests(newR, 'newRequestsTable');
+     renderRequests(newR, 'newRequestsTable');
     renderRequests(pendingR, 'pendingRequestsTable');
   renderCompletedByMonth(completedR, 'completedRequestsTable');
     showTable('new');
 }
 
-// Словарь отображаемых названий типов работ
-const workTypeNames = {
+ const workTypeNames = {
     both: "Установка столбов и освещения",
     repair: "Ремонт повреждения электрических сетей"
 };
@@ -879,8 +839,7 @@ async function returnToPending(createdAt) {
 
     const req = requests[index];
 
-    // 🔥 ВОЗВРАТ ТОВАРОВ
-    if (req.items) {
+     if (req.items) {
         req.items.forEach(item => {
          const index = buildWarehouseIndex(warehouse);
 
@@ -897,19 +856,17 @@ req.items.forEach(item => {
         });
     }
 
-    // 🔥 ВАЖНО: меняем прямо в массиве
+    
     requests[index] = {
         ...req,
         status: 'В процессе',
-        completionDate: null // лучше null чем ''
+        completionDate: null  
     };
 
-    // сохраняем
-    localStorage.setItem('warehouse', JSON.stringify(warehouse));
+     localStorage.setItem('warehouse', JSON.stringify(warehouse));
     localStorage.setItem('requests', JSON.stringify(requests));
 
-    // если есть сервер
-    await saveRequestsAll(requests);
+     await saveRequestsAll(requests);
 
     loadWarehouse();
     loadRequests();
@@ -992,8 +949,7 @@ async function downloadSelectedReport() {
         return;
     }
 
-    // 🔥 используем твою старую функцию, но передаём данные
-    generateExcelFromRequests(filtered);
+     generateExcelFromRequests(filtered);
 
     closeReportPopup();
 }
@@ -1041,7 +997,7 @@ function renderCompletedByMonth(requests, tableId) {
 
         group.forEach(r => {
 
-            // ===== ОПИСАНИЕ + ТОВАРЫ =====
+            
             let parts = [];
 
             if (r.problemDescription && r.problemDescription.trim() !== '') {
@@ -1096,19 +1052,16 @@ function deleteMonth(monthKey) {
 
     let requests = JSON.parse(localStorage.getItem('requests')) || [];
 
-    // удаляем все заявки этого месяца
-    requests = requests.filter(r => {
+     requests = requests.filter(r => {
         const key = r.completionDate ? r.completionDate.slice(0, 7) : 'no-date';
         return key !== monthKey;
     });
 
     localStorage.setItem('requests', JSON.stringify(requests));
 
-    // сохранить на сервер
-    saveAllRequests();
+     saveAllRequests();
 
-    // перерисовать
-    loadRequests();
+     loadRequests();
 }
 function filterByType(value) {
     activeTypeFilter = value;
@@ -1159,27 +1112,23 @@ function resetFiltersAndRestoreView() {
         const rows = table.querySelectorAll('tbody tr');
 
         rows.forEach(row => {
-            row.style.display = ''; // 🔥 вернуть ВСЕ строки
+            row.style.display = '';  
         });
     });
 }
-// Функция рендеринга заявок
-function renderRequests(requests, tableId) {
+ function renderRequests(requests, tableId) {
     const tbody = document.getElementById(tableId).querySelector('tbody');
     tbody.innerHTML = '';
 
     requests.forEach(r => {
 
-        // ===== ОПИСАНИЕ + ТОВАРЫ =====
-        let parts = [];
+         let parts = [];
 
-        // описание проблемы
-        if (r.problemDescription && r.problemDescription.trim() !== '') {
+         if (r.problemDescription && r.problemDescription.trim() !== '') {
             parts.push(`📝 ${r.problemDescription.trim()}`);
         }
 
-        // товары
-        if (r.items && r.items.length > 0) {
+         if (r.items && r.items.length > 0) {
             const itemsText = r.items.map(i => {
                 const info = i.info ? ` — ${i.info}` : '';
                 return `${i.name} (x${i.qty})${info}`;
@@ -1226,8 +1175,7 @@ function editRequest(createdAt){
 
     currentRequestCopy = JSON.parse(JSON.stringify(req));
 
-    // ===== восстановление товаров =====
-    let updatedRequest = JSON.parse(localStorage.getItem("currentAdminRequest"));
+     let updatedRequest = JSON.parse(localStorage.getItem("currentAdminRequest"));
     if (updatedRequest && updatedRequest.items) {
         if (!currentRequestCopy.items) currentRequestCopy.items = [];
 
@@ -1240,8 +1188,7 @@ function editRequest(createdAt){
         localStorage.removeItem("currentAdminRequest");
     }
 
-    // ===== заполнение полей =====
-    document.getElementById('editLastname').value = currentRequestCopy.lastname || '';
+     document.getElementById('editLastname').value = currentRequestCopy.lastname || '';
     document.getElementById('editFirstname').value = currentRequestCopy.firstname || '';
     document.getElementById('editPhone').value = currentRequestCopy.phone || '';
     document.getElementById('editEmail').value = currentRequestCopy.email || '';
@@ -1255,8 +1202,7 @@ function editRequest(createdAt){
 
     renderSelectedItems();
 
-    // ===== кнопка статуса =====
-    const statusBtn = document.getElementById('statusActionBtn');
+     const statusBtn = document.getElementById('statusActionBtn');
 
 if (currentRequestCopy.status === 'Новая') {
     statusBtn.textContent = 'Отправить в ожидание';
@@ -1273,14 +1219,11 @@ else if (currentRequestCopy.status === 'В процессе') {
     };
 }
 
-    // =========================
-    // 🔒 ОГРАНИЧЕНИЯ ДАТ
-    // =========================
+ 
     const callDateInput = document.getElementById('editCallDate');
     const completionInput = document.getElementById('editCompletionDate');
 
-    // 👉 1. запрет на прошлые даты звонка
-    const today = new Date();
+     const today = new Date();
     const yyyy = today.getFullYear();
     const mm = String(today.getMonth() + 1).padStart(2, '0');
     const dd = String(today.getDate()).padStart(2, '0');
@@ -1288,8 +1231,7 @@ else if (currentRequestCopy.status === 'В процессе') {
 
     callDateInput.min = todayStr;
 
-    // 👉 2. логика для даты завершения
-    callDateInput.onchange = function () {
+     callDateInput.onchange = function () {
         const callDate = this.value;
 
         if (callDate) {
@@ -1302,34 +1244,27 @@ else if (currentRequestCopy.status === 'В процессе') {
 
             completionInput.min = `${y}-${m}-${d}`;
 
-            // 💥 чистим если дата некорректная
-            if (completionInput.value && completionInput.value <= callDate) {
+             if (completionInput.value && completionInput.value <= callDate) {
                 completionInput.value = '';
             }
         }
     };
 
-    // 👉 применяем сразу
-    callDateInput.dispatchEvent(new Event('change'));
+     callDateInput.dispatchEvent(new Event('change'));
 
-    // ===== открываем окно =====
-    document.getElementById('overlay').style.display = 'flex';
+     document.getElementById('overlay').style.display = 'flex';
 }
-
-// ==== Выбранные предметы в заявке с раскрытием детей ====
-// Функция рендеринга выбранных предметов
+ 
 function renderSelectedItems() {
     const div = document.getElementById('selectedItems');
     div.innerHTML = '';
 
-    // ===== общий контейнер =====
-    const wrapper = document.createElement('div');
+     const wrapper = document.createElement('div');
     wrapper.style.display = 'flex';
     wrapper.style.flexDirection = 'column';
     wrapper.style.gap = '10px';
 
-    // ===== описание проблемы =====
-    const problemDiv = document.createElement('div');
+     const problemDiv = document.createElement('div');
     problemDiv.style.padding = '10px';
     problemDiv.style.border = '1px solid #ddd';
     problemDiv.style.borderRadius = '10px';
@@ -1344,8 +1279,7 @@ function renderSelectedItems() {
 
     wrapper.appendChild(problemDiv);
 
-    // ===== если нет товаров =====
-    if (!currentRequestCopy.items || currentRequestCopy.items.length === 0) {
+     if (!currentRequestCopy.items || currentRequestCopy.items.length === 0) {
         const emptyDiv = document.createElement('div');
         emptyDiv.style.padding = '10px';
         emptyDiv.style.color = '#777';
@@ -1356,8 +1290,7 @@ function renderSelectedItems() {
         return;
     }
 
-    // ===== товары =====
-    currentRequestCopy.items.forEach((item, index) => {
+     currentRequestCopy.items.forEach((item, index) => {
         const itemDiv = document.createElement('div');
         itemDiv.style.display = 'flex';
         itemDiv.style.flexDirection = 'column';
@@ -1383,8 +1316,7 @@ function renderSelectedItems() {
 
         itemDiv.appendChild(mainRow);
 
-        // ===== дочерние =====
-        const childrenDiv = document.createElement('div');
+         const childrenDiv = document.createElement('div');
         childrenDiv.style.display = 'none';
         childrenDiv.style.paddingLeft = '15px';
         childrenDiv.style.marginTop = '5px';
@@ -1433,12 +1365,9 @@ function saveRequestChanges(){
 
     const oldRequest = requests.find(r => r.createdAt === currentRequestCopy.createdAt);
 
-    // 🔥 строим быстрый индекс
-    const index = buildWarehouseIndex(warehouse);
+     const index = buildWarehouseIndex(warehouse);
 
-    // =========================
-    // 🔄 1. ВОЗВРАЩАЕМ СТАРЫЕ ТОВАРЫ НА СКЛАД
-    // =========================
+ 
     if (oldRequest && oldRequest.items) {
         oldRequest.items.forEach(item => {
             const child = index[item.name];
@@ -1448,9 +1377,7 @@ function saveRequestChanges(){
         });
     }
 
-    // =========================
-    // ❗ 2. ПРОВЕРЯЕМ НОВЫЕ ТОВАРЫ
-    // =========================
+  
     if (currentRequestCopy.items) {
         for (let item of currentRequestCopy.items) {
             const child = index[item.name];
@@ -1467,9 +1394,7 @@ function saveRequestChanges(){
         }
     }
 
-    // =========================
-    // ➖ 3. СПИСЫВАЕМ НОВЫЕ ТОВАРЫ
-    // =========================
+ 
     if (currentRequestCopy.items) {
         currentRequestCopy.items.forEach(item => {
             const child = index[item.name];
@@ -1479,9 +1404,7 @@ function saveRequestChanges(){
         });
     }
 
-    // =========================
-    // 📝 4. СОХРАНЯЕМ ДАННЫЕ ФОРМЫ
-    // =========================
+ 
     currentRequestCopy.lastname = document.getElementById('editLastname').value.trim();
     currentRequestCopy.firstname = document.getElementById('editFirstname').value.trim();
     currentRequestCopy.phone = document.getElementById('editPhone').value.trim();
@@ -1494,9 +1417,7 @@ function saveRequestChanges(){
     currentRequestCopy.problemDescription =
         document.getElementById('editProblemDescription').value.trim();
 
-    // =========================
-    // 💾 5. СОХРАНЯЕМ ВСЁ
-    // =========================
+ 
     requests = requests.map(r =>
         r.createdAt === currentRequestCopy.createdAt ? currentRequestCopy : r
     );
@@ -1504,11 +1425,9 @@ function saveRequestChanges(){
     localStorage.setItem('requests', JSON.stringify(requests));
     localStorage.setItem('warehouse', JSON.stringify(warehouse));
 
-    // сервер
-    saveAllRequests();
+     saveAllRequests();
 
-    // UI
-    closePopup();
+     closePopup();
     loadRequests();
     loadWarehouse();
 }
@@ -1520,16 +1439,14 @@ function goToMainMenu() {
 function filterRequests() {
     const value = document.getElementById('requestSearch').value.toLowerCase().trim();
 
-    // ===== ЕСЛИ ПУСТО — ВСЁ ВОЗВРАЩАЕМ =====
+    
     if (!value) {
         loadRequests();
         loadWarehouse();
         return;
     }
 
-    // =========================
-    // 🔎 1. ФИЛЬТР ЗАЯВОК
-    // =========================
+  
     const tables = [
         'newRequestsTable',
         'pendingRequestsTable',
@@ -1548,9 +1465,7 @@ function filterRequests() {
         });
     });
 
-    // =========================
-    // 🏗️ 2. ФИЛЬТР СКЛАДА
-    // =========================
+ 
 const warehouseRows = document.querySelectorAll("#warehouseTable tbody tr");
 
 let currentParent = null;
@@ -1561,9 +1476,7 @@ warehouseRows.forEach(row => {
     const isParent = row.innerText.includes("▶ ");
     const isChild = row.innerText.includes("↳ ");
 
-    // ======================
-    // 🟦 РОДИТЕЛЬ (товар)
-    // ======================
+ 
     if (isParent) {
         currentParent = row;
         parentHasMatch = false;
@@ -1580,9 +1493,7 @@ warehouseRows.forEach(row => {
         return;
     }
 
-    // ======================
-    // 🟨 ДОЧЕРНИЙ ОБЪЕКТ
-    // ======================
+ 
     if (isChild) {
         const text = row.innerText.toLowerCase();
 
@@ -1655,32 +1566,30 @@ function sendToPending() {
     loadWarehouse();
 }
 function sendToCompleted() {
-    // Изменяем статус текущего запроса на 'Завершена'
+ 
     currentRequestCopy.status = 'Завершена';
 
-    // Если дата завершения ещё не установлена, добавляем текущую дату
+ 
     if (!currentRequestCopy.completionDate) {
         currentRequestCopy.completionDate = new Date().toISOString().split('T')[0];
     }
 
-    // Сохраняем изменения текущего запроса
+   
     saveRequestChanges();
 
-    // Сохраняем все запросы
+  
     saveAllRequests();
 }
 function closePopup(){ document.getElementById('overlay').style.display='none'; currentRequestCopy=null; }
 
-// ==== Склад ====
+ 
 function loadWarehouse() {
 
     const data = JSON.parse(localStorage.getItem('warehouse')) || [];
     const tbody = document.querySelector("#warehouseTable tbody");
     tbody.innerHTML = '';
 
-    // =========================
-    // 🔥 1. СОБИРАЕМ МАЛЫЕ ОСТАТКИ
-    // =========================
+ 
     let lowStockChildren = [];
 
     data.forEach(item => {
@@ -1696,12 +1605,10 @@ function loadWarehouse() {
         }
     });
 
-    // сортировка (самые маленькие сверху)
+  
     lowStockChildren.sort((a, b) => a.qty - b.qty);
 
-    // =========================
-    // 🔥 2. БЛОК "ЗАКАНЧИВАЕТСЯ"
-    // =========================
+ 
     if (lowStockChildren.length > 0) {
 
         let opened = false;
@@ -1726,7 +1633,7 @@ function loadWarehouse() {
                 ? `images/${c.imgFileName}`
                 : (c.img || '');
 
-            // цвет по критичности
+         
             let color = "orange";
             if (c.qty <= 2) color = "red";
 
@@ -1745,7 +1652,7 @@ function loadWarehouse() {
             childRows.push(childRow);
         });
 
-        // раскрытие
+    
         lowRow.onclick = function () {
             opened = !opened;
             lowRow.cells[0].innerHTML =
@@ -1757,9 +1664,7 @@ function loadWarehouse() {
         };
     }
 
-    // =========================
-    // 📦 3. ОСНОВНОЙ СКЛАД
-    // =========================
+ 
     const categories = {
         light: { name: "Освещение", opened: false },
         pole: { name: "Столбы", opened: false }
@@ -1835,7 +1740,7 @@ function loadWarehouse() {
                 });
             }
 
-            // раскрытие товара
+        
             row.onclick = function () {
                 opened = !opened;
                 row.cells[0].innerHTML =
@@ -1868,18 +1773,18 @@ function editProduct(index) {
         return;
     }
 
-    // заполняем поля попапа
+   
     document.getElementById('productName').value = product.name || '';
     document.getElementById('productCategory').value = product.category || 'light';
 
-    // дочерние элементы
+   
     productChildren = product.children ? [...product.children] : [];
     renderProductChildren();
 
-    // сохраняем индекс редактируемого товара
+  
     editIndex = index;
 
-    // открываем попап
+   
     document.getElementById('productPopup').style.display = 'flex';
 }
 
@@ -1921,7 +1826,7 @@ function editChildSettings(parentIndex, childIndex) {
     if (!child) return alert('Дочерний объект не найден');
 
     currentChildIndex = childIndex;
-    editIndex = parentIndex; // <- важное исправление
+    editIndex = parentIndex;  
 
     document.getElementById('childEditName').value = child.name;
     document.getElementById('childEditQty').value = child.qty;
@@ -1944,18 +1849,18 @@ function changeChildQty(add = true) {
     if (add) child.qty += delta;
     else child.qty = Math.max(1, child.qty - delta);
 
-    // Обновляем поле в попапе
+    
     document.getElementById('childEditQty').value = child.qty;
 
-    // Сохраняем сразу
+   
     localStorage.setItem('warehouse', JSON.stringify(data));
 
-    // Обновляем визуально
+    
     renderProductChildren();
     loadWarehouse();
 }
 
-// Удаление дочернего объекта из попапа
+ 
 async function deleteChildFromPopup() {
     if (currentChildIndex === null || editIndex === null) return;
 
@@ -1965,7 +1870,7 @@ async function deleteChildFromPopup() {
     data[editIndex].children.splice(currentChildIndex, 1);
     localStorage.setItem('warehouse', JSON.stringify(data));
 
-    // Сохраняем на GitHub (ждём!)
+    
     await saveWarehouseToGitHub(data);
 
     closeChildEditPopup();
@@ -1992,7 +1897,7 @@ async function saveChildEdit() {
 
     localStorage.setItem('warehouse', JSON.stringify(data));
 
-    // 🔥 ВОТ ЭТОГО НЕ ХВАТАЛО
+   
     await saveWarehouseToGitHub(data);
 
     renderProductChildren();
@@ -2006,41 +1911,37 @@ function closeChildEditPopup() {
     document.getElementById('childEditFile').value = '';
     document.getElementById('childQtyChange').value = 1;
 }
-// ==== Редактирование дочернего объекта ====
+ 
 function editChild(parentIndex, childIndex){
   const data = JSON.parse(localStorage.getItem('warehouse'))||[];
   const child = data[parentIndex].children[childIndex];
 
-  // заполняем поля попапа товара
+  
   productName.value = child.name;
-  productCategory.value = data[parentIndex].category; // наследуем категорию родителя
+  productCategory.value = data[parentIndex].category;  
  
-   productChildren = data[parentIndex].children.slice(); // копируем всех детей
-  editIndex = parentIndex; // редактируем родителя
+   productChildren = data[parentIndex].children.slice();  
+  editIndex = parentIndex;  
   renderProductChildren();
 
-  // временно удаляем редактируемого ребёнка, чтобы сохранить потом новые данные
-  productChildren.splice(childIndex,1);
+   productChildren.splice(childIndex,1);
 
   document.getElementById('productPopup').style.display='flex';
 }
 
-// ==== Удаление дочернего объекта ====
-async function deleteChild(parentIndex, childIndex){
+ async function deleteChild(parentIndex, childIndex){
   if(!confirm('Удалить дочерний объект?')) return;
 
   const data = JSON.parse(localStorage.getItem('warehouse'))||[];
   data[parentIndex].children.splice(childIndex,1);
   localStorage.setItem('warehouse', JSON.stringify(data));
 
-  // Сохраняем на GitHub
-  await saveWarehouseToGitHub(data);
+   await saveWarehouseToGitHub(data);
 
   loadWarehouse();
 }
 
-// ==== Дочерние объекты товара ====
-function addProductChild() {
+ function addProductChild() {
     const name = document.getElementById('productChildSize').value.trim();
     const qty = parseInt(document.getElementById('productChildQty').value);
     const info = document.getElementById('productChildInfo').value.trim();
@@ -2052,8 +1953,7 @@ function addProductChild() {
         return;
     }
 
-    // Создаем объект нового ребенка
-    const childObj = {
+     const childObj = {
         name: name,
         qty: qty,
         info: info,
@@ -2061,12 +1961,10 @@ function addProductChild() {
         img: fileObj ? `images/${fileObj.name}` : ''    // путь к PNG
     };
 
-    // **Добавляем нового ребенка в массив, не очищая предыдущих**
-    if (!productChildren) productChildren = [];
+     if (!productChildren) productChildren = [];
     productChildren.push(childObj);
 
-    // Обновляем визуально
-    renderProductChildren();
+     renderProductChildren();
     clearChildInputs();
 }
 
@@ -2172,8 +2070,7 @@ async function saveProduct() {
 
     localStorage.setItem('warehouse', JSON.stringify(data));
 
-    // ⏳ ЖДЁМ сохранение
-    await saveWarehouseToGitHub(data);
+     await saveWarehouseToGitHub(data);
 
     closeProductPopup();
     loadWarehouse();
@@ -2194,8 +2091,7 @@ function checkItemsBeforeAction(onConfirm) {
     currentRequestCopy.items.forEach(item => {
         const words = item.name.trim().split(/\s+/);
 
-        // 🔥 если 4+ слова
-        if (words.length >= 4) {
+         if (words.length >= 4) {
             warnings.push(
                 `⚠️ "${item.name}" может не подойти для опоры.`
             );
@@ -2209,8 +2105,7 @@ function checkItemsBeforeAction(onConfirm) {
     }
 }
 function removeProductChild(i){ productChildren.splice(i,1); renderProductChildren(); }
-// Функция для удаления заявки
-// Функция для удаления заявки
+ 
 function deleteRequest() {
     if (!currentRequestCopy) {
         alert('Нет заявки для удаления');
@@ -2225,22 +2120,18 @@ function deleteRequest() {
         return;
     }
 
-    // Подтверждение удаления
-    if (!confirm('Вы уверены, что хотите удалить эту заявку?')) {
+     if (!confirm('Вы уверены, что хотите удалить эту заявку?')) {
         return;
     }
 
-    // Удаляем заявку
-    requests.splice(index, 1);
+     requests.splice(index, 1);
     localStorage.setItem('requests', JSON.stringify(requests));
 
     alert('Заявка удалена');
 
-    // Закрытие попапа
-    closePopup();
+     closePopup();
 
-    // Обновляем отображение заявок
-    loadRequests();
+     loadRequests();
 		saveAllRequests();
 
 }
@@ -2255,9 +2146,7 @@ async function generateExcelFromRequests(completed) {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Отчет');
 
-    // --------------------
-    // 1️⃣ Общая статистика
-    // --------------------
+ 
     const uniqueClients = new Set(completed.map(r => r.lastname + r.firstname)).size;
     const detailsCount = {};
     let totalDetails = 0;
@@ -2282,9 +2171,7 @@ async function generateExcelFromRequests(completed) {
     statRows.forEach(r => worksheet.addRow(r));
     worksheet.addRow([]);
 
-    // --------------------
-    // 2️⃣ Таблица заказов
-    // --------------------
+ 
     const workTypeNames = {
         both: "Установка столбов и освещения",
         repair: "Ремонт повреждения электрических сетей"
@@ -2294,8 +2181,7 @@ async function generateExcelFromRequests(completed) {
     worksheet.addRow(['ФИО', 'Телефон', 'Тип работы', 'Выбранные предметы', 'Дата завершения']);
     const headerRow = worksheet.lastRow;
 
-    // Оформление заголовка
-    headerRow.eachCell(cell => {
+     headerRow.eachCell(cell => {
         cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
         cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF007BFF' } };
         cell.alignment = { vertical: 'middle', horizontal: 'center' };
@@ -2307,8 +2193,7 @@ async function generateExcelFromRequests(completed) {
         };
     });
 
-    // Данные заказов
-    completed.forEach(r => {
+     completed.forEach(r => {
         const itemsStr = r.items && r.items.length > 0
             ? r.items.map(i => `${i.name} (x${i.qty || 1})`).join(", ")
             : '-';
@@ -2338,9 +2223,7 @@ async function generateExcelFromRequests(completed) {
         to: `E${worksheet.lastRow.number}`
     };
 
-    // --------------------
-    // 3️⃣ Сводка по деталям
-    // --------------------
+ 
     worksheet.addRow([]);
     const detailStartRow = worksheet.lastRow.number + 1;
     worksheet.addRow(['Сводка по деталям']);
@@ -2376,9 +2259,7 @@ async function generateExcelFromRequests(completed) {
         to: `B${worksheet.lastRow.number}`
     };
 
-    // --------------------
-    // 4️⃣ Сводка по типам работы
-    // --------------------
+ 
     const typeCount = {};
     completed.forEach(r => {
         const normalizedType = (r.type || '').trim().toLowerCase();
@@ -2421,9 +2302,7 @@ async function generateExcelFromRequests(completed) {
         to: `B${worksheet.lastRow.number}`
     };
 
-    // --------------------
-    // 5️⃣ Данные по месяцам
-    // --------------------
+ 
     const monthCount = {};
     completed.forEach(r => {
         if (r.completionDate) {
@@ -2467,9 +2346,7 @@ async function generateExcelFromRequests(completed) {
         to: `B${worksheet.lastRow.number}`
     };
 
-    // --------------------
-    // Автоширина колонок
-    // --------------------
+ 
     worksheet.columns.forEach(col => {
         let maxLength = 10;
         col.eachCell({ includeEmpty: true }, cell => {
@@ -2479,9 +2356,7 @@ async function generateExcelFromRequests(completed) {
         col.width = maxLength;
     });
 
-    // --------------------
-    // Сохраняем Excel
-    // --------------------
+ 
     const buf = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
     saveAs(blob, "styled_completed_requests_report.xlsx");
@@ -2494,25 +2369,21 @@ async function deleteProduct(i){
   data.splice(i,1); 
   localStorage.setItem('warehouse', JSON.stringify(data)); 
 
-  // ⏳ ЖДЁМ сохранение
-  await saveWarehouseToGitHub(data);
+   await saveWarehouseToGitHub(data);
 
   loadWarehouse(); 
 }
 
 
  
-// ==== Выбор товара для заявки ====
-let selectForAdmin = false;
+ let selectForAdmin = false;
 function openWarehousePopup(forAdmin = false){
   selectForAdmin = forAdmin; // сохраняем контекст
-  // вместо внутреннего popup открываем страницу выбора
-  if(selectForAdmin){
+   if(selectForAdmin){
  	localStorage.setItem("currentAdminRequest", JSON.stringify(currentRequestCopy));
 	window.open('poles.html?forAdmin=1', '_blank');
   } else {
-    // старое поведение для заявки
-    const data = JSON.parse(localStorage.getItem('warehouse'))||[];
+     const data = JSON.parse(localStorage.getItem('warehouse'))||[];
     const div = document.getElementById('warehouseSelectList');
     div.innerHTML='';
     data.forEach((item,index)=>{
@@ -2534,8 +2405,7 @@ function openProductPopup() {
     document.getElementById('productCategory').value = 'light';
     document.getElementById('productFile').value = '';
 
-    // ❌ скрываем дочерние объекты
-    document.getElementById('productChildrenContainer').style.display = 'none';
+     document.getElementById('productChildrenContainer').style.display = 'none';
 
     document.getElementById('productPopup').style.display = 'flex';
 }
@@ -2544,24 +2414,20 @@ function addItemFromWarehouse(item, index){
   if(selectForAdmin){
     if (!currentRequestCopy) return;
 
-    // Проверяем, есть ли уже товар с таким именем
-    let existing = currentRequestCopy.items.find(i => i.name === item.name);
+     let existing = currentRequestCopy.items.find(i => i.name === item.name);
     if (existing) {
         existing.qty = (Number(existing.qty) || 0) + 1;
     } else {
-        // добавляем копию товара, включая дочерние объекты
-        currentRequestCopy.items.push({
+         currentRequestCopy.items.push({
             name: item.name,
             qty: 1,
             children: item.children ? JSON.parse(JSON.stringify(item.children)) : []
         });
     }
 
-    // Обновляем визуально блок "Выбранные предметы"
-    renderSelectedItems();
+     renderSelectedItems();
   } else {
-    // Обычное добавление в заявку
-    if(!currentRequestCopy) return;
+     if(!currentRequestCopy) return;
     let existing = currentRequestCopy.items.find(i=>i.name===item.name);
     if(existing){ existing.qty=(Number(existing.qty)||0)+1; }
     else { currentRequestCopy.items.push({ name:item.name, qty:1, children:item.children ? JSON.parse(JSON.stringify(item.children)) : [] }); }
@@ -2584,22 +2450,19 @@ function returnStock(item){ const data=JSON.parse(localStorage.getItem('warehous
 function downloadWarehouse() {
     const data = JSON.parse(localStorage.getItem('warehouse') || '[]');
 
-    // Просто используем текущий data — все пути к PNG уже в поле "img"
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = 'warehouse.json';
     a.click();
 }
-// ==== INIT ====
-async function loadWarehouseFromJSON() {
+ async function loadWarehouseFromJSON() {
     try {
         const response = await fetch('./warehouse.json');
         if (!response.ok) throw new Error('Файл warehouse.json не найден');
         let data = await response.json();
 
-        // Корректируем пути к картинкам
-        data.forEach(item => {
+         data.forEach(item => {
             if(item.img && !item.img.startsWith('images/')) item.img = `images/${item.img}`;
             if(item.children && item.children.length > 0){
                 item.children.forEach(c => { 
@@ -2608,23 +2471,19 @@ async function loadWarehouseFromJSON() {
             }
         });
 
-        // Сохраняем в localStorage
-        localStorage.setItem('warehouse', JSON.stringify(data));
+         localStorage.setItem('warehouse', JSON.stringify(data));
 
-        // Загружаем склад на страницу
-        loadWarehouse();
+         loadWarehouse();
 
     } catch (err) {
         alert('Ошибка загрузки склада: ' + err.message);
-        // На случай ошибки пытаемся загрузить из localStorage, если там есть данные
-        const localData = localStorage.getItem('warehouse');
+         const localData = localStorage.getItem('warehouse');
         if(localData) loadWarehouse();
     }
 }
 
 async function loadRequestsFromJSON() {
-    // Если уже есть заявки в localStorage — используем их
-    const localData = localStorage.getItem('requests');
+     const localData = localStorage.getItem('requests');
     if (localData && localData.length > 0) {
         loadRequests();
         return;
@@ -2635,8 +2494,7 @@ async function loadRequestsFromJSON() {
         if (!response.ok) throw new Error('Файл requests_all.json не найден');
         const data = await response.json();
 
-        // Проверка структуры на всякий случай
-        if (!Array.isArray(data)) throw new Error('Неверный формат JSON заявок');
+         if (!Array.isArray(data)) throw new Error('Неверный формат JSON заявок');
 
         localStorage.setItem('requests', JSON.stringify(data));
         loadRequests();
@@ -2651,7 +2509,7 @@ window.addEventListener('DOMContentLoaded', function() {
     
     productQty = document.getElementById('productQty');
 
-    loadRequestsFromJSON(); // <-- вот здесь
+    loadRequestsFromJSON();  
     loadWarehouseFromJSON();
 });
 
@@ -2681,16 +2539,14 @@ async function loadRequestsFromFile() {
     try {
         const response = await fetch('requests_all.json');
         if (!response.ok) throw new Error('Файл requests_all.json не найден');
-        const requests = await response.json(); // просто массив
+        const requests = await response.json();  
 
-        // Сохраняем в localStorage
-        localStorage.setItem('requests', JSON.stringify(requests));
+         localStorage.setItem('requests', JSON.stringify(requests));
 
-        // Загружаем таблицы
-        loadRequests();
+         loadRequests();
     } catch (err) {
         alert('Ошибка загрузки заявок: ' + err.message);
-        loadRequests(); // fallback на localStorage
+        loadRequests();  
     }
 }
 
@@ -2713,11 +2569,11 @@ async function saveWarehouseToGitHub(updatedData) {
     } catch (err) {
         console.error('Ошибка:', err);
         alert('Ошибка сохранения: ' + err.message);
-        throw err; // 👈 важно!
+        throw err;  
     }
 }
 
-// Пример Node.js / Netlify Function
+ 
  
 function downloadAllRequests() {
     const requests = JSON.parse(localStorage.getItem('requests')) || [];
@@ -2728,7 +2584,7 @@ function downloadAllRequests() {
     a.download = 'requests_all.json';
     a.click();
 }
-// Добавить товар в текущую редактируемую заявку
+ 
 function addItemToAdminRequest(item) {
     if (!currentRequestCopy) return;
 
@@ -2740,19 +2596,19 @@ function addItemToAdminRequest(item) {
         children: item.children ? JSON.parse(JSON.stringify(item.children)) : []
     });
 
-    renderSelectedItems(); // обновляет визуально блок “Выбранные предметы”
+    renderSelectedItems();  
 }
 
 function saveAllRequests() {
   const requests = JSON.parse(localStorage.getItem('requests')) || [];
-  saveRequestsAll(requests); // Отправляем все заявки на сервер
+  saveRequestsAll(requests);  
 }
 function refreshAdminUI() {
     if (!currentRequestCopy) return;
     let updatedRequest = JSON.parse(localStorage.getItem("currentAdminRequest"));
     if (!updatedRequest || !updatedRequest.items) return;
 
-    // Добавляем новые предметы в текущую заявку
+    
     if (!currentRequestCopy.items) currentRequestCopy.items = [];
     updatedRequest.items.forEach(newItem => {
         let existing = currentRequestCopy.items.find(i => i.name === newItem.name);
@@ -2764,7 +2620,7 @@ function refreshAdminUI() {
     });
 
     renderSelectedItems();
-    localStorage.removeItem("currentAdminRequest"); // очищаем, чтобы не дублировать
+    localStorage.removeItem("currentAdminRequest");  
 }
 async function saveRequestsAll(requestsData) {
     try {

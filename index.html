@@ -47,8 +47,7 @@ body::before {
     z-index: 0;
 }
 
-/* HEADER */
-.header-container { 
+ .header-container { 
     display: flex; 
     justify-content: space-between; 
     align-items: center; 
@@ -122,8 +121,7 @@ body::before {
 }
 #userInfo, #username { color: #fff !important; }
 
-/* Пользователь */
-#userInfo { 
+ #userInfo { 
     display: none; 
     align-items: center; 
     gap: 10px; 
@@ -137,8 +135,7 @@ body::before {
 #userInfo:hover { transform: translateY(-2px); background: rgba(255,255,255,.1); box-shadow: 0 8px 18px rgba(0,0,0,.18); }
 #userInfo img { width: 30px; height: 30px; border-radius: 50%; border: 2px solid rgba(255,255,255,.55); }
  
-/* HERO */
-.hero { 
+ .hero { 
 padding-top: 60px;
     min-height: 100vh; 
     display: flex; 
@@ -250,8 +247,7 @@ pointer-events: none;
     transform: translateY(0) scale(0.99);
 }
 
-/* Блоки установок и кейсов */
-.install-section, .cases-section { 
+ .install-section, .cases-section { 
     padding: 100px 80px; 
     position: relative; 
     background: linear-gradient(135deg, #f7d800 0%, #ffd43b 38%, #ffbf1f 100%);
@@ -293,8 +289,7 @@ pointer-events: none;
     isolation: isolate;
 }
 
-/* мягкий затемняющий слой */
-.install-buttons button::before,
+ .install-buttons button::before,
 .cases-buttons button::before {
     content: "";
     position: absolute;
@@ -420,8 +415,7 @@ pointer-events: none;
     letter-spacing: .4px;
 }
 
-/* Почему мы */
-.why-section { 
+ .why-section { 
     background: linear-gradient(180deg, #1e2430 0%, #11161f 100%); 
     color: #eee; 
     padding: 80px 60px; 
@@ -518,8 +512,7 @@ pointer-events: none;
     margin-top: 5px; 
 }
 
-/* Видео и текст */
-.video-text-section { 
+ .video-text-section { 
     display: flex; 
     gap: 40px; 
     background: linear-gradient(90deg, #3a424f 35%, #1b2230 65%); 
@@ -560,8 +553,7 @@ pointer-events: none;
     z-index: 1;
 }
 
-/* Анимации для кнопок */
-@keyframes slideInTopToBottom {
+ @keyframes slideInTopToBottom {
     0% { opacity: 0; transform: translateY(-200px) scale(.98); }
     100% { opacity: 1; transform: translateY(0) scale(1); }
 }
@@ -602,8 +594,7 @@ a {
     font-size: 18px;
  }
 
-/* Модалка */
-.modal { 
+ .modal { 
     display: none; 
     position: fixed; 
     z-index: 1000; 
@@ -997,8 +988,7 @@ footer a:hover { color: #FFC300; }
         height: 70px;
     }
 
-    /* заголовок внутри карточки */
-    .why-title {
+     .why-title {
         font-size: 15px;
         font-weight: 700;
     }
@@ -1096,7 +1086,7 @@ footer a:hover { color: #FFC300; }
     content: "";
     position: absolute;
     left: 50%;
-    bottom:4px; /* 🔥 ниже поднято/опущено — регулируй тут */
+    bottom:4px;  
     width: 70%;
     height: 2px;
     background: #fff;
@@ -1108,8 +1098,7 @@ footer a:hover { color: #FFC300; }
     transform: translateX(-50%) scaleX(1);
 }
 
-/* Анимация появления */
-.fade-up {
+ .fade-up {
     opacity: 0;
     transform: translateY(30px);
     filter: blur(6px);
@@ -1191,8 +1180,7 @@ footer a:hover { color: #FFC300; }
     box-shadow: 0 22px 48px rgba(0,0,0,.38);
 }
 
-/* картинки */
-.case .img {
+ .case .img {
     position: absolute;
     inset: 0;
     background-size: cover;
@@ -1205,8 +1193,7 @@ footer a:hover { color: #FFC300; }
     opacity: 1;
 }
 
-/* цветная */
-.case .color {
+ .case .color {
     opacity: 0;
 }
 
@@ -1218,8 +1205,7 @@ footer a:hover { color: #FFC300; }
     opacity: 1;
 }
 
-/* текст */
-.case span {
+ .case span {
     position: absolute;
     bottom: 15px;
     left: 15px;
@@ -1230,10 +1216,8 @@ footer a:hover { color: #FFC300; }
     text-shadow: 1px 1px 4px rgba(0,0,0,.8);
 }
 
-/* ТВОИ КАРТИНКИ */
-
-/* Улица */
-.case:nth-child(1) .dark {
+ 
+ .case:nth-child(1) .dark {
     background-image: url("sait1/case1.jpg");
 }
 .case:nth-child(1) .color {
@@ -1270,7 +1254,7 @@ footer a:hover { color: #FFC300; }
 }
 
 .install-buttons button {
-    background: #000; /* цвет фона совпадает с тёмной картинкой */
+    background: #000;  
     border: none;
     position: relative;
     padding: 0;
@@ -1285,21 +1269,18 @@ footer a:hover { color: #FFC300; }
     background-position: center;
     transition: opacity 0.5s ease;
     pointer-events: none;
-    will-change: opacity; /* браузер оптимизирует рендер */
+    will-change: opacity;  
 }
 
-/* тёмная */
-.install-buttons .dark {
+ .install-buttons .dark {
     opacity: 1;
 }
 
-/* цветная */
-.install-buttons .color {
+ .install-buttons .color {
     opacity: 0;
 }
 
-/* при наведении */
-.install-buttons button:hover .dark {
+ .install-buttons button:hover .dark {
     opacity: 0;
 }
 
@@ -1322,16 +1303,14 @@ footer a:hover { color: #FFC300; }
         gap: 6px;
     }
 
-    /* ЛОГО */
-    .logo {
+     .logo {
         position: static !important;
         width: 85px;
         height: auto;
         flex-shrink: 0;
     }
 
-    /* правая зона — разрешаем сжиматься */
-    .header-right {
+     .header-right {
         display: flex;
         align-items: center;
         justify-content: flex-end;
@@ -1341,15 +1320,13 @@ footer a:hover { color: #FFC300; }
         min-width: 0; /* важно */
     }
 
-    /* телефон */
-    .phone {
+     .phone {
         font-size: 10px;
         white-space: nowrap;
         flex-shrink: 0;
     }
 
-    /* вход/регистрация — чтобы не раздували шапку */
-    #loginLink a,
+     #loginLink a,
     #registerLink a {
         font-size: 10px;
         padding: 3px 5px;
@@ -1361,15 +1338,13 @@ footer a:hover { color: #FFC300; }
         margin-top: -4px;
     }
 
-    /* гамбургер ВСЕГДА внутри */
-    .menu-toggle {
+     .menu-toggle {
         display: flex;
         flex-shrink: 0;
         margin-left: 4px;
     }
 
-    /* user блок если есть */
-    #userInfo {
+     #userInfo {
         flex-shrink: 0;
         margin: 0;
         transform: none;

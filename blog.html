@@ -31,8 +31,7 @@
     header h1 { margin:0; font-size:2.5em; }
     header p { margin-top:5px; font-size:1.2em; }
 
-    /* Кнопки увеличения/уменьшения шрифта */
-    .accessibility-controls {
+     .accessibility-controls {
       margin: 15px 0 0 0;
       display: flex;
       justify-content: center;
@@ -138,8 +137,7 @@
       transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
 
-    /* Анимация задержки для каждой карточки */
-    .card:nth-child(1) { animation-delay: 0.1s; }
+     .card:nth-child(1) { animation-delay: 0.1s; }
     .card:nth-child(2) { animation-delay: 0.2s; }
     .card:nth-child(3) { animation-delay: 0.3s; }
     .card:nth-child(4) { animation-delay: 0.4s; }
@@ -178,13 +176,11 @@
       .card img{width:100%; height:200px;} 
     }
 
-    /* Плавное увеличение текста */
-    body, header, .sidebar, .card, .card-title, .card-text, .category {
+     body, header, .sidebar, .card, .card-title, .card-text, .category {
       transition: font-size 0.3s;
     }
 
-    /* Анимации */
-    @keyframes fadeInUp {
+     @keyframes fadeInUp {
       0% { opacity: 0; transform: translateY(30px) scale(0.98); }
       60% { opacity: 0.7; transform: translateY(-10px) scale(1.02); }
       100% { opacity: 1; transform: translateY(0) scale(1); }
@@ -221,16 +217,14 @@
 
 <div class="container">
 
-  <!-- Сайдбар -->
-  <div class="sidebar">
+   <div class="sidebar">
     <h2>Категории</h2>
     <div class="category" data-category="streets">Освещение улиц</div>
     <div class="category" data-category="parks">Освещение парков</div>
     <div class="category" data-category="factories">Освещение цехов</div>
   </div>
 
-  <!-- Контент -->
-  <div class="content">
+   <div class="content">
 
     <div class="card" data-category="streets">
       <img src="blog/streets/street1.jpg">

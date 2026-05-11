@@ -73,8 +73,8 @@
         }
 
    #address {
-    background: #2a3b55; /* Можно заменить на другой цвет, если хотите */
-    cursor: text; /* Сделать курсор текстовым, когда пользователь кликает на поле */
+    background: #2a3b55;  
+    cursor: text;  
 }
 
         .map-wrapper {
@@ -538,9 +538,7 @@
         window.location.href = 'login.html';
     }
     
-    // Убираем очистку selectedItems при загрузке страницы, чтобы не терять данные
-    // localStorage.removeItem("selectedItems");
-
+ 
     function goHome() {
         window.location.href = 'index.html';
     }
@@ -566,7 +564,7 @@
             lightBtn.style.display = 'none';
             problemDiv.style.display = 'block';
 
-            // Очистка выбранных товаров, если выбрана "ремонт"
+ 
             localStorage.removeItem("selectedItems");
             render();
 
@@ -583,7 +581,7 @@
         const regex = /^[a-zA-Zа-яА-ЯёЁ]+$/;
         return regex.test(name);
     }
-	let pendingRequest = null; // сюда будем сохранять данные заявки при проверке
+	let pendingRequest = null;  
 
 function checkCompatibility(items) {
     return items.some(item => {
@@ -593,7 +591,7 @@ function checkCompatibility(items) {
 }
 
 function showIncompatibilityModal(message, requestData) {
-    pendingRequest = requestData; // сохраняем данные для возможной отправки
+    pendingRequest = requestData;  
     const modal = document.getElementById('incompatibilityModal');
     const modalText = document.getElementById('incompatibilityModalText');
 
@@ -612,7 +610,7 @@ function confirmSubmission() {
 
     if (pendingRequest) {
 
-        // СОХРАНЕНИЕ ЗАЯВКИ
+       
         const storedRequests = JSON.parse(localStorage.getItem("requests")) || [];
 
         storedRequests.push(pendingRequest);
@@ -621,7 +619,7 @@ function confirmSubmission() {
 
         saveAllRequests();
 
-        // ПЕРЕХОД НА СТРАНИЦУ
+ 
         const summary = encodeURIComponent(JSON.stringify(pendingRequest));
 
         window.location.href = `confirmation.html?data=${summary}`;
@@ -629,7 +627,7 @@ function confirmSubmission() {
 }
 
 function cancelSubmission() {
-    // Пользователь отменил отправку
+ 
     const modal = document.getElementById('incompatibilityModal');
     modal.classList.remove('show');
     document.getElementById('pageContent').classList.remove('page-dim');
@@ -787,8 +785,7 @@ function cancelSubmission() {
  window.addEventListener("focus", render);
 render();
 
-// Автовыбор типа работы если уже есть выбранные товары
-const savedItems = JSON.parse(localStorage.getItem("selectedItems")) || [];
+ const savedItems = JSON.parse(localStorage.getItem("selectedItems")) || [];
 
 if (savedItems.length > 0) {
     document.getElementById("workType").value = "both";
@@ -863,17 +860,15 @@ const request = {
     expectedCallTime: new Date(Date.now() + 5 * 60 * 1000).toISOString()
 };
 
-// Проверка совместимости
-if (checkCompatibility(items)) {
+ if (checkCompatibility(items)) {
     showIncompatibilityModal(
         "Светильник Street 30 не подходит ни к одной опоре. Он потолочный. Продолжить?",
         request
     );
-    return; // останавливаем стандартную отправку до решения пользователя
+    return;  
 }
 
-// обычная отправка заявки
-const storedRequests = JSON.parse(localStorage.getItem("requests")) || [];
+ const storedRequests = JSON.parse(localStorage.getItem("requests")) || [];
 storedRequests.push(request);
 localStorage.setItem("requests", JSON.stringify(storedRequests));
 saveAllRequests();

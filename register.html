@@ -63,7 +63,7 @@
     nav a {
     color: #fff;
     text-decoration: none;
-    font-weight: bold; /* ← ВОТ ЭТО ДОБАВЛЯЕТ ЖИРНЫЙ ШРИФТ */
+    font-weight: bold;  
     transition: color 0.2s ease, opacity 0.2s ease;
 }
 
@@ -80,7 +80,7 @@
         }
 
 .register-panel {
-    width: min(100%, 480px); /* Увеличено с 360px до 480px */
+    width: min(100%, 480px);  
     display: flex;
     flex-direction: column;
     gap: 14px;
@@ -315,7 +315,7 @@
         }
 		@media (min-width: 768px) {
     .register-panel {
-        width: 500px; /* Ширина формы для экранов больше 768px */
+        width: 500px;  
     }
 }
         @media (max-width: 640px) {
@@ -345,7 +345,7 @@
 
 		@media (max-width: 640px) {
     header {
-        flex-direction: row; /* остаётся в строку */
+        flex-direction: row;  
         justify-content: space-between;
         align-items: center;
     }
@@ -421,7 +421,7 @@
 
  
 
-<!-- МОДАЛЬНОЕ ОКНО -->
+ 
 <div id="modal">
     <div id="modalBox">
         <div id="modalText"></div>
@@ -466,8 +466,7 @@ function closeModal() {
 }
 
 function isValidUsername(value) {
-    // Проверяем, что в имени есть хотя бы одна буква (латиница или кириллица) и что формат соответствует
-    return /[a-zA-Zа-яА-ЯёЁ]/.test(value) && /^[a-zA-Z0-9_а-яА-ЯёЁ]{3,20}$/.test(value);
+     return /[a-zA-Zа-яА-ЯёЁ]/.test(value) && /^[a-zA-Z0-9_а-яА-ЯёЁ]{3,20}$/.test(value);
 }
 function getPasswordScore(password) {
     let score = 0;
@@ -500,7 +499,7 @@ function updateUsernameHint() {
     const length = value.length;
     usernameCount.textContent = `${length} / 20`;
 
-    // Проверяем, что логин состоит хотя бы из одной буквы
+   
     if (length === 0) {
         usernameHint.textContent = 'Только латиница, цифры и _. 3–20 символов.';
         usernameCount.style.background = '#eef2ff';
@@ -515,16 +514,14 @@ function updateUsernameHint() {
         return;
     }
 
-    // Проверяем, что логин содержит хотя бы одну букву
-    if (!/[a-zA-Zа-яА-ЯёЁ]/.test(value)) {
+     if (!/[a-zA-Zа-яА-ЯёЁ]/.test(value)) {
         usernameHint.textContent = 'Логин должен содержать хотя бы одну букву.';
         usernameCount.style.background = '#fee2e2';
         usernameCount.style.color = '#991b1b';
         return;
     }
 
-    // Проверяем, что логин соответствует формату
-    if (!/^[a-zA-Z0-9_а-яА-ЯёЁ]*$/.test(value)) {
+     if (!/^[a-zA-Z0-9_а-яА-ЯёЁ]*$/.test(value)) {
         usernameHint.textContent = 'Можно использовать только латиницу, цифры и символ _.';
         usernameCount.style.background = '#fef3c7';
         usernameCount.style.color = '#92400e';
