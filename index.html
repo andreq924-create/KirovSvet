@@ -729,7 +729,6 @@ footer a:hover { color: #FFC300; }
 .mobile-menu {
     display: none;
     position: fixed;
-    top: 42px;
     left: 0;
     width: 100%;
     background: rgba(30, 42, 56, 0.96);
@@ -1009,7 +1008,7 @@ footer a:hover { color: #FFC300; }
     #userInfo {
         font-size: 14px;
  
-         transform: translateY(-5px); /* 👈 визуально вниз */
+         transform: translateY(-5px);  
 
 
     }
@@ -1353,7 +1352,6 @@ footer a:hover { color: #FFC300; }
 #mobileMenu {
     display: none;
     position: fixed;
-    top: 72px;
     left: 0;
     width: 100%;
     z-index: 999;
@@ -1375,9 +1373,6 @@ footer a:hover { color: #FFC300; }
 
     #mainHeader .logo {
         width: 130px !important;
-    }
-	    #mobileMenu {
-        top: calc(100% - 540px);
     }
 }
 
@@ -1426,10 +1421,6 @@ footer a:hover { color: #FFC300; }
         margin-left: 0 !important;
         transform: none !important;
     }
-
-    #mobileMenu {
-        top: 56px;
-    }
 }
 
 /* очень маленькие экраны */
@@ -1441,9 +1432,7 @@ footer a:hover { color: #FFC300; }
     #mainHeader .logo {
         width: 80px !important;
     }
-	    #mobileMenu {
-        top: calc(100% - 570px);
-    }
+
     #mainHeader .phone {
         font-size: 9px !important;
 
@@ -1713,6 +1702,14 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 <script>
+function setMobileMenuTop() {
+    const header = document.getElementById('mainHeader');
+    const mobileMenu = document.getElementById('mobileMenu');
+    if (header && mobileMenu) {
+        mobileMenu.style.top = header.offsetHeight + 'px';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const username = sessionStorage.getItem('username');
     const role = sessionStorage.getItem('role');
@@ -1741,6 +1738,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (loginLink) loginLink.style.display = 'block';
         if (registerLink) registerLink.style.display = 'block';
     }
+
+    setMobileMenuTop();
 });
 
 function handleRequestClick(event){
@@ -1754,11 +1753,16 @@ function handleRequestClick(event){
 
 function toggleMenu() {
     const mobileMenu = document.getElementById('mobileMenu');
+    const header = document.getElementById('mainHeader');
+
+    setMobileMenuTop();
     mobileMenu.classList.toggle('show');
+
     if (mobileMenu.classList.contains('show')) {
-        document.getElementById('mainHeader').classList.remove('scrolled');
+        header.classList.remove('scrolled');
     }
 }
+
 function closeModal(){ document.getElementById('authModal').style.display='none'; }
 function goToLogin(){ window.location.href="login.html"; }
 function goToRegister(){ window.location.href="register.html"; }
@@ -1774,6 +1778,10 @@ window.addEventListener('scroll', function() {
     } else {
         header.classList.remove('scrolled');
     }
+});
+
+window.addEventListener('resize', () => {
+    setMobileMenuTop();
 });
 
 function goToDashboard() {
