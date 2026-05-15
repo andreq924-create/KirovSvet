@@ -189,8 +189,10 @@
     "type": "repair",
     "problemDescription": "Отпал провод нужно подсоеденить",
     "items": [],
-    "status": "Новая",
+    "status": "В процессе",
     "createdAt": "2026-05-15T11:41:42.029Z",
-    "expectedCallTime": "2026-05-15T11:46:42.029Z"
+    "expectedCallTime": "2026-05-15T11:46:42.029Z",
+    "callDate": "2026-05-15",
+    "completionDate": "2026-05-23"
   }
 ]
