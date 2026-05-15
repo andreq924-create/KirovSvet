@@ -155,7 +155,7 @@
     "items": [
       {
         "name": "Опора НФГ 9",
-        "qty": 1,
+        "qty": 2,
         "img": "images/oporaНФГ.png"
       },
       {
@@ -174,9 +174,11 @@
         "img": "images/Светильник Gelllious 50.png"
       }
     ],
-    "status": "Новая",
+    "status": "В процессе",
     "createdAt": "2026-05-15T11:39:50.949Z",
-    "expectedCallTime": "2026-05-15T11:44:50.949Z"
+    "expectedCallTime": "2026-05-15T11:44:50.949Z",
+    "callDate": "2026-05-16",
+    "completionDate": "2026-05-18"
   },
   {
     "username": "yui123",
