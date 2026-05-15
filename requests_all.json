@@ -96,9 +96,11 @@
     "type": "repair",
     "problemDescription": "Заменить светильник",
     "items": [],
-    "status": "Новая",
+    "status": "В процессе",
     "createdAt": "2026-05-15T11:32:08.991Z",
-    "expectedCallTime": "2026-05-15T11:37:08.991Z"
+    "expectedCallTime": "2026-05-15T11:37:08.991Z",
+    "callDate": "2026-05-23",
+    "completionDate": "2026-05-25"
   },
   {
     "username": "yui123",
