@@ -138,9 +138,11 @@
         "img": "images/oporaНФГ.png"
       }
     ],
-    "status": "Новая",
+    "status": "В процессе",
     "createdAt": "2026-05-15T11:36:57.814Z",
-    "expectedCallTime": "2026-05-15T11:41:57.814Z"
+    "expectedCallTime": "2026-05-15T11:41:57.814Z",
+    "callDate": "2026-05-20",
+    "completionDate": "2026-05-21"
   },
   {
     "username": "yui123",
