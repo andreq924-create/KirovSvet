@@ -4,9 +4,9 @@
     "password": "iIHmTjSAmIdtz"
   },
   {
-    "username": "Adminn",
-    "password": "Adminn",
-    "role": "admin"
+  "username": "Adminn",
+  "password": "Adminn",
+  "role": "admin"
   },
   {
     "username": "Артем",
@@ -15,25 +15,5 @@
   {
     "username": "Сергей",
     "password": "fdmFz16rHXQxC"
-  },
-  {
-    "username": "шшшш",
-    "password": "выфакуап43п43ак"
-  },
-  {
-    "username": "фыв123456",
-    "password": "фцыв123123к23а324а"
-  },
-  {
-    "username": "dsvavsdvasdv234234",
-    "password": "erg34g345g34g34g34"
-  },
-  {
-    "username": "hjk123",
-    "password": "qwre2r3e243g342g354g45"
-  },
-  {
-    "username": "yui123",
-    "password": "weqfwegf43g43g3g"
   }
 ]

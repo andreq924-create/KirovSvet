@@ -597,6 +597,10 @@
                 } else {
                     typeName = request.type || '-';
                 }
+				const callDate = request.callDate
+    ? new Date(request.callDate).toLocaleDateString('ru-RU')
+    : '—';
+
 
                 const createdAt = new Date(request.createdAt);
                 const completionDate = request.completionDate
@@ -623,6 +627,7 @@
                     <p><strong>Адрес:</strong> 📍 ${request.address}</p>
                     ${itemsText ? `<p><strong>Описание товаров:</strong> 🛍️ ${itemsText}</p>` : ''}
                     ${problemText ? `<p><strong>Описание проблемы:</strong> 📝 ${request.problemDescription}</p>` : ''}
+					<p><strong>Дата начала работы:</strong> 🟢 ${callDate}</p>
                     <p><strong>Дата завершения:</strong> 🕒 ${completionDate}</p>
 
                     <span class="status ${statusClass}">${statusText}</span>
