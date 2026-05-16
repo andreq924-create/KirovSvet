@@ -83,7 +83,7 @@
     "type": "repair",
     "problemDescription": "Оборвались провада  на опорах",
     "items": [],
-    "status": "В процессе",
+    "status": "Завершена",
     "createdAt": "2026-05-15T11:27:53.712Z",
     "expectedCallTime": "2026-05-15T11:32:53.712Z",
     "callDate": "2026-06-04",
