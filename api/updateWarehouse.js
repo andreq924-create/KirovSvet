@@ -9,35 +9,32 @@ export default async function handler(req, res) {
   const BRANCH = 'main';
 
   try {
-    const { warehouse, sha: providedSha } = req.body;
+    const { warehouse } = req.body;
 
     if (!warehouse) {
       return res.status(400).json({ error: 'No warehouse data provided' });
     }
 
-    let sha = providedSha || null;
-
-    // Если sha не передали с клиента — получаем его из GitHub
-    if (!sha) {
-      const getResponse = await fetch(
-        `https://api.github.com/repos/${REPO}/contents/${FILE_PATH}?ref=${BRANCH}`,
-        {
-          headers: {
-            Authorization: `Bearer ${GITHUB_TOKEN}`,
-            Accept: 'application/vnd.github+json',
-          },
-        }
-      );
-
-      if (!getResponse.ok) {
-        const text = await getResponse.text();
-        throw new Error(`Failed to get file info: ${text}`);
+    // 1️⃣ Получаем SHA текущего файла
+    const getResponse = await fetch(
+      `https://api.github.com/repos/${REPO}/contents/${FILE_PATH}?ref=${BRANCH}`,
+      {
+        headers: {
+          Authorization: `Bearer ${GITHUB_TOKEN}`,
+          Accept: 'application/vnd.github+json',
+        },
       }
+    );
 
-      const getData = await getResponse.json();
-      sha = getData.sha;
+    if (!getResponse.ok) {
+      const text = await getResponse.text();
+      throw new Error(`Failed to get file info: ${text}`);
     }
 
+    const getData = await getResponse.json();
+    const sha = getData.sha;
+
+    // 2️⃣ Обновляем файл
     const putResponse = await fetch(
       `https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`,
       {
@@ -45,11 +42,12 @@ export default async function handler(req, res) {
         headers: {
           Authorization: `Bearer ${GITHUB_TOKEN}`,
           Accept: 'application/vnd.github+json',
-          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           message: 'Обновление warehouse.json через Vercel API',
-          content: Buffer.from(JSON.stringify(warehouse)).toString('base64'),
+          content: Buffer.from(
+            JSON.stringify(warehouse, null, 2)
+          ).toString('base64'),
           sha: sha,
           branch: BRANCH,
         }),

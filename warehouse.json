@@ -23,7 +23,7 @@
         "img": "images/oporaCT1.png"
       }
     ],
-   
+    "qty": 19
   },
   {
     "name": "Опора НФГ",
@@ -49,7 +49,7 @@
         "img": "images/oporaНФГ1.png"
       }
     ],
- 
+    "qty": 16
   },
   {
     "name": "Опоры ОТФ",
@@ -76,7 +76,7 @@
         "imgFileName": "OporaOTF1.png"
       }
     ],
-    
+    "qty": 26
   },
   {
     "name": "Поталочный Светильники Street",
@@ -127,7 +127,7 @@
         "img": "images/светильник Cobra 30 3.png"
       }
     ],
-    
+    "qty": 29
   },
   {
     "name": "Светильник Gelllious",
