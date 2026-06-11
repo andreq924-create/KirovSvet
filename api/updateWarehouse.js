@@ -9,17 +9,35 @@ export default async function handler(req, res) {
   const BRANCH = 'main';
 
   try {
-    // ⚡ Ждём, что фронт пришлёт warehouse и sha
-    const { warehouse, sha } = req.body;
+    const { warehouse, sha: incomingSha } = req.body;
 
     if (!warehouse) {
       return res.status(400).json({ error: 'No warehouse data provided' });
     }
+
+    let sha = incomingSha;
+
+    // Если sha уже пришёл с фронта — пропускаем GET и обновляем файл сразу
     if (!sha) {
-      return res.status(400).json({ error: 'No SHA provided. Include current file SHA for faster update.' });
+      const getResponse = await fetch(
+        `https://api.github.com/repos/${REPO}/contents/${FILE_PATH}?ref=${BRANCH}`,
+        {
+          headers: {
+            Authorization: `Bearer ${GITHUB_TOKEN}`,
+            Accept: 'application/vnd.github+json',
+          },
+        }
+      );
+
+      if (!getResponse.ok) {
+        const text = await getResponse.text();
+        throw new Error(`Failed to get file info: ${text}`);
+      }
+
+      const getData = await getResponse.json();
+      sha = getData.sha;
     }
 
-    // 🔹 Обновляем файл напрямую, используя SHA с фронта
     const putResponse = await fetch(
       `https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`,
       {
@@ -31,7 +49,7 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           message: 'Обновление warehouse.json через Vercel API',
           content: Buffer.from(JSON.stringify(warehouse, null, 2)).toString('base64'),
-          sha: sha,  // используем SHA, пришедший с фронта
+          sha,
           branch: BRANCH,
         }),
       }
@@ -44,7 +62,6 @@ export default async function handler(req, res) {
 
     const putData = await putResponse.json();
     return res.status(200).json(putData);
-
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: err.message });
