@@ -161,10 +161,16 @@
     "children": [
       {
         "name": "ывавыа",
-        "qty": -23232,
+        "qty": 16104,
         "info": "ршиодшрлдимшрид",
         "img": "images/светильник Cobra 30 3.png"
       }
     ]
+  },
+  {
+    "name": "кнеоркнеурукнер",
+    "category": "light",
+    "img": "images/oporaCT1.png",
+    "children": []
   }
 ]
