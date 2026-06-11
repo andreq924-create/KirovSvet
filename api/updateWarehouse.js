@@ -4,10 +4,10 @@ export default async function handler(req, res) {
   }
 
   const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-  const REPO = 'andreq924-create/admin-panel';
-  const OWNER = 'andreq924-create';
+  const OWNER = 'andreq924-create';  // Владелец репозитория
+  const REPO = 'admin-panel';         // Только название репозитория
   const FILE_PATH = 'warehouse.json';
-  const BRANCH = 'main';
+  const BRANCH = 'main';             // Убедись, что ветка существует
 
   try {
     const { warehouse } = req.body;
