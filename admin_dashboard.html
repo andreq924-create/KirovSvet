@@ -1677,186 +1677,143 @@ function sendToCompleted() {
 function closePopup(){ document.getElementById('overlay').style.display='none'; currentRequestCopy=null; }
 
  
-function loadWarehouse() {
-
-    const data = JSON.parse(localStorage.getItem('warehouse')) || [];
+async function loadWarehouse() {
     const tbody = document.querySelector("#warehouseTable tbody");
     tbody.innerHTML = '';
 
- 
-    let lowStockChildren = [];
+    try {
+        // 1️⃣ Загружаем склад с GitHub через API
+        const response = await fetch('/api/getWarehouse');
+        const result = await response.json();
 
-    data.forEach(item => {
-        if (item.children) {
-            item.children.forEach(c => {
-                if ((c.qty || 0) < 5) {
-                    lowStockChildren.push({
-                        ...c,
-                        parentName: item.name
-                    });
-                }
-            });
-        }
-    });
+        if (result.error) throw new Error(result.error);
 
-  
-    lowStockChildren.sort((a, b) => a.qty - b.qty);
+        const data = result.warehouse || [];
 
- 
-    if (lowStockChildren.length > 0) {
-
-        let opened = false;
-
-        const lowRow = document.createElement('tr');
-        lowRow.style.cursor = "pointer";
-        lowRow.style.background = "#ffe5e5";
-        lowRow.style.fontWeight = "bold";
-
-        lowRow.innerHTML = `<td colspan="6">▶ ⚠️ Заканчивается (<5)</td>`;
-        tbody.appendChild(lowRow);
-
-        let childRows = [];
-
-        lowStockChildren.forEach(c => {
-
-            const childRow = document.createElement('tr');
-            childRow.style.display = "none";
-            childRow.style.background = "#fffafa";
-
-            const imgSrc = c.imgFileName
-                ? `images/${c.imgFileName}`
-                : (c.img || '');
-
-         
-            let color = "orange";
-            if (c.qty <= 2) color = "red";
-
-            childRow.innerHTML = `
-                <td style="padding-left:30px">
-                    ↳ ${c.name}
-                    <div style="font-size:11px;color:#777">${c.parentName}</div>
-                </td>
-                <td>${imgSrc ? `<img src="${imgSrc}" class="preview">` : '-'}</td>
-                <td style="color:${color}; font-weight:bold;">⚠️</td>
-                <td style="color:${color}; font-weight:bold;">${c.qty}</td>
-                <td></td>
-            `;
-
-            tbody.appendChild(childRow);
-            childRows.push(childRow);
-        });
-
-    
-        lowRow.onclick = function () {
-            opened = !opened;
-            lowRow.cells[0].innerHTML =
-                (opened ? "▼ " : "▶ ") + "⚠️ Заканчивается (<5)";
-
-            childRows.forEach(r => {
-                r.style.display = opened ? "table-row" : "none";
-            });
-        };
-    }
-
- 
-    const categories = {
-        light: { name: "Освещение", opened: false },
-        pole: { name: "Столбы", opened: false }
-    };
-
-    const grouped = {
-        light: data.filter(i => i.category === 'light'),
-        pole: data.filter(i => i.category === 'pole')
-    };
-
-    Object.keys(categories).forEach(catKey => {
-
-        let cat = categories[catKey];
-        let items = grouped[catKey];
-
-        const catRow = document.createElement('tr');
-        catRow.style.cursor = "pointer";
-        catRow.style.background = "#f0f0f0";
-        catRow.style.fontWeight = "bold";
-
-        catRow.innerHTML = `<td colspan="6">▶ ${cat.name}</td>`;
-        tbody.appendChild(catRow);
-
-        let itemRows = [];
-
-        items.forEach(item => {
-
-            const realIndex = data.indexOf(item);
-            let opened = false;
-
-            const row = document.createElement('tr');
-            row.style.display = "none";
-            row.style.cursor = "pointer";
-
-            row.innerHTML = `
-                <td style="padding-left:20px">▶ ${item.name}</td>
-                <td>${item.img ? `<img src="${item.img}" class="preview">` : '-'}</td>
-                <td>${item.category === 'light' ? 'Освещение' : 'Столбы'}</td>
-                <td>${item.qty || '-'}</td>
-                <td>
-                    <button onclick="event.stopPropagation(); editProduct(${realIndex})">✏️</button> 
-                    <button onclick="event.stopPropagation(); deleteProduct(${realIndex})">🗑</button>
-                </td>
-            `;
-            tbody.appendChild(row);
-            itemRows.push(row);
-
-            let childRows = [];
-
+        // 2️⃣ Обрабатываем товары с малым количеством
+        let lowStockChildren = [];
+        data.forEach(item => {
             if (item.children) {
-                item.children.forEach((c, ci) => {
-
-                    const childRow = document.createElement('tr');
-                    childRow.style.display = "none";
-
-                    const imgSrc = c.imgFileName
-                        ? `images/${c.imgFileName}`
-                        : (c.img || '');
-
-                    childRow.innerHTML = `
-                        <td style="padding-left:40px">↳ ${c.name}</td>
-                        <td>${imgSrc ? `<img src="${imgSrc}" class="preview">` : '-'}</td>
-                        <td>-</td>
-                        <td>${c.qty}</td>
-                        <td>
-                            <button onclick="event.stopPropagation(); editChildSettings(${realIndex}, ${ci});">⚙️</button>
-                            <button onclick="event.stopPropagation(); deleteChild(${realIndex},${ci})">🗑</button>
-                        </td>
-                    `;
-
-                    tbody.appendChild(childRow);
-                    childRows.push(childRow);
+                item.children.forEach(c => {
+                    if ((c.qty || 0) < 5) {
+                        lowStockChildren.push({ ...c, parentName: item.name });
+                    }
                 });
             }
+        });
 
-        
-            row.onclick = function () {
+        lowStockChildren.sort((a, b) => a.qty - b.qty);
+
+        if (lowStockChildren.length > 0) {
+            let opened = false;
+            const lowRow = document.createElement('tr');
+            lowRow.style.cursor = "pointer";
+            lowRow.style.background = "#ffe5e5";
+            lowRow.style.fontWeight = "bold";
+            lowRow.innerHTML = `<td colspan="6">▶ ⚠️ Заканчивается (<5)</td>`;
+            tbody.appendChild(lowRow);
+
+            const childRows = lowStockChildren.map(c => {
+                const childRow = document.createElement('tr');
+                childRow.style.display = "none";
+                childRow.style.background = "#fffafa";
+
+                const imgSrc = c.imgFileName ? `images/${c.imgFileName}` : (c.img || '');
+                let color = "orange";
+                if (c.qty <= 2) color = "red";
+
+                childRow.innerHTML = `
+                    <td style="padding-left:30px">
+                        ↳ ${c.name}
+                        <div style="font-size:11px;color:#777">${c.parentName}</div>
+                    </td>
+                    <td>${imgSrc ? `<img src="${imgSrc}" class="preview">` : '-'}</td>
+                    <td style="color:${color}; font-weight:bold;">⚠️</td>
+                    <td style="color:${color}; font-weight:bold;">${c.qty}</td>
+                    <td></td>
+                `;
+                tbody.appendChild(childRow);
+                return childRow;
+            });
+
+            lowRow.onclick = function () {
                 opened = !opened;
-                row.cells[0].innerHTML =
-                    (opened ? "▼ " : "▶ ") + item.name;
+                lowRow.cells[0].innerHTML = (opened ? "▼ " : "▶ ") + "⚠️ Заканчивается (<5)";
+                childRows.forEach(r => r.style.display = opened ? "table-row" : "none");
+            };
+        }
 
-                childRows.forEach(r => {
-                    r.style.display = opened ? "table-row" : "none";
-                });
+        // 3️⃣ Группировка по категориям
+        const categories = { light: "Освещение", pole: "Столбы" };
+        Object.keys(categories).forEach(catKey => {
+            const items = data.filter(i => i.category === catKey);
+            const catRow = document.createElement('tr');
+            catRow.style.cursor = "pointer";
+            catRow.style.background = "#f0f0f0";
+            catRow.style.fontWeight = "bold";
+            catRow.innerHTML = `<td colspan="6">▶ ${categories[catKey]}</td>`;
+            tbody.appendChild(catRow);
+
+            let opened = false;
+            const itemRows = items.map(item => {
+                const row = document.createElement('tr');
+                row.style.display = "none";
+                row.style.cursor = "pointer";
+
+                row.innerHTML = `
+                    <td style="padding-left:20px">▶ ${item.name}</td>
+                    <td>${item.img ? `<img src="${item.img}" class="preview">` : '-'}</td>
+                    <td>${categories[catKey]}</td>
+                    <td>${item.qty || '-'}</td>
+                    <td>
+                        <button onclick="event.stopPropagation(); editProduct(${data.indexOf(item)})">✏️</button> 
+                        <button onclick="event.stopPropagation(); deleteProduct(${data.indexOf(item)})">🗑</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+
+                // Дочерние объекты
+                let childRows = [];
+                if (item.children) {
+                    childRows = item.children.map((c, ci) => {
+                        const childRow = document.createElement('tr');
+                        childRow.style.display = "none";
+                        const imgSrc = c.imgFileName ? `images/${c.imgFileName}` : (c.img || '');
+                        childRow.innerHTML = `
+                            <td style="padding-left:40px">↳ ${c.name}</td>
+                            <td>${imgSrc ? `<img src="${imgSrc}" class="preview">` : '-'}</td>
+                            <td>-</td>
+                            <td>${c.qty}</td>
+                            <td>
+                                <button onclick="event.stopPropagation(); editChildSettings(${data.indexOf(item)}, ${ci});">⚙️</button>
+                                <button onclick="event.stopPropagation(); deleteChild(${data.indexOf(item)}, ${ci})">🗑</button>
+                            </td>
+                        `;
+                        tbody.appendChild(childRow);
+                        return childRow;
+                    });
+                }
+
+                row.onclick = function () {
+                    opened = !opened;
+                    row.cells[0].innerHTML = (opened ? "▼ " : "▶ ") + item.name;
+                    childRows.forEach(r => r.style.display = opened ? "table-row" : "none");
+                };
+
+                return row;
+            });
+
+            catRow.onclick = function () {
+                opened = !opened;
+                catRow.cells[0].innerHTML = (opened ? "▼ " : "▶ ") + categories[catKey];
+                itemRows.forEach(r => r.style.display = opened ? "table-row" : "none");
             };
         });
 
-        // раскрытие категории
-        catRow.onclick = function () {
-            cat.opened = !cat.opened;
-            catRow.cells[0].innerHTML =
-                (cat.opened ? "▼ " : "▶ ") + cat.name;
-
-            itemRows.forEach(r => {
-                r.style.display = cat.opened ? "table-row" : "none";
-            });
-        };
-    });
+    } catch (err) {
+        console.error('Ошибка загрузки склада с GitHub:', err);
+        tbody.innerHTML = `<tr><td colspan="6" style="color:red;">Ошибка загрузки склада: ${err.message}</td></tr>`;
+    }
 }
 function editProduct(index) {
     const warehouse = JSON.parse(localStorage.getItem('warehouse')) || [];
