@@ -158,6 +158,13 @@
     "name": "yuyuyuyuyu",
     "category": "light",
     "img": "images/светильник Cobra 30 1.png",
-    "children": []
+    "children": [
+      {
+        "name": "ывавыа",
+        "qty": -23232,
+        "info": "ршиодшрлдимшрид",
+        "img": "images/светильник Cobra 30 3.png"
+      }
+    ]
   }
 ]
