@@ -1906,7 +1906,7 @@ function changeChildQty(add = true) {
     document.getElementById('childEditQty').value = child.qty;
 
    
- 
+    localStorage.setItem('warehouse', JSON.stringify(data));
 
     
     renderProductChildren();
