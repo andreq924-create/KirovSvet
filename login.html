@@ -235,12 +235,12 @@
         <form id="loginForm" autocomplete="off" novalidate>
             <div class="field">
                 <label for="username">Имя пользователя:</label>
-                <input type="text" id="username" autocomplete="username" required>
+                <input type="text" id="username" required>
             </div>
 
             <div class="field">
                 <label for="password">Пароль:</label>
-                <input type="password" id="password" autocomplete="current-password" required>
+                <input type="password" id="password" required>
             </div>
 
             <button type="submit" id="submitBtn">Войти</button>
@@ -274,11 +274,12 @@ function showModal(message, type = "error") {
     modal.style.display = "flex";
 }
 
-function closeModal() {
+ function closeModal() {
     document.getElementById('modal').style.display = "none";
 }
 
 loginForm.addEventListener('submit', async (event) => {
+
     event.preventDefault();
 
     const username = document.getElementById('username').value.trim();
@@ -289,8 +290,11 @@ loginForm.addEventListener('submit', async (event) => {
         return;
     }
 
-    let failedAttempts = parseInt(sessionStorage.getItem('failedAttempts')) || 0;
-    let blockTime = parseInt(sessionStorage.getItem('blockTime')) || 0;
+    let failedAttempts =
+        parseInt(sessionStorage.getItem('failedAttempts')) || 0;
+
+    let blockTime =
+        parseInt(sessionStorage.getItem('blockTime')) || 0;
 
     const currentTime = Date.now();
 
@@ -301,6 +305,7 @@ loginForm.addEventListener('submit', async (event) => {
     }
 
     try {
+
         const response = await fetch('/api/login', {
             method: 'POST',
             headers: {
@@ -312,30 +317,25 @@ loginForm.addEventListener('submit', async (event) => {
             })
         });
 
-        let data = {};
-        try {
-            data = await response.json();
-        } catch {
-            data = { success: false, message: 'Ошибка ответа сервера' };
-        }
+        const data = await response.json();
 
         if (response.ok && data.success) {
-            sessionStorage.removeItem('failedAttempts');
-            sessionStorage.removeItem('blockTime');
 
             sessionStorage.setItem('username', data.username);
-            sessionStorage.setItem('role', data.role);
+			sessionStorage.setItem('role', data.role);
 
             window.location.href =
                 data.role === 'admin'
-                    ? 'admin_dashboard.html'
-                    : 'user_dashboard.html';
+                ? 'admin_dashboard.html'
+                : 'user_dashboard.html';
 
         } else {
+
             failedAttempts++;
             sessionStorage.setItem('failedAttempts', failedAttempts);
 
             if (failedAttempts >= 5) {
+
                 blockTime = currentTime + 10000;
                 sessionStorage.setItem('blockTime', blockTime);
 
@@ -343,7 +343,9 @@ loginForm.addEventListener('submit', async (event) => {
                     'Превышено количество попыток! Блокировка на 10 секунд.',
                     'error'
                 );
+
             } else {
+
                 showModal(
                     data.message || 'Неверный логин или пароль!',
                     'error'

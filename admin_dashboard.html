@@ -561,7 +561,15 @@ table button:hover{
 
    <label>Изменить количество:</label>
   <div style="display:flex; gap:5px; align-items:center; margin-bottom:10px;">
-      <input type="number" id="childQtyChange" value="1" style="width:60px; padding:5px; border-radius:4px; border:1px solid #ccc;">
+<input
+    type="text"
+    id="childQtyChange"
+    value="1"
+    inputmode="numeric"
+    style="width:60px; padding:5px; border-radius:4px; border:1px solid #ccc;"
+    oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+    onblur="if(this.value==='' || this.value==='0'){this.value=1}"
+>
       <button onclick="changeChildQty(true)">➕ Добавить</button>
       <button onclick="changeChildQty(false)">➖ Вычесть</button>
   </div>
@@ -1435,6 +1443,17 @@ function removeSelected(index){
 }
 function saveRequestChanges(){
 
+    const problemText = document.getElementById('editProblemDescription').value.trim();
+
+    const hasItems =
+        currentRequestCopy.items &&
+        currentRequestCopy.items.length > 0;
+
+    if (!hasItems && !problemText) {
+        alert('Нету ни товара ни проблемы');
+        return;
+    }
+
     let requests = JSON.parse(localStorage.getItem('requests')) || [];
     let warehouse = JSON.parse(localStorage.getItem('warehouse')) || [];
 
@@ -1915,6 +1934,8 @@ function changeChildQty(add = true) {
     const delta = parseInt(document.getElementById('childQtyChange').value) || 0;
     if (delta === 0) return;
 
+
+
     const data = JSON.parse(localStorage.getItem('warehouse')) || [];
     const parent = data[editIndex];
     const child = parent.children[currentChildIndex];
@@ -1928,7 +1949,7 @@ function changeChildQty(add = true) {
     document.getElementById('childEditQty').value = child.qty;
 
    
-    localStorage.setItem('warehouse', JSON.stringify(data));
+ 
 
     
     renderProductChildren();
@@ -2718,6 +2739,22 @@ async function saveRequestsAll(requestsData) {
         console.error('Ошибка:', err);
       
     }
+}
+const qtyInput = document.getElementById('childQtyChange');
+
+if (qtyInput) {
+
+    // только цифры
+    qtyInput.addEventListener('input', () => {
+        qtyInput.value = qtyInput.value.replace(/[^0-9]/g, '');
+    });
+
+    // ставим 1 только когда вышли из поля
+    qtyInput.addEventListener('blur', () => {
+        if (qtyInput.value.trim() === '' || qtyInput.value === '0') {
+            qtyInput.value = 1;
+        }
+    });
 }
 </script>
 </body>
