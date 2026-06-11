@@ -153,5 +153,11 @@
         "img": "images/Светильник Gelllious 50.png"
       }
     ]
+  },
+  {
+    "name": "asdasd",
+    "category": "light",
+    "img": "images/светильник Cobra 30 3.png",
+    "children": []
   }
 ]
