@@ -824,18 +824,42 @@
             window.location.href = "register.html";
         }
 
-        async function loadWarehouse() {
-            try {
-                const response = await fetch('./warehouse.json');
-                const data = await response.json();
-                localStorage.setItem(warehouseKey, JSON.stringify(data));
-                loadGrid();
-            } catch {
-                const warehouseLS = localStorage.getItem(warehouseKey);
-                if (warehouseLS) loadGrid();
-                else alert("Данные недоступны!");
-            }
-        }
+async function loadWarehouse() {
+    try {
+        const response = await fetch('/api/getWarehouse');
+        const result = await response.json();
+
+        if (result.error) throw new Error(result.error);
+
+        const warehouse = result.warehouse || [];
+
+        // Фильтруем только категорию "pole"
+        currentPoles = warehouse.filter(item => item.category === 'pole');
+
+        // Очищаем сетку и заголовок
+        grid.innerHTML = '';
+        document.querySelector('h2').textContent = 'Опоры';
+
+        // Генерируем карточки
+        currentPoles.forEach((item, index) => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.style.animationDelay = `${index * 0.06}s`;
+
+            card.innerHTML = `
+                <img src="${item.img}">
+                <h3>${item.name}</h3>
+            `;
+
+            card.onclick = () => showChildren(index);
+            grid.appendChild(card);
+        });
+
+    } catch (err) {
+        console.error('Ошибка загрузки склада с API:', err);
+        alert('Ошибка загрузки склада: ' + err.message);
+    }
+}
 
         function loadGrid() {
             grid.classList.remove("details-mode");
