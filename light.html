@@ -763,78 +763,74 @@
         </div>
     </div>
 
-  <script>
-    const grid = document.getElementById("grid");
-    const menuBtn = document.getElementById("menuBtn");
-    const backBtn = document.getElementById("backBtn");
-    const urlParams = new URLSearchParams(window.location.search);
-    const isAdmin = urlParams.get('forAdmin') === '1';
-    const fromIndex = urlParams.get('from') === 'index';
+    <script>
+        const warehouseKey = 'warehouse';
+        const grid = document.getElementById("grid");
+        const menuBtn = document.getElementById("menuBtn");
+        const backBtn = document.getElementById("backBtn");
+        const urlParams = new URLSearchParams(window.location.search);
+        const isAdmin = urlParams.get('forAdmin') === '1';
+        const fromIndex = urlParams.get('from') === 'index';
 
-    let currentPoles = [];
-    let backAction = null;
+        let currentLights = [];
+        let backAction = null;
 
-    backBtn.onclick = () => {
-        if (typeof backAction === "function") backAction();
-    };
+        backBtn.onclick = () => {
+            if (typeof backAction === "function") backAction();
+        };
 
-    function goToMenu() {
-        window.location.href = "index.html";
-    }
+        function goToMenu() {
+            window.location.href = "index.html";
+        }
 
-    function showMenuBtn(show) {
-        menuBtn.classList.toggle("hidden", !show);
-    }
+        function showMenuBtn(show) {
+            menuBtn.classList.toggle("hidden", !show);
+        }
 
-    function showBackBtn(show) {
-        backBtn.classList.toggle("hidden", !show);
-    }
+        function showBackBtn(show) {
+            backBtn.classList.toggle("hidden", !show);
+        }
 
-    function isUserLoggedIn() {
-        return sessionStorage.getItem("username") !== null;
-    }
+        function isUserLoggedIn() {
+            return sessionStorage.getItem("username") !== null;
+        }
 
-    function openAuthModal() {
-        document.getElementById("authModal").classList.remove("hidden");
-    }
+        function openAuthModal() {
+            document.getElementById("authModal").classList.remove("hidden");
+        }
 
-    function closeAuthModal() {
-        document.getElementById("authModal").classList.add("hidden");
-    }
+        function closeAuthModal() {
+            document.getElementById("authModal").classList.add("hidden");
+        }
 
-    function goToLogin() {
-        window.location.href = "login.html";
-    }
+        function goToLogin() {
+            window.location.href = "login.html";
+        }
 
-    function goToRegister() {
-        window.location.href = "register.html";
-    }
+        function goToRegister() {
+            window.location.href = "register.html";
+        }
 
-   async function loadWarehouse() {
+        async function loadWarehouse() {
     try {
         const response = await fetch('/api/getWarehouse');
         const result = await response.json();
 
         if (result.error) throw new Error(result.error);
 
-        const warehouse = result.warehouse || [];
+        const data = result.warehouse || [];
 
-        // Только категория "pole"
-        currentPoles = warehouse.filter(item => item.category === 'pole');
-
+        // Не используем localStorage, сразу рендерим
+        currentLights = data.filter(item => item.category === 'light');
         grid.innerHTML = '';
-        document.querySelector('h2').textContent = 'Опоры';
 
-        currentPoles.forEach((item, index) => {
+        document.querySelector('h2').textContent = 'Светильники';
+
+        currentLights.forEach((item, index) => {
             const card = document.createElement('div');
             card.className = 'card';
             card.style.animationDelay = `${index * 0.06}s`;
-
-            card.innerHTML = `
-                <img src="${item.img}">
-                <h3>${item.name}</h3>
-            `;
-
+            card.innerHTML = `<img src="${item.img}"><h3>${item.name}</h3>`;
             card.onclick = () => showChildren(index);
             grid.appendChild(card);
         });
@@ -845,166 +841,164 @@
     }
 }
 
-    function loadGrid() {
-        grid.classList.remove("details-mode");
-        showMenuBtn(true);
-        showBackBtn(false);
-        backAction = null;
+        function loadGrid() {
+            grid.classList.remove("details-mode");
+            showMenuBtn(true);
+            showBackBtn(false);
+            backAction = null;
 
-        grid.innerHTML = '';
+            const warehouse = JSON.parse(localStorage.getItem(warehouseKey)) || [];
+            currentLights = warehouse.filter(item => item.category === 'light');
+            grid.innerHTML = '';
 
-        document.querySelector('h2').textContent = 'Опоры';
+            document.querySelector('h2').textContent = 'Светильник';
 
-        currentPoles.forEach((item, index) => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.style.animationDelay = `${index * 0.06}s`;
-            card.innerHTML = `<img src="${item.img}"><h3>${item.name}</h3>`;
-            card.onclick = () => showChildren(index);
-            grid.appendChild(card);
-        });
-    }
-
-    function showChildren(parentIndex) {
-        grid.classList.remove("details-mode");
-        showMenuBtn(false);
-        showBackBtn(true);
-        backAction = loadGrid;
-
-        const parent = currentPoles[parentIndex];
-        const children = parent.children || [];
-
-        document.querySelector('h2').textContent = `Длина ${parent.name}`;
-
-        let html = `<div class="size-grid">`;
-
-        children.forEach((child, childIndex) => {
-            html += `
-                <div class="card"
-                     style="animation-delay: ${childIndex * 0.06}s"
-                     onclick="showProductDetails(${parentIndex}, ${childIndex})">
-                    <img src="${child.img || parent.img}">
-                    <h3>${child.name}</h3>
-                    <span class="qty-badge">${child.qty}</span>
-                </div>`;
-        });
-
-        html += `</div>`;
-        grid.innerHTML = html;
-    }
-
-    function showProductDetails(parentIndex, childIndex) {
-        grid.classList.add("details-mode");
-        showMenuBtn(false);
-        showBackBtn(true);
-        backAction = () => showChildren(parentIndex);
-
-        const parent = currentPoles[parentIndex];
-        const child = parent.children[childIndex];
-
-        let infoRowsHTML = '';
-        document.querySelector('h2').textContent = `${child.name}`;
-
-        if (child.info) {
-            child.info.split('\n').forEach(line => {
-                if (!line.trim()) return;
-                const parts = line.split(':');
-                if (parts.length >= 2) {
-                    infoRowsHTML += `<tr><td>${parts[0].trim()}</td><td>${parts.slice(1).join(':').trim()}</td></tr>`;
-                } else {
-                    infoRowsHTML += `<tr><td colspan="2">${line.trim()}</td></tr>`;
-                }
+            currentLights.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.style.animationDelay = `${index * 0.06}s`;
+                card.innerHTML = `<img src="${item.img}"><h3>${item.name}</h3>`;
+                card.onclick = () => showChildren(index);
+                grid.appendChild(card);
             });
-        } else {
-            infoRowsHTML = '<tr><td colspan="2">Информация отсутствует</td></tr>';
         }
 
-        grid.innerHTML = `
-            <div class="details-container">
-                <div class="image">
-                    <img src="${child.img || parent.img}">
-                </div>
+        function showChildren(parentIndex) {
+            grid.classList.remove("details-mode");
+            showMenuBtn(false);
+            showBackBtn(true);
+            backAction = loadGrid;
 
-                <div class="info">
-                    <div class="detail-top">
-                        <h3 class="detail-name">${child.name}</h3>
-                        <div class="detail-stock">В наличии: ${child.qty}</div>
+            const parent = currentLights[parentIndex];
+            const children = parent.children || [];
+
+            let html = `<div class="size-grid">`;
+			document.querySelector('h2').textContent = `Потребляемая мощность ${parent.name}`;
+            children.forEach((child, childIndex) => {
+                html += `
+                    <div class="card"
+                         style="animation-delay: ${childIndex * 0.06}s"
+                         onclick="showProductDetails(${parentIndex}, ${childIndex})">
+                        <img src="${child.img || parent.img}">
+                        <h3>${child.name}</h3>
+                        <span class="qty-badge">${child.qty}</span>
+                    </div>`;
+            });
+
+            html += `</div>`;
+            grid.innerHTML = html;
+        }
+
+        function showProductDetails(parentIndex, childIndex) {
+            grid.classList.add("details-mode");
+            showMenuBtn(false);
+            showBackBtn(true);
+            backAction = () => showChildren(parentIndex);
+
+            const parent = currentLights[parentIndex];
+            const child = parent.children[childIndex];
+
+            let infoRowsHTML = '';
+            document.querySelector('h2').textContent = `${child.name}`;
+
+            if (child.info) {
+                child.info.split('\n').forEach(line => {
+                    if (!line.trim()) return;
+                    const parts = line.split(':');
+                    if (parts.length >= 2) {
+                        infoRowsHTML += `<tr><td>${parts[0].trim()}</td><td>${parts.slice(1).join(':').trim()}</td></tr>`;
+                    } else {
+                        infoRowsHTML += `<tr><td colspan="2">${line.trim()}</td></tr>`;
+                    }
+                });
+            } else {
+                infoRowsHTML = '<tr><td colspan="2">Информация отсутствует</td></tr>';
+            }
+
+            grid.innerHTML = `
+                <div class="details-container">
+                    <div class="image">
+                        <img src="${child.img || parent.img}">
                     </div>
 
-                    <div class="detail-section-title">Информация</div>
+                    <div class="info">
+                        <div class="detail-top">
+                            <h3 class="detail-name">${child.name}</h3>
+                            <div class="detail-stock">В наличии: ${child.qty}</div>
+                        </div>
 
-                    <table>
-                        ${infoRowsHTML}
-                    </table>
+                        <div class="detail-section-title">Информация</div>
 
-                    <button onclick="handleAction(${parentIndex}, ${childIndex})">
-                        ${fromIndex ? "Оставить заявку" : "Выбрать"}
-                    </button>
+                        <table>
+                            ${infoRowsHTML}
+                        </table>
+
+                        <button onclick="handleAction(${parentIndex}, ${childIndex})">
+                            ${fromIndex ? "Оставить заявку" : "Выбрать"}
+                        </button>
+                    </div>
                 </div>
-            </div>
-        `;
-    }
-
-    function handleAction(parentIndex, childIndex) {
-        const parent = currentPoles[parentIndex];
-        if (!parent) return alert("Ошибка: родительский элемент не найден");
-
-        const child = parent.children?.[childIndex];
-        if (!child) return alert("Ошибка: дочерний элемент не найден");
-
-        if (!isUserLoggedIn()) {
-            openAuthModal();
-            return;
+            `;
         }
 
-        if (child.qty < 1) {
-            alert("Нет в наличии");
-            return;
-        }
+        function handleAction(parentIndex, childIndex) {
+            const parent = currentLights[parentIndex];
+            if (!parent) return alert("Ошибка: родительский элемент не найден");
 
-        let selected = JSON.parse(localStorage.getItem("selectedItems")) || [];
-        let exist = selected.find(i => i.name === child.name);
+            const child = parent.children?.[childIndex];
+            if (!child) return alert("Ошибка: дочерний элемент не найден");
 
-        if (exist) exist.qty += 1;
-        else selected.push({ name: child.name, price: child.price, qty: 1, img: parent.img });
+            if (!isUserLoggedIn()) {
+                openAuthModal();
+                return;
+            }
 
-        localStorage.setItem("selectedItems", JSON.stringify(selected));
+            if (fromIndex) {
+                localStorage.setItem("requestItem", JSON.stringify({
+                    name: child.name,
+                    price: child.price,
+                    img: child.img || parent.img
+                }));
 
-        if (fromIndex) {
+                window.location.href = "submit_request.html";
+                return;
+            }
+
+            if (child.qty < 1) {
+                alert("Нет в наличии");
+                return;
+            }
+
             let selected = JSON.parse(localStorage.getItem("selectedItems")) || [];
             let exist = selected.find(i => i.name === child.name);
 
             if (exist) exist.qty += 1;
-            else selected.push({ name: child.name, price: child.price, qty: 1, img: child.img || parent.img });
+            else selected.push({ name: child.name, price: child.price, qty: 1, img: parent.img });
 
             localStorage.setItem("selectedItems", JSON.stringify(selected));
 
-            window.location.href = "submit_request.html";
-            return;
-        }
+            if (isAdmin) {
+                let request = JSON.parse(localStorage.getItem("currentAdminRequest")) || {};
+                request.items = Array.isArray(request.items) ? request.items : [];
 
-        if (isAdmin) {
-            let request = JSON.parse(localStorage.getItem("currentAdminRequest")) || {};
-            request.items = Array.isArray(request.items) ? request.items : [];
+                let exist2 = request.items.find(i => i.name === child.name);
 
-            let exist2 = request.items.find(i => i.name === child.name);
+                if (exist2) exist2.qty += 1;
+                else request.items.push({ name: child.name, price: child.price, qty: 1, img: parent.img });
 
-            if (exist2) exist2.qty += 1;
-            else request.items.push({ name: child.name, price: child.price, qty: 1, img: parent.img });
+                localStorage.setItem("currentAdminRequest", JSON.stringify(request));
+                alert(`Добавлено: ${child.name}`);
 
-            localStorage.setItem("currentAdminRequest", JSON.stringify(request));
-            alert(`Добавлено: ${child.name}`);
-
-            if (window.opener && typeof window.opener.refreshAdminUI === "function") {
-                window.opener.refreshAdminUI();
+                if (window.opener && typeof window.opener.refreshAdminUI === "function") {
+                    window.opener.refreshAdminUI();
+                }
             }
+
+            window.close();
+            loadGrid();
         }
 
-        window.close();
-        loadGrid();
-    }
-
-    loadWarehouse();
-</script>
+        loadWarehouse();
+    </script>
 </body>
 </html>
