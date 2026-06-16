@@ -1,38 +1,17 @@
 [
   {
-    "username": "Pavel",
-    "date": "14.06.2026, 14:51:01",
-    "lastname": "Иванов",
-    "firstname": "Иван",
+    "username": "wriz_73",
+    "date": "16.06.2026, 08:43:57",
+    "lastname": "gfdgf",
+    "firstname": "hgfd",
     "phone": "+7(999)999-99-99",
-    "email": "fds@fsd.ru",
-    "address": "8/1, улица Чапаева, Ленинский район, Киров, городской округ Киров, Кировская область,",
+    "email": "enum43@gmail.com",
+    "address": "Spandauer Straße, Nikolaiviertel, Spandauer Vorstadt, Митте, Берлин, 10178, Германия",
     "type": "repair",
-    "problemDescription": "fgdsgfsgdf",
+    "problemDescription": "hgfdhg",
     "items": [],
     "status": "Новая",
-    "createdAt": "2026-06-14T11:51:01.785Z",
-    "expectedCallTime": "2026-06-14T11:56:01.785Z"
-  },
-  {
-    "username": "Pavel",
-    "date": "14.06.2026, 15:14:52",
-    "lastname": "Иванов",
-    "firstname": "Иван",
-    "phone": "+7(999)999-99-99",
-    "email": "fds@fsd.ru",
-    "address": "Spandauer Straße, Nikolaiviertel, Spandauer Vorstadt, Митте, Берлин, 10178, Германия",
-    "type": "both",
-    "problemDescription": "",
-    "items": [
-      {
-        "name": "Поталочный светильник Street 30",
-        "qty": 1,
-        "img": "images/Светильники Street.png"
-      }
-    ],
-    "status": "Новая",
-    "createdAt": "2026-06-14T12:14:52.621Z",
-    "expectedCallTime": "2026-06-14T12:19:52.621Z"
+    "createdAt": "2026-06-16T05:43:57.176Z",
+    "expectedCallTime": "2026-06-16T05:48:57.176Z"
   }
 ]
