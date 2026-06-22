@@ -10,9 +10,11 @@
     "type": "repair",
     "problemDescription": "hgfdhg",
     "items": [],
-    "status": "Новая",
+    "status": "В процессе",
     "createdAt": "2026-06-16T05:43:57.176Z",
-    "expectedCallTime": "2026-06-16T05:48:57.176Z"
+    "expectedCallTime": "2026-06-16T05:48:57.176Z",
+    "callDate": "2026-06-22",
+    "completionDate": "2026-06-25"
   },
   {
     "username": "wriz_73",
