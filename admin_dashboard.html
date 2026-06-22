@@ -825,7 +825,7 @@ function showTable(name, btn) {
 };
  
 function loadRequests() {
-    const requests = JSON.parse(localStorage.getItem('requests')) || [];
+    const requests = await loadRequestsFromServer();
     const today = new Date().toISOString().split('T')[0];
 
     requests.forEach(r => {
@@ -838,7 +838,7 @@ function loadRequests() {
         }
     });
 
-    localStorage.setItem('requests', JSON.stringify(requests));
+    await saveRequestsAll(requests);
 
     const sortByNewest = (a, b) =>
         new Date(b.createdAt) - new Date(a.createdAt);
@@ -911,16 +911,20 @@ req.items.forEach(item => {
     };
 
      localStorage.setItem('warehouse', JSON.stringify(warehouse));
-    localStorage.setItem('requests', JSON.stringify(requests));
+   await saveRequestsAll(requests);
 
      await saveRequestsAll(requests);
 
     loadWarehouse();
-    loadRequests();
+    await loadRequests();
 }
 
 
-
+async function loadRequestsFromServer() {
+    const res = await fetch('/api/getRequests');
+    const data = await res.json();
+    return data.requests || [];
+}
 
 function openReportPopup() {
     const requests = JSON.parse(localStorage.getItem('requests')) || [];
