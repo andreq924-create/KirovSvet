@@ -826,13 +826,8 @@ function showTable(name, btn) {
  
 async function loadRequests() {
     try {
-        const response = await fetch('/api/getRequests');
-        const result = await response.json();
-
-        if (result.error) throw new Error(result.error);
-
-        const requests = result.requests || [];
-        localStorage.setItem('requests', JSON.stringify(requests));
+        const res = await fetch('/api/getRequests');
+        const requests = await res.json();
 
         const today = new Date().toISOString().split('T')[0];
 
@@ -845,47 +840,6 @@ async function loadRequests() {
                 r.status = 'Завершена';
             }
         });
-
-        localStorage.setItem('requests', JSON.stringify(requests));
-
-        const sortByNewest = (a, b) =>
-            new Date(b.createdAt) - new Date(a.createdAt);
-
-        const newR = requests
-            .filter(r => r.status === 'Новая')
-            .sort(sortByNewest);
-
-        const pendingR = requests
-            .filter(r => r.status === 'В процессе')
-            .sort(sortByNewest);
-
-        const completedR = requests
-            .filter(r => r.status === 'Завершена')
-            .sort(sortByNewest);
-
-        document.getElementById('newRequestsCount').textContent = newR.length;
-        document.getElementById('pendingRequestsCount').textContent = pendingR.length;
-        document.getElementById('completedRequestsCount').textContent = completedR.length;
-
-        renderRequests(newR, 'newRequestsTable');
-        renderRequests(pendingR, 'pendingRequestsTable');
-        renderCompletedByMonth(completedR, 'completedRequestsTable');
-
-        showTable('new');
-    } catch (err) {
-        console.error('Ошибка загрузки заявок:', err);
-        const requests = JSON.parse(localStorage.getItem('requests')) || [];
-        const today = new Date().toISOString().split('T')[0];
-        requests.forEach(r => {
-            if (
-                r.status === 'В процессе' &&
-                r.completionDate &&
-                r.completionDate <= today
-            ) {
-                r.status = 'Завершена';
-            }
-        });
-        localStorage.setItem('requests', JSON.stringify(requests));
 
         const sortByNewest = (a, b) =>
             new Date(b.createdAt) - new Date(a.createdAt);
@@ -903,13 +857,11 @@ async function loadRequests() {
         renderCompletedByMonth(completedR, 'completedRequestsTable');
 
         showTable('new');
+
+    } catch (err) {
+        console.error('Ошибка загрузки заявок:', err);
     }
 }
-
- const workTypeNames = {
-    both: "Установка столбов и освещения",
-    repair: "Ремонт повреждения электрических сетей"
-};
 
 async function returnToPending(createdAt) {
     if (!confirm('Вернуть заявку в "В ожидании"?')) return;
@@ -1477,64 +1429,22 @@ function removeSelected(index){
   currentRequestCopy.items.splice(index,1); 
   renderSelectedItems(); 
 }
-function saveRequestChanges(){
+async function saveRequestChanges() {
 
-    const problemText = document.getElementById('editProblemDescription').value.trim();
+    const res = await fetch('/api/getRequests');
+    let requests = await res.json();
 
-    const hasItems =
-        currentRequestCopy.items &&
-        currentRequestCopy.items.length > 0;
+    const index = requests.findIndex(
+        r => r.createdAt === currentRequestCopy.createdAt
+    );
 
-    if (!hasItems && !problemText) {
-        alert('Нету ни товара ни проблемы');
+    if (index === -1) {
+        alert('Заявка не найдена');
         return;
     }
 
-    let requests = JSON.parse(localStorage.getItem('requests')) || [];
-    let warehouse = JSON.parse(localStorage.getItem('warehouse')) || [];
+    const problemText = document.getElementById('editProblemDescription').value.trim();
 
-    const oldRequest = requests.find(r => r.createdAt === currentRequestCopy.createdAt);
-
-     const index = buildWarehouseIndex(warehouse);
-
- 
-    if (oldRequest && oldRequest.items) {
-        oldRequest.items.forEach(item => {
-            const child = index[item.name];
-            if (child) {
-                child.qty += item.qty || 0;
-            }
-        });
-    }
-
-  
-    if (currentRequestCopy.items) {
-        for (let item of currentRequestCopy.items) {
-            const child = index[item.name];
-
-            if (!child) {
-                alert(`Товар не найден: ${item.name}`);
-                return;
-            }
-
-            if (child.qty < (item.qty || 0)) {
-                alert(`Недостаточно на складе: ${item.name} (осталось ${child.qty})`);
-                return;
-            }
-        }
-    }
-
- 
-    if (currentRequestCopy.items) {
-        currentRequestCopy.items.forEach(item => {
-            const child = index[item.name];
-            if (child) {
-                child.qty -= item.qty || 0;
-            }
-        });
-    }
-
- 
     currentRequestCopy.lastname = document.getElementById('editLastname').value.trim();
     currentRequestCopy.firstname = document.getElementById('editFirstname').value.trim();
     currentRequestCopy.phone = document.getElementById('editPhone').value.trim();
@@ -1543,23 +1453,14 @@ function saveRequestChanges(){
     currentRequestCopy.type = document.getElementById('editWorkType').value.trim();
     currentRequestCopy.callDate = document.getElementById('editCallDate').value;
     currentRequestCopy.completionDate = document.getElementById('editCompletionDate').value;
+    currentRequestCopy.problemDescription = problemText;
 
-    currentRequestCopy.problemDescription =
-        document.getElementById('editProblemDescription').value.trim();
+    requests[index] = currentRequestCopy;
 
- 
-    requests = requests.map(r =>
-        r.createdAt === currentRequestCopy.createdAt ? currentRequestCopy : r
-    );
+    await saveAllRequests(requests);
 
-    localStorage.setItem('requests', JSON.stringify(requests));
-    localStorage.setItem('warehouse', JSON.stringify(warehouse));
-
-     saveAllRequests();
-
-     closePopup();
+    closePopup();
     loadRequests();
-    loadWarehouse();
 }
 
 
@@ -1647,68 +1548,55 @@ function logout() {
   sessionStorage.removeItem('username');
          window.location.href = 'index.html';
 }
-function sendToPending() {
-    if (!currentRequestCopy || !currentRequestCopy.items) return;
+async function sendToPending() {
 
-    // Проверка даты
+    if (!currentRequestCopy?.items) return;
+
     const callDate = document.getElementById('editCallDate').value;
     if (!callDate) {
-        alert('Сначала укажите дату звонка, только потом можно отправить заявку в ожидание.');
-        document.getElementById('editCallDate').focus();
+        alert('Сначала укажи дату');
         return;
     }
 
-    let warehouse = JSON.parse(localStorage.getItem('warehouse')) || [];
-    let missingItems = [];
+    const resReq = await fetch('/api/getRequests');
+    let requests = await resReq.json();
 
-    currentRequestCopy.items.forEach(requestItem => {
-        let parent = warehouse.find(w => w.children?.some(c => c.name === requestItem.name));
-        if (!parent) {
-            missingItems.push(`${requestItem.name} (родитель не найден)`);
-            return;
-        }
+    const resWh = await fetch('/api/getWarehouse');
+    let warehouse = await resWh.json();
 
-        let child = parent.children.find(c => c.name === requestItem.name);
-        if (!child) {
-            missingItems.push(`${requestItem.name} (не найден у родителя)`);
-            return;
-        }
+    const index = requests.findIndex(
+        r => r.createdAt === currentRequestCopy.createdAt
+    );
 
-        if ((child.qty || 0) < (requestItem.qty || 0)) {
-            missingItems.push(`${requestItem.name} (недостаточно на складе: ${child.qty || 0})`);
-        }
-    });
+    if (index === -1) return;
 
-    if (missingItems.length > 0) {
-        alert("Не хватает следующих предметов на складе:\n" + missingItems.join("\n"));
-        return;
-    }
+    requests[index].status = 'В процессе';
 
-    currentRequestCopy.items.forEach(requestItem => {
-        let parent = warehouse.find(w => w.children?.some(c => c.name === requestItem.name));
-        let child = parent.children.find(c => c.name === requestItem.name);
-        child.qty -= requestItem.qty || 0;
-    });
+    await saveAllRequests(requests);
 
-    localStorage.setItem('warehouse', JSON.stringify(warehouse));
-    currentRequestCopy.status = 'В процессе';
-    saveRequestChanges();
-    loadWarehouse();
+    loadRequests();
 }
-function sendToCompleted() {
- 
-    currentRequestCopy.status = 'Завершена';
+async function sendToCompleted() {
 
- 
-    if (!currentRequestCopy.completionDate) {
-        currentRequestCopy.completionDate = new Date().toISOString().split('T')[0];
+    const res = await fetch('/api/getRequests');
+    let requests = await res.json();
+
+    const index = requests.findIndex(
+        r => r.createdAt === currentRequestCopy.createdAt
+    );
+
+    if (index === -1) return;
+
+    requests[index].status = 'Завершена';
+
+    if (!requests[index].completionDate) {
+        requests[index].completionDate =
+            new Date().toISOString().split('T')[0];
     }
 
-   
-    saveRequestChanges();
+    await saveAllRequests(requests);
 
-  
-    saveAllRequests();
+    loadRequests();
 }
 function closePopup(){ document.getElementById('overlay').style.display='none'; currentRequestCopy=null; }
 
@@ -1718,14 +1606,15 @@ async function loadWarehouse() {
     tbody.innerHTML = '';
 
     try {
+        // 1️⃣ Загружаем склад с GitHub через API
         const response = await fetch('/api/getWarehouse');
         const result = await response.json();
 
         if (result.error) throw new Error(result.error);
 
         const data = result.warehouse || [];
-        localStorage.setItem('warehouse', JSON.stringify(data));
 
+        // 2️⃣ Обрабатываем товары с малым количеством
         let lowStockChildren = [];
         data.forEach(item => {
             if (item.children) {
@@ -1778,6 +1667,7 @@ async function loadWarehouse() {
             };
         }
 
+        // 3️⃣ Группировка по категориям
         const categories = { light: "Освещение", pole: "Столбы" };
         Object.keys(categories).forEach(catKey => {
             const items = data.filter(i => i.category === catKey);
@@ -1806,6 +1696,7 @@ async function loadWarehouse() {
                 `;
                 tbody.appendChild(row);
 
+                // Дочерние объекты
                 let childRows = [];
                 if (item.children) {
                     childRows = item.children.map((c, ci) => {
@@ -1845,13 +1736,9 @@ async function loadWarehouse() {
 
     } catch (err) {
         console.error('Ошибка загрузки склада с GitHub:', err);
-        const data = JSON.parse(localStorage.getItem('warehouse')) || [];
-        localStorage.setItem('warehouse', JSON.stringify(data));
-        const tbody = document.querySelector("#warehouseTable tbody");
         tbody.innerHTML = `<tr><td colspan="6" style="color:red;">Ошибка загрузки склада: ${err.message}</td></tr>`;
     }
 }
-
 function editProduct(index) {
     const warehouse = JSON.parse(localStorage.getItem('warehouse')) || [];
     const product = warehouse[index];
@@ -2196,34 +2083,32 @@ function checkItemsBeforeAction(onConfirm) {
 }
 function removeProductChild(i){ productChildren.splice(i,1); renderProductChildren(); }
  
-function deleteRequest() {
+async function deleteRequest() {
     if (!currentRequestCopy) {
-        alert('Нет заявки для удаления');
+        alert('Нет заявки');
         return;
     }
 
-    const requests = JSON.parse(localStorage.getItem('requests')) || [];
-    const index = requests.findIndex(r => r.createdAt === currentRequestCopy.createdAt);
+    const res = await fetch('/api/getRequests');
+    let requests = await res.json();
+
+    const index = requests.findIndex(
+        r => r.createdAt === currentRequestCopy.createdAt
+    );
 
     if (index === -1) {
         alert('Заявка не найдена');
         return;
     }
 
-     if (!confirm('Вы уверены, что хотите удалить эту заявку?')) {
-        return;
-    }
+    if (!confirm('Удалить заявку?')) return;
 
-     requests.splice(index, 1);
-    localStorage.setItem('requests', JSON.stringify(requests));
+    requests.splice(index, 1);
 
-    alert('Заявка удалена');
+    await saveAllRequests(requests);
 
-     closePopup();
-
-     loadRequests();
-		saveAllRequests();
-
+    closePopup();
+    loadRequests();
 }
 async function generateExcelFromRequests(completed) {
   
@@ -2629,14 +2514,14 @@ async function loadRequestsFromFile() {
     try {
         const response = await fetch('requests_all.json');
         if (!response.ok) throw new Error('Файл requests_all.json не найден');
-        const requests = await response.json();
+        const requests = await response.json();  
 
-        localStorage.setItem('requests', JSON.stringify(requests));
-        await saveRequestsAll(requests);
-        loadRequests();
+         localStorage.setItem('requests', JSON.stringify(requests));
+
+         loadRequests();
     } catch (err) {
         alert('Ошибка загрузки заявок: ' + err.message);
-        loadRequests();
+        loadRequests();  
     }
 }
 
@@ -2654,37 +2539,25 @@ async function saveWarehouseToGitHub(updatedData) {
             throw new Error(result.error || 'Ошибка сервера');
         }
 
-        localStorage.setItem('warehouse', JSON.stringify(updatedData));
         console.log('Склад обновлён:', result);
 
     } catch (err) {
         console.error('Ошибка:', err);
         alert('Ошибка сохранения: ' + err.message);
-        throw err;
+        throw err;  
     }
 }
 
  
  
-async function downloadAllRequests() {
-    try {
-        const response = await fetch('/api/getRequests');
-        const result = await response.json();
-        const requests = result.requests || JSON.parse(localStorage.getItem('requests')) || [];
+function downloadAllRequests() {
+    const requests = JSON.parse(localStorage.getItem('requests')) || [];
 
-        const blob = new Blob([JSON.stringify(requests, null, 2)], { type: 'application/json' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'requests_all.json';
-        a.click();
-    } catch (err) {
-        const requests = JSON.parse(localStorage.getItem('requests')) || [];
-        const blob = new Blob([JSON.stringify(requests, null, 2)], { type: 'application/json' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'requests_all.json';
-        a.click();
-    }
+    const blob = new Blob([JSON.stringify(requests, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'requests_all.json';
+    a.click();
 }
  
 function addItemToAdminRequest(item) {
@@ -2701,10 +2574,27 @@ function addItemToAdminRequest(item) {
     renderSelectedItems();  
 }
 
-async function saveAllRequests(requestsData) {
-  const requests = requestsData || JSON.parse(localStorage.getItem('requests')) || [];
-  localStorage.setItem('requests', JSON.stringify(requests));
-  await saveRequestsAll(requests);
+async function saveAllRequests(requests) {
+    try {
+        const res = await fetch('/api/updateRequestsAll', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ requests })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            throw new Error(data.error || 'Ошибка сохранения');
+        }
+
+        return data;
+
+    } catch (err) {
+        console.error('Ошибка сохранения заявок:', err);
+    }
 }
 function refreshAdminUI() {
     if (!currentRequestCopy) return;
@@ -2737,13 +2627,14 @@ async function saveRequestsAll(requestsData) {
 
         if (!response.ok) {
             console.error('Ошибка сервера:', result.error || result);
+            
             return;
         }
 
-        localStorage.setItem('requests', JSON.stringify(requestsData));
         console.log('Заявки обновлены:', result);
     } catch (err) {
         console.error('Ошибка:', err);
+      
     }
 }
 const qtyInput = document.getElementById('childQtyChange');
