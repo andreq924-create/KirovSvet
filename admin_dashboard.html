@@ -825,7 +825,7 @@ function showTable(name, btn) {
 };
  
 function loadRequests() {
-    const requests = await loadRequestsFromServer();
+    const requests = JSON.parse(localStorage.getItem('requests')) || [];
     const today = new Date().toISOString().split('T')[0];
 
     requests.forEach(r => {
@@ -838,7 +838,7 @@ function loadRequests() {
         }
     });
 
-    await saveRequestsAll(requests);
+    localStorage.setItem('requests', JSON.stringify(requests));
 
     const sortByNewest = (a, b) =>
         new Date(b.createdAt) - new Date(a.createdAt);
@@ -911,20 +911,16 @@ req.items.forEach(item => {
     };
 
      localStorage.setItem('warehouse', JSON.stringify(warehouse));
-   await saveRequestsAll(requests);
+    localStorage.setItem('requests', JSON.stringify(requests));
 
      await saveRequestsAll(requests);
 
     loadWarehouse();
-    await loadRequests();
+    loadRequests();
 }
 
 
-async function loadRequestsFromServer() {
-    const res = await fetch('/api/getRequests');
-    const data = await res.json();
-    return data.requests || [];
-}
+
 
 function openReportPopup() {
     const requests = JSON.parse(localStorage.getItem('requests')) || [];
@@ -2515,43 +2511,43 @@ function downloadWarehouse() {
 }
  async function loadWarehouseFromJSON() {
     try {
-        const response = await fetch('./warehouse.json');
-        if (!response.ok) throw new Error('Файл warehouse.json не найден');
-        let data = await response.json();
+        const response = await fetch('/api/getWarehouse');
+        if (!response.ok) throw new Error('Не удалось загрузить склад с GitHub');
+        const result = await response.json();
 
-         data.forEach(item => {
-            if(item.img && !item.img.startsWith('images/')) item.img = `images/${item.img}`;
-            if(item.children && item.children.length > 0){
-                item.children.forEach(c => { 
-                    if(c.img && !c.img.startsWith('images/')) c.img = `images/${c.img}`; 
+        if (result.error) throw new Error(result.error);
+
+        let data = result.warehouse || [];
+
+        data.forEach(item => {
+            if (item.img && !item.img.startsWith('images/')) item.img = `images/${item.img}`;
+            if (item.children && item.children.length > 0) {
+                item.children.forEach(c => {
+                    if (c.img && !c.img.startsWith('images/')) c.img = `images/${c.img}`;
                 });
             }
         });
 
-         localStorage.setItem('warehouse', JSON.stringify(data));
-
-         loadWarehouse();
-
+        localStorage.setItem('warehouse', JSON.stringify(data));
+        loadWarehouse();
     } catch (err) {
         alert('Ошибка загрузки склада: ' + err.message);
-         const localData = localStorage.getItem('warehouse');
-        if(localData) loadWarehouse();
+        const localData = localStorage.getItem('warehouse');
+        if (localData) loadWarehouse();
     }
 }
 
 async function loadRequestsFromJSON() {
-     const localData = localStorage.getItem('requests');
-    if (localData && localData.length > 0) {
-        loadRequests();
-        return;
-    }
-
     try {
-        const response = await fetch('./requests_all.json');
-        if (!response.ok) throw new Error('Файл requests_all.json не найден');
-        const data = await response.json();
+        const response = await fetch('/api/getRequestsAll');
+        if (!response.ok) throw new Error('Не удалось загрузить заявки с GitHub');
+        const result = await response.json();
 
-         if (!Array.isArray(data)) throw new Error('Неверный формат JSON заявок');
+        if (result.error) throw new Error(result.error);
+
+        const data = result.requests || [];
+
+        if (!Array.isArray(data)) throw new Error('Неверный формат JSON заявок');
 
         localStorage.setItem('requests', JSON.stringify(data));
         loadRequests();
@@ -2594,16 +2590,20 @@ window.addEventListener('focus', function () {
 });
 async function loadRequestsFromFile() {
     try {
-        const response = await fetch('requests_all.json');
-        if (!response.ok) throw new Error('Файл requests_all.json не найден');
-        const requests = await response.json();  
+        const response = await fetch('/api/getRequestsAll');
+        if (!response.ok) throw new Error('Не удалось загрузить заявки с GitHub');
+        const result = await response.json();
 
-         localStorage.setItem('requests', JSON.stringify(requests));
+        if (result.error) throw new Error(result.error);
 
-         loadRequests();
+        const requests = result.requests || [];
+        if (!Array.isArray(requests)) throw new Error('Неверный формат JSON заявок');
+
+        localStorage.setItem('requests', JSON.stringify(requests));
+        loadRequests();
     } catch (err) {
         alert('Ошибка загрузки заявок: ' + err.message);
-        loadRequests();  
+        loadRequests();
     }
 }
 
