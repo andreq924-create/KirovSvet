@@ -67,7 +67,9 @@ export default async function handler(req, res) {
       );
     }
 
-    return res.status(200).json(result);
+    return res.status(200).json({
+    requests: result
+});
 
   } catch (err) {
     console.error('SERVER ERROR:', err);
