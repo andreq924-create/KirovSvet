@@ -824,50 +824,86 @@ function showTable(name, btn) {
   document.getElementById('newRequestsBtn').classList.add('active');
 };
  
-function loadRequests() {
-    const requests = JSON.parse(localStorage.getItem('requests')) || [];
-    const today = new Date().toISOString().split('T')[0];
+async function loadRequests() {
+    try {
+        const response = await fetch('/api/getRequests');
+        const result = await response.json();
 
-    requests.forEach(r => {
-        if (
-            r.status === 'В процессе' &&
-            r.completionDate &&
-            r.completionDate <= today
-        ) {
-            r.status = 'Завершена';
-        }
-    });
+        if (result.error) throw new Error(result.error);
 
-    localStorage.setItem('requests', JSON.stringify(requests));
+        const requests = result.requests || [];
+        localStorage.setItem('requests', JSON.stringify(requests));
 
-    const sortByNewest = (a, b) =>
-        new Date(b.createdAt) - new Date(a.createdAt);
+        const today = new Date().toISOString().split('T')[0];
 
-    const newR = requests
-        .filter(r => r.status === 'Новая')
-        .sort(sortByNewest);
+        requests.forEach(r => {
+            if (
+                r.status === 'В процессе' &&
+                r.completionDate &&
+                r.completionDate <= today
+            ) {
+                r.status = 'Завершена';
+            }
+        });
 
-    const pendingR = requests
-        .filter(r => r.status === 'В процессе')
-        .sort(sortByNewest);
+        localStorage.setItem('requests', JSON.stringify(requests));
 
-    const completedR = requests
-        .filter(r => r.status === 'Завершена')
-        .sort(sortByNewest);
+        const sortByNewest = (a, b) =>
+            new Date(b.createdAt) - new Date(a.createdAt);
 
-    document.getElementById('newRequestsCount').textContent = newR.length;
-    document.getElementById('pendingRequestsCount').textContent = pendingR.length;
-    document.getElementById('completedRequestsCount').textContent = completedR.length;
+        const newR = requests
+            .filter(r => r.status === 'Новая')
+            .sort(sortByNewest);
 
-    renderRequests(newR, 'newRequestsTable');
-    renderRequests(pendingR, 'pendingRequestsTable');
+        const pendingR = requests
+            .filter(r => r.status === 'В процессе')
+            .sort(sortByNewest);
 
-    renderCompletedByMonth(
-        completedR,
-        'completedRequestsTable'
-    );
+        const completedR = requests
+            .filter(r => r.status === 'Завершена')
+            .sort(sortByNewest);
 
-    showTable('new');
+        document.getElementById('newRequestsCount').textContent = newR.length;
+        document.getElementById('pendingRequestsCount').textContent = pendingR.length;
+        document.getElementById('completedRequestsCount').textContent = completedR.length;
+
+        renderRequests(newR, 'newRequestsTable');
+        renderRequests(pendingR, 'pendingRequestsTable');
+        renderCompletedByMonth(completedR, 'completedRequestsTable');
+
+        showTable('new');
+    } catch (err) {
+        console.error('Ошибка загрузки заявок:', err);
+        const requests = JSON.parse(localStorage.getItem('requests')) || [];
+        const today = new Date().toISOString().split('T')[0];
+        requests.forEach(r => {
+            if (
+                r.status === 'В процессе' &&
+                r.completionDate &&
+                r.completionDate <= today
+            ) {
+                r.status = 'Завершена';
+            }
+        });
+        localStorage.setItem('requests', JSON.stringify(requests));
+
+        const sortByNewest = (a, b) =>
+            new Date(b.createdAt) - new Date(a.createdAt);
+
+        const newR = requests.filter(r => r.status === 'Новая').sort(sortByNewest);
+        const pendingR = requests.filter(r => r.status === 'В процессе').sort(sortByNewest);
+        const completedR = requests.filter(r => r.status === 'Завершена').sort(sortByNewest);
+
+        document.getElementById('newRequestsCount').textContent = newR.length;
+        document.getElementById('pendingRequestsCount').textContent = pendingR.length;
+        document.getElementById('completedRequestsCount').textContent = completedR.length;
+
+        renderRequests(newR, 'newRequestsTable');
+        renderRequests(pendingR, 'pendingRequestsTable');
+        renderCompletedByMonth(completedR, 'completedRequestsTable');
+
+        showTable('new');
+    }
 }
 
  const workTypeNames = {
@@ -1682,15 +1718,14 @@ async function loadWarehouse() {
     tbody.innerHTML = '';
 
     try {
-        // 1️⃣ Загружаем склад с GitHub через API
         const response = await fetch('/api/getWarehouse');
         const result = await response.json();
 
         if (result.error) throw new Error(result.error);
 
         const data = result.warehouse || [];
+        localStorage.setItem('warehouse', JSON.stringify(data));
 
-        // 2️⃣ Обрабатываем товары с малым количеством
         let lowStockChildren = [];
         data.forEach(item => {
             if (item.children) {
@@ -1743,7 +1778,6 @@ async function loadWarehouse() {
             };
         }
 
-        // 3️⃣ Группировка по категориям
         const categories = { light: "Освещение", pole: "Столбы" };
         Object.keys(categories).forEach(catKey => {
             const items = data.filter(i => i.category === catKey);
@@ -1772,7 +1806,6 @@ async function loadWarehouse() {
                 `;
                 tbody.appendChild(row);
 
-                // Дочерние объекты
                 let childRows = [];
                 if (item.children) {
                     childRows = item.children.map((c, ci) => {
@@ -1812,9 +1845,13 @@ async function loadWarehouse() {
 
     } catch (err) {
         console.error('Ошибка загрузки склада с GitHub:', err);
+        const data = JSON.parse(localStorage.getItem('warehouse')) || [];
+        localStorage.setItem('warehouse', JSON.stringify(data));
+        const tbody = document.querySelector("#warehouseTable tbody");
         tbody.innerHTML = `<tr><td colspan="6" style="color:red;">Ошибка загрузки склада: ${err.message}</td></tr>`;
     }
 }
+
 function editProduct(index) {
     const warehouse = JSON.parse(localStorage.getItem('warehouse')) || [];
     const product = warehouse[index];
@@ -2511,43 +2548,43 @@ function downloadWarehouse() {
 }
  async function loadWarehouseFromJSON() {
     try {
-        const response = await fetch('/api/getWarehouse');
-        if (!response.ok) throw new Error('Не удалось загрузить склад с GitHub');
-        const result = await response.json();
+        const response = await fetch('./warehouse.json');
+        if (!response.ok) throw new Error('Файл warehouse.json не найден');
+        let data = await response.json();
 
-        if (result.error) throw new Error(result.error);
-
-        let data = result.warehouse || [];
-
-        data.forEach(item => {
-            if (item.img && !item.img.startsWith('images/')) item.img = `images/${item.img}`;
-            if (item.children && item.children.length > 0) {
-                item.children.forEach(c => {
-                    if (c.img && !c.img.startsWith('images/')) c.img = `images/${c.img}`;
+         data.forEach(item => {
+            if(item.img && !item.img.startsWith('images/')) item.img = `images/${item.img}`;
+            if(item.children && item.children.length > 0){
+                item.children.forEach(c => { 
+                    if(c.img && !c.img.startsWith('images/')) c.img = `images/${c.img}`; 
                 });
             }
         });
 
-        localStorage.setItem('warehouse', JSON.stringify(data));
-        loadWarehouse();
+         localStorage.setItem('warehouse', JSON.stringify(data));
+
+         loadWarehouse();
+
     } catch (err) {
         alert('Ошибка загрузки склада: ' + err.message);
-        const localData = localStorage.getItem('warehouse');
-        if (localData) loadWarehouse();
+         const localData = localStorage.getItem('warehouse');
+        if(localData) loadWarehouse();
     }
 }
 
 async function loadRequestsFromJSON() {
+     const localData = localStorage.getItem('requests');
+    if (localData && localData.length > 0) {
+        loadRequests();
+        return;
+    }
+
     try {
-        const response = await fetch('/api/getRequests');
-        if (!response.ok) throw new Error('Не удалось загрузить заявки с GitHub');
-        const result = await response.json();
+        const response = await fetch('./requests_all.json');
+        if (!response.ok) throw new Error('Файл requests_all.json не найден');
+        const data = await response.json();
 
-        if (result.error) throw new Error(result.error);
-
-        const data = result.requests || [];
-
-        if (!Array.isArray(data)) throw new Error('Неверный формат JSON заявок');
+         if (!Array.isArray(data)) throw new Error('Неверный формат JSON заявок');
 
         localStorage.setItem('requests', JSON.stringify(data));
         loadRequests();
@@ -2590,16 +2627,12 @@ window.addEventListener('focus', function () {
 });
 async function loadRequestsFromFile() {
     try {
-        const response = await fetch('/api/getRequests');
-        if (!response.ok) throw new Error('Не удалось загрузить заявки с GitHub');
-        const result = await response.json();
-
-        if (result.error) throw new Error(result.error);
-
-        const requests = result.requests || [];
-        if (!Array.isArray(requests)) throw new Error('Неверный формат JSON заявок');
+        const response = await fetch('requests_all.json');
+        if (!response.ok) throw new Error('Файл requests_all.json не найден');
+        const requests = await response.json();
 
         localStorage.setItem('requests', JSON.stringify(requests));
+        await saveRequestsAll(requests);
         loadRequests();
     } catch (err) {
         alert('Ошибка загрузки заявок: ' + err.message);
@@ -2621,25 +2654,37 @@ async function saveWarehouseToGitHub(updatedData) {
             throw new Error(result.error || 'Ошибка сервера');
         }
 
+        localStorage.setItem('warehouse', JSON.stringify(updatedData));
         console.log('Склад обновлён:', result);
 
     } catch (err) {
         console.error('Ошибка:', err);
         alert('Ошибка сохранения: ' + err.message);
-        throw err;  
+        throw err;
     }
 }
 
  
  
-function downloadAllRequests() {
-    const requests = JSON.parse(localStorage.getItem('requests')) || [];
+async function downloadAllRequests() {
+    try {
+        const response = await fetch('/api/getRequests');
+        const result = await response.json();
+        const requests = result.requests || JSON.parse(localStorage.getItem('requests')) || [];
 
-    const blob = new Blob([JSON.stringify(requests, null, 2)], { type: 'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'requests_all.json';
-    a.click();
+        const blob = new Blob([JSON.stringify(requests, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'requests_all.json';
+        a.click();
+    } catch (err) {
+        const requests = JSON.parse(localStorage.getItem('requests')) || [];
+        const blob = new Blob([JSON.stringify(requests, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'requests_all.json';
+        a.click();
+    }
 }
  
 function addItemToAdminRequest(item) {
@@ -2656,9 +2701,10 @@ function addItemToAdminRequest(item) {
     renderSelectedItems();  
 }
 
-function saveAllRequests() {
-  const requests = JSON.parse(localStorage.getItem('requests')) || [];
-  saveRequestsAll(requests);  
+async function saveAllRequests(requestsData) {
+  const requests = requestsData || JSON.parse(localStorage.getItem('requests')) || [];
+  localStorage.setItem('requests', JSON.stringify(requests));
+  await saveRequestsAll(requests);
 }
 function refreshAdminUI() {
     if (!currentRequestCopy) return;
@@ -2691,14 +2737,13 @@ async function saveRequestsAll(requestsData) {
 
         if (!response.ok) {
             console.error('Ошибка сервера:', result.error || result);
-            
             return;
         }
 
+        localStorage.setItem('requests', JSON.stringify(requestsData));
         console.log('Заявки обновлены:', result);
     } catch (err) {
         console.error('Ошибка:', err);
-      
     }
 }
 const qtyInput = document.getElementById('childQtyChange');
