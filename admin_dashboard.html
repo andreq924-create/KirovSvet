@@ -745,6 +745,8 @@ let currentRequestCopy = null;
 let editIndex = null;
 let productChildren = [];  
 let productName, productCategory, productQty;
+window.requestsCache = [];
+window.warehouseCache = [];
 
  
 
@@ -826,9 +828,61 @@ function showTable(name, btn) {
  
 async function loadRequests() {
     try {
-        const res = await fetch('/api/getRequests');
-        const requests = await res.json();
+        const response = await fetch('/api/getRequests');
+        const result = await response.json();
 
+        if (result.error) throw new Error(result.error);
+
+        const requests = Array.isArray(result.requests) ? result.requests : [];
+        window.requestsCache = requests;
+
+        const today = new Date().toISOString().split('T')[0];
+
+        requests.forEach(r => {
+            if (
+                r.status === 'В процессе' &&
+                r.completionDate &&
+                r.completionDate <= today
+            ) {
+                r.status = 'Завершена';
+            }
+        });
+
+        window.requestsCache = requests;
+
+        const sortByNewest = (a, b) =>
+            new Date(b.createdAt) - new Date(a.createdAt);
+
+        const newR = requests
+            .filter(r => r.status === 'Новая')
+            .sort(sortByNewest);
+
+        const pendingR = requests
+            .filter(r => r.status === 'В процессе')
+            .sort(sortByNewest);
+
+        const completedR = requests
+            .filter(r => r.status === 'Завершена')
+            .sort(sortByNewest);
+
+        document.getElementById('newRequestsCount').textContent = newR.length;
+        document.getElementById('pendingRequestsCount').textContent = pendingR.length;
+        document.getElementById('completedRequestsCount').textContent = completedR.length;
+
+        renderRequests(newR, 'newRequestsTable');
+        renderRequests(pendingR, 'pendingRequestsTable');
+
+        renderCompletedByMonth(
+            completedR,
+            'completedRequestsTable'
+        );
+
+        showTable('new');
+    } catch (err) {
+        console.error('Ошибка загрузки заявок:', err);
+        window.requestsCache = window.requestsCache || [];
+
+        const requests = window.requestsCache;
         const today = new Date().toISOString().split('T')[0];
 
         requests.forEach(r => {
@@ -844,9 +898,17 @@ async function loadRequests() {
         const sortByNewest = (a, b) =>
             new Date(b.createdAt) - new Date(a.createdAt);
 
-        const newR = requests.filter(r => r.status === 'Новая').sort(sortByNewest);
-        const pendingR = requests.filter(r => r.status === 'В процессе').sort(sortByNewest);
-        const completedR = requests.filter(r => r.status === 'Завершена').sort(sortByNewest);
+        const newR = requests
+            .filter(r => r.status === 'Новая')
+            .sort(sortByNewest);
+
+        const pendingR = requests
+            .filter(r => r.status === 'В процессе')
+            .sort(sortByNewest);
+
+        const completedR = requests
+            .filter(r => r.status === 'Завершена')
+            .sort(sortByNewest);
 
         document.getElementById('newRequestsCount').textContent = newR.length;
         document.getElementById('pendingRequestsCount').textContent = pendingR.length;
@@ -855,19 +917,20 @@ async function loadRequests() {
         renderRequests(newR, 'newRequestsTable');
         renderRequests(pendingR, 'pendingRequestsTable');
         renderCompletedByMonth(completedR, 'completedRequestsTable');
-
         showTable('new');
-
-    } catch (err) {
-        console.error('Ошибка загрузки заявок:', err);
     }
 }
+
+const workTypeNames = {
+    both: "Установка столбов и освещения",
+    repair: "Ремонт повреждения электрических сетей"
+};
 
 async function returnToPending(createdAt) {
     if (!confirm('Вернуть заявку в "В ожидании"?')) return;
 
-    let requests = JSON.parse(localStorage.getItem('requests')) || [];
-    let warehouse = JSON.parse(localStorage.getItem('warehouse')) || [];
+    let requests = window.requestsCache || [];
+    let warehouse = window.warehouseCache || [];
 
     const index = requests.findIndex(r => r.createdAt === createdAt);
     if (index === -1) return alert('Заявка не найдена');
@@ -898,8 +961,8 @@ req.items.forEach(item => {
         completionDate: null  
     };
 
-     localStorage.setItem('warehouse', JSON.stringify(warehouse));
-    localStorage.setItem('requests', JSON.stringify(requests));
+     window.warehouseCache = warehouse;
+    window.requestsCache = requests;
 
      await saveRequestsAll(requests);
 
@@ -911,7 +974,7 @@ req.items.forEach(item => {
 
 
 function openReportPopup() {
-    const requests = JSON.parse(localStorage.getItem('requests')) || [];
+    const requests = window.requestsCache || [];
     const completed = requests.filter(r => r.status === 'Завершена');
 
     const months = {};
@@ -971,7 +1034,7 @@ async function downloadSelectedReport() {
         return;
     }
 
-    const requests = JSON.parse(localStorage.getItem('requests')) || [];
+    const requests = window.requestsCache || [];
 
     const filtered = requests.filter(r => {
         if (r.status !== 'Завершена' || !r.completionDate) return false;
@@ -1085,14 +1148,14 @@ childRows.forEach(row => {
 function deleteMonth(monthKey) {
     if (!confirm('Удалить ВСЕ заявки этого месяца?')) return;
 
-    let requests = JSON.parse(localStorage.getItem('requests')) || [];
+    let requests = window.requestsCache || [];
 
      requests = requests.filter(r => {
         const key = r.completionDate ? r.completionDate.slice(0, 7) : 'no-date';
         return key !== monthKey;
     });
 
-    localStorage.setItem('requests', JSON.stringify(requests));
+    window.requestsCache = requests;
 
      saveAllRequests();
 
@@ -1224,7 +1287,7 @@ function resetFiltersAndRestoreView() {
     });
 }
 function editRequest(createdAt){
-    let requests = JSON.parse(localStorage.getItem('requests')) || [];
+    let requests = window.requestsCache || [];
     const req = requests.find(r => r.createdAt === createdAt);
     if(!req) return alert('Заявка не найдена');
 
@@ -1313,7 +1376,7 @@ function renderSelectedItems() {
     const div = document.getElementById('selectedItems');
     div.innerHTML = '';
 
-    const warehouse = JSON.parse(localStorage.getItem('warehouse')) || [];
+    const warehouse = window.warehouseCache || [];
 
     const wrapper = document.createElement('div');
     wrapper.style.display = 'flex';
@@ -1429,22 +1492,64 @@ function removeSelected(index){
   currentRequestCopy.items.splice(index,1); 
   renderSelectedItems(); 
 }
-async function saveRequestChanges() {
-
-    const res = await fetch('/api/getRequests');
-    let requests = await res.json();
-
-    const index = requests.findIndex(
-        r => r.createdAt === currentRequestCopy.createdAt
-    );
-
-    if (index === -1) {
-        alert('Заявка не найдена');
-        return;
-    }
+function saveRequestChanges(){
 
     const problemText = document.getElementById('editProblemDescription').value.trim();
 
+    const hasItems =
+        currentRequestCopy.items &&
+        currentRequestCopy.items.length > 0;
+
+    if (!hasItems && !problemText) {
+        alert('Нету ни товара ни проблемы');
+        return;
+    }
+
+    let requests = window.requestsCache || [];
+    let warehouse = window.warehouseCache || [];
+
+    const oldRequest = requests.find(r => r.createdAt === currentRequestCopy.createdAt);
+
+     const index = buildWarehouseIndex(warehouse);
+
+ 
+    if (oldRequest && oldRequest.items) {
+        oldRequest.items.forEach(item => {
+            const child = index[item.name];
+            if (child) {
+                child.qty += item.qty || 0;
+            }
+        });
+    }
+
+  
+    if (currentRequestCopy.items) {
+        for (let item of currentRequestCopy.items) {
+            const child = index[item.name];
+
+            if (!child) {
+                alert(`Товар не найден: ${item.name}`);
+                return;
+            }
+
+            if (child.qty < (item.qty || 0)) {
+                alert(`Недостаточно на складе: ${item.name} (осталось ${child.qty})`);
+                return;
+            }
+        }
+    }
+
+ 
+    if (currentRequestCopy.items) {
+        currentRequestCopy.items.forEach(item => {
+            const child = index[item.name];
+            if (child) {
+                child.qty -= item.qty || 0;
+            }
+        });
+    }
+
+ 
     currentRequestCopy.lastname = document.getElementById('editLastname').value.trim();
     currentRequestCopy.firstname = document.getElementById('editFirstname').value.trim();
     currentRequestCopy.phone = document.getElementById('editPhone').value.trim();
@@ -1453,14 +1558,23 @@ async function saveRequestChanges() {
     currentRequestCopy.type = document.getElementById('editWorkType').value.trim();
     currentRequestCopy.callDate = document.getElementById('editCallDate').value;
     currentRequestCopy.completionDate = document.getElementById('editCompletionDate').value;
-    currentRequestCopy.problemDescription = problemText;
 
-    requests[index] = currentRequestCopy;
+    currentRequestCopy.problemDescription =
+        document.getElementById('editProblemDescription').value.trim();
 
-    await saveAllRequests(requests);
+ 
+    requests = requests.map(r =>
+        r.createdAt === currentRequestCopy.createdAt ? currentRequestCopy : r
+    );
 
-    closePopup();
+    window.requestsCache = requests;
+    window.warehouseCache = warehouse;
+
+     saveAllRequests();
+
+     closePopup();
     loadRequests();
+    loadWarehouse();
 }
 
 
@@ -1548,55 +1662,68 @@ function logout() {
   sessionStorage.removeItem('username');
          window.location.href = 'index.html';
 }
-async function sendToPending() {
+function sendToPending() {
+    if (!currentRequestCopy || !currentRequestCopy.items) return;
 
-    if (!currentRequestCopy?.items) return;
-
+    // Проверка даты
     const callDate = document.getElementById('editCallDate').value;
     if (!callDate) {
-        alert('Сначала укажи дату');
+        alert('Сначала укажите дату звонка, только потом можно отправить заявку в ожидание.');
+        document.getElementById('editCallDate').focus();
         return;
     }
 
-    const resReq = await fetch('/api/getRequests');
-    let requests = await resReq.json();
+    let warehouse = window.warehouseCache || [];
+    let missingItems = [];
 
-    const resWh = await fetch('/api/getWarehouse');
-    let warehouse = await resWh.json();
+    currentRequestCopy.items.forEach(requestItem => {
+        let parent = warehouse.find(w => w.children?.some(c => c.name === requestItem.name));
+        if (!parent) {
+            missingItems.push(`${requestItem.name} (родитель не найден)`);
+            return;
+        }
 
-    const index = requests.findIndex(
-        r => r.createdAt === currentRequestCopy.createdAt
-    );
+        let child = parent.children.find(c => c.name === requestItem.name);
+        if (!child) {
+            missingItems.push(`${requestItem.name} (не найден у родителя)`);
+            return;
+        }
 
-    if (index === -1) return;
+        if ((child.qty || 0) < (requestItem.qty || 0)) {
+            missingItems.push(`${requestItem.name} (недостаточно на складе: ${child.qty || 0})`);
+        }
+    });
 
-    requests[index].status = 'В процессе';
-
-    await saveAllRequests(requests);
-
-    loadRequests();
-}
-async function sendToCompleted() {
-
-    const res = await fetch('/api/getRequests');
-    let requests = await res.json();
-
-    const index = requests.findIndex(
-        r => r.createdAt === currentRequestCopy.createdAt
-    );
-
-    if (index === -1) return;
-
-    requests[index].status = 'Завершена';
-
-    if (!requests[index].completionDate) {
-        requests[index].completionDate =
-            new Date().toISOString().split('T')[0];
+    if (missingItems.length > 0) {
+        alert("Не хватает следующих предметов на складе:\n" + missingItems.join("\n"));
+        return;
     }
 
-    await saveAllRequests(requests);
+    currentRequestCopy.items.forEach(requestItem => {
+        let parent = warehouse.find(w => w.children?.some(c => c.name === requestItem.name));
+        let child = parent.children.find(c => c.name === requestItem.name);
+        child.qty -= requestItem.qty || 0;
+    });
 
-    loadRequests();
+    window.warehouseCache = warehouse;
+    currentRequestCopy.status = 'В процессе';
+    saveRequestChanges();
+    loadWarehouse();
+}
+function sendToCompleted() {
+ 
+    currentRequestCopy.status = 'Завершена';
+
+ 
+    if (!currentRequestCopy.completionDate) {
+        currentRequestCopy.completionDate = new Date().toISOString().split('T')[0];
+    }
+
+   
+    saveRequestChanges();
+
+  
+    saveAllRequests();
 }
 function closePopup(){ document.getElementById('overlay').style.display='none'; currentRequestCopy=null; }
 
@@ -1740,7 +1867,7 @@ async function loadWarehouse() {
     }
 }
 function editProduct(index) {
-    const warehouse = JSON.parse(localStorage.getItem('warehouse')) || [];
+    const warehouse = window.warehouseCache || [];
     const product = warehouse[index];
 
     if (!product) {
@@ -1796,7 +1923,7 @@ function renderProductChildren() {
 let currentChildIndex = null;
 
 function editChildSettings(parentIndex, childIndex) {
-    const data = JSON.parse(localStorage.getItem('warehouse')) || [];
+    const data = window.warehouseCache || [];
     const child = data[parentIndex].children[childIndex];
     if (!child) return alert('Дочерний объект не найден');
 
@@ -1817,7 +1944,7 @@ function changeChildQty(add = true) {
 
 
 
-    const data = JSON.parse(localStorage.getItem('warehouse')) || [];
+    const data = window.warehouseCache || [];
     const parent = data[editIndex];
     const child = parent.children[currentChildIndex];
 
@@ -1830,7 +1957,7 @@ function changeChildQty(add = true) {
     document.getElementById('childEditQty').value = child.qty;
 
    
-    localStorage.setItem('warehouse', JSON.stringify(data));
+    window.warehouseCache = data;
 
     
     renderProductChildren();
@@ -1843,9 +1970,9 @@ async function deleteChildFromPopup() {
 
     if (!confirm('Удалить дочерний объект?')) return;
 
-    const data = JSON.parse(localStorage.getItem('warehouse')) || [];
+    const data = window.warehouseCache || [];
     data[editIndex].children.splice(currentChildIndex, 1);
-    localStorage.setItem('warehouse', JSON.stringify(data));
+    window.warehouseCache = data;
 
     
     await saveWarehouseToGitHub(data);
@@ -1859,7 +1986,7 @@ async function deleteChildFromPopup() {
 async function saveChildEdit() {
     if (currentChildIndex === null || editIndex === null) return;
 
-    const data = JSON.parse(localStorage.getItem('warehouse')) || [];
+    const data = window.warehouseCache || [];
     const child = data[editIndex].children[currentChildIndex];
 
     child.name = document.getElementById('childEditName').value.trim();
@@ -1872,7 +1999,7 @@ async function saveChildEdit() {
         child.imgFileName = fileInput.files[0].name;
     }
 
-    localStorage.setItem('warehouse', JSON.stringify(data));
+    window.warehouseCache = data;
 
    
     await saveWarehouseToGitHub(data);
@@ -1890,7 +2017,7 @@ function closeChildEditPopup() {
 }
  
 function editChild(parentIndex, childIndex){
-  const data = JSON.parse(localStorage.getItem('warehouse'))||[];
+  const data = window.warehouseCache || [];
   const child = data[parentIndex].children[childIndex];
 
   
@@ -1909,9 +2036,9 @@ function editChild(parentIndex, childIndex){
  async function deleteChild(parentIndex, childIndex){
   if(!confirm('Удалить дочерний объект?')) return;
 
-  const data = JSON.parse(localStorage.getItem('warehouse'))||[];
+  const data = window.warehouseCache || [];
   data[parentIndex].children.splice(childIndex,1);
-  localStorage.setItem('warehouse', JSON.stringify(data));
+  window.warehouseCache = data;
 
    await saveWarehouseToGitHub(data);
 
@@ -2010,7 +2137,7 @@ async function saveProduct() {
     if (fileInput.files[0]) {
         imgPath = `images/${fileInput.files[0].name}`;
     } else if (editIndex !== null) {
-        const data = JSON.parse(localStorage.getItem('warehouse')) || [];
+        const data = window.warehouseCache || [];
         imgPath = data[editIndex].img || '';
     }
 
@@ -2038,14 +2165,14 @@ async function saveProduct() {
     };
 
 
-    const data = JSON.parse(localStorage.getItem('warehouse')) || [];
+    const data = window.warehouseCache || [];
     if (editIndex !== null) {
         data[editIndex] = product;
     } else {
         data.push(product);
     }
 
-    localStorage.setItem('warehouse', JSON.stringify(data));
+    window.warehouseCache = data;
 
      await saveWarehouseToGitHub(data);
 
@@ -2083,32 +2210,34 @@ function checkItemsBeforeAction(onConfirm) {
 }
 function removeProductChild(i){ productChildren.splice(i,1); renderProductChildren(); }
  
-async function deleteRequest() {
+function deleteRequest() {
     if (!currentRequestCopy) {
-        alert('Нет заявки');
+        alert('Нет заявки для удаления');
         return;
     }
 
-    const res = await fetch('/api/getRequests');
-    let requests = await res.json();
-
-    const index = requests.findIndex(
-        r => r.createdAt === currentRequestCopy.createdAt
-    );
+    const requests = window.requestsCache || [];
+    const index = requests.findIndex(r => r.createdAt === currentRequestCopy.createdAt);
 
     if (index === -1) {
         alert('Заявка не найдена');
         return;
     }
 
-    if (!confirm('Удалить заявку?')) return;
+     if (!confirm('Вы уверены, что хотите удалить эту заявку?')) {
+        return;
+    }
 
-    requests.splice(index, 1);
+     requests.splice(index, 1);
+    window.requestsCache = requests;
 
-    await saveAllRequests(requests);
+    alert('Заявка удалена');
 
-    closePopup();
-    loadRequests();
+     closePopup();
+
+     loadRequests();
+		saveAllRequests();
+
 }
 async function generateExcelFromRequests(completed) {
   
@@ -2340,9 +2469,9 @@ function closeProductPopup(){ document.getElementById('productPopup').style.disp
 async function deleteProduct(i){ 
   if(!confirm('Удалить товар?')) return; 
 
-  const data = JSON.parse(localStorage.getItem('warehouse')) || []; 
+  const data = window.warehouseCache || []; 
   data.splice(i,1); 
-  localStorage.setItem('warehouse', JSON.stringify(data)); 
+  window.warehouseCache = data; 
 
    await saveWarehouseToGitHub(data);
 
@@ -2358,7 +2487,7 @@ function openWarehousePopup(forAdmin = false){
  	localStorage.setItem("currentAdminRequest", JSON.stringify(currentRequestCopy));
 	window.open('poles.html?forAdmin=1', '_blank');
   } else {
-     const data = JSON.parse(localStorage.getItem('warehouse'))||[];
+     const data = window.warehouseCache || [];
     const div = document.getElementById('warehouseSelectList');
     div.innerHTML='';
     data.forEach((item,index)=>{
@@ -2420,64 +2549,25 @@ function addItemToRequest(item,index){
   else { currentRequestCopy.items.push({ name:item.name, qty:1, children:item.children ? JSON.parse(JSON.stringify(item.children)) : [] }); }
   decreaseStock(item.name); renderSelectedItems(); closeWarehousePopup();
 }
-function decreaseStock(name){ const data=JSON.parse(localStorage.getItem('warehouse'))||[]; for(let i=0;i<data.length;i++){ if(data[i].name===name){ data[i].qty-=1; break; } } localStorage.setItem('warehouse',JSON.stringify(data)); loadWarehouse(); }
-function returnStock(item){ const data=JSON.parse(localStorage.getItem('warehouse'))||[]; for(let i=0;i<data.length;i++){ if(data[i].name===item.name){ data[i].qty+=item.qty; break; } } localStorage.setItem('warehouse',JSON.stringify(data)); loadWarehouse(); }
+function decreaseStock(name){ const data=window.warehouseCache || []; for(let i=0;i<data.length;i++){ if(data[i].name===name){ data[i].qty-=1; break; } } window.warehouseCache = data; saveWarehouseToGitHub(data); loadWarehouse(); }
+function returnStock(item){ const data=window.warehouseCache || []; for(let i=0;i<data.length;i++){ if(data[i].name===item.name){ data[i].qty+=item.qty; break; } } window.warehouseCache = data; saveWarehouseToGitHub(data); loadWarehouse(); }
 function downloadWarehouse() {
-    const data = JSON.parse(localStorage.getItem('warehouse') || '[]');
+    const data = window.warehouseCache || [];
 
-     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = 'warehouse.json';
     a.click();
 }
- async function loadWarehouseFromJSON() {
-    try {
-        const response = await fetch('./warehouse.json');
-        if (!response.ok) throw new Error('Файл warehouse.json не найден');
-        let data = await response.json();
-
-         data.forEach(item => {
-            if(item.img && !item.img.startsWith('images/')) item.img = `images/${item.img}`;
-            if(item.children && item.children.length > 0){
-                item.children.forEach(c => { 
-                    if(c.img && !c.img.startsWith('images/')) c.img = `images/${c.img}`; 
-                });
-            }
-        });
-
-         localStorage.setItem('warehouse', JSON.stringify(data));
-
-         loadWarehouse();
-
-    } catch (err) {
-        alert('Ошибка загрузки склада: ' + err.message);
-         const localData = localStorage.getItem('warehouse');
-        if(localData) loadWarehouse();
-    }
+ async function loadRequestsFromJSON() {
+    await loadRequests();
 }
 
-async function loadRequestsFromJSON() {
-     const localData = localStorage.getItem('requests');
-    if (localData && localData.length > 0) {
-        loadRequests();
-        return;
-    }
-
-    try {
-        const response = await fetch('./requests_all.json');
-        if (!response.ok) throw new Error('Файл requests_all.json не найден');
-        const data = await response.json();
-
-         if (!Array.isArray(data)) throw new Error('Неверный формат JSON заявок');
-
-        localStorage.setItem('requests', JSON.stringify(data));
-        loadRequests();
-    } catch (err) {
-        alert('Ошибка загрузки заявок: ' + err.message);
-        loadRequests();
-    }
+async function loadWarehouseFromJSON() {
+    await loadWarehouse();
 }
+
 window.addEventListener('DOMContentLoaded', function() {
     productName = document.getElementById('productName');
     productCategory = document.getElementById('productCategory');
@@ -2511,22 +2601,12 @@ window.addEventListener('focus', function () {
     }
 });
 async function loadRequestsFromFile() {
-    try {
-        const response = await fetch('requests_all.json');
-        if (!response.ok) throw new Error('Файл requests_all.json не найден');
-        const requests = await response.json();  
-
-         localStorage.setItem('requests', JSON.stringify(requests));
-
-         loadRequests();
-    } catch (err) {
-        alert('Ошибка загрузки заявок: ' + err.message);
-        loadRequests();  
-    }
+    await loadRequests();
 }
 
 async function saveWarehouseToGitHub(updatedData) {
     try {
+        window.warehouseCache = updatedData;
         const response = await fetch('/api/updateWarehouse', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -2548,10 +2628,9 @@ async function saveWarehouseToGitHub(updatedData) {
     }
 }
 
- 
- 
+
 function downloadAllRequests() {
-    const requests = JSON.parse(localStorage.getItem('requests')) || [];
+    const requests = window.requestsCache || [];
 
     const blob = new Blob([JSON.stringify(requests, null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
@@ -2574,27 +2653,9 @@ function addItemToAdminRequest(item) {
     renderSelectedItems();  
 }
 
-async function saveAllRequests(requests) {
-    try {
-        const res = await fetch('/api/updateRequestsAll', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ requests })
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-            throw new Error(data.error || 'Ошибка сохранения');
-        }
-
-        return data;
-
-    } catch (err) {
-        console.error('Ошибка сохранения заявок:', err);
-    }
+function saveAllRequests() {
+  const requests = window.requestsCache || [];
+  saveRequestsAll(requests);  
 }
 function refreshAdminUI() {
     if (!currentRequestCopy) return;
@@ -2617,6 +2678,7 @@ function refreshAdminUI() {
 }
 async function saveRequestsAll(requestsData) {
     try {
+        window.requestsCache = requestsData;
         const response = await fetch('/api/updateRequestsAll', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
