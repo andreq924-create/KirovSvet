@@ -2539,7 +2539,7 @@ function downloadWarehouse() {
 
 async function loadRequestsFromJSON() {
     try {
-        const response = await fetch('/api/getRequestsAll');
+        const response = await fetch('/api/getRequests');
         if (!response.ok) throw new Error('Не удалось загрузить заявки с GitHub');
         const result = await response.json();
 
@@ -2590,7 +2590,7 @@ window.addEventListener('focus', function () {
 });
 async function loadRequestsFromFile() {
     try {
-        const response = await fetch('/api/getRequestsAll');
+        const response = await fetch('/api/getRequests');
         if (!response.ok) throw new Error('Не удалось загрузить заявки с GitHub');
         const result = await response.json();
 
