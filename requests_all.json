@@ -392,14 +392,16 @@
     "problemDescription": "",
     "items": [
       {
-        "name": "Опроы СТ 3",
+        "name": "Опоры СТ 12",
         "qty": 1,
         "img": "images/oporaCT.png"
       }
     ],
-    "status": "Новая",
+    "status": "В процессе",
     "createdAt": "2026-06-23T14:11:29.091Z",
     "expectedCallTime": "2026-06-23T14:16:29.091Z",
-    "id": 1782223889996
+    "id": 1782223889996,
+    "callDate": "2026-06-24",
+    "completionDate": "2026-06-26"
   }
 ]
