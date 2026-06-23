@@ -2278,7 +2278,6 @@ async function deleteRequest() {
     }
 }
 async function generateExcelFromRequests(completed, selectedMonths = []) {
-
     if (!completed || completed.length === 0) {
         alert("Нет выполненных заявок для отчета");
         return;
@@ -2287,175 +2286,92 @@ async function generateExcelFromRequests(completed, selectedMonths = []) {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Отчет');
 
-    // Заголовок
+    worksheet.views = [{ state: 'frozen', ySplit: 4 }]; // закрепляем верх
+
+    let periodText = selectedMonths.length ? selectedMonths.join(', ') : 'Все месяцы';
+
+    // ===== Заголовок =====
     worksheet.mergeCells('A1:F1');
-
-    let periodText = 'Все выбранные месяцы';
-
-    if (selectedMonths.length) {
-        periodText = selectedMonths.join(', ');
-    }
-
-    worksheet.getCell('A1').value = `Отчет за период: ${periodText}`;
-    worksheet.getCell('A1').font = {
-        bold: true,
-        size: 16
-    };
-    worksheet.getCell('A1').alignment = {
-        horizontal: 'center'
-    };
+    const title = worksheet.getCell('A1');
+    title.value = `Отчет за период: ${periodText}`;
+    title.font = { bold: true, size: 16 };
+    title.alignment = { horizontal: 'center' };
 
     worksheet.addRow([]);
 
-    // Статистика
-    const uniqueClients = new Set(
-        completed.map(r => `${r.lastname || ''} ${r.firstname || ''}`)
-    ).size;
-
-    const detailsCount = {};
-    let totalDetails = 0;
-
-    completed.forEach(r => {
-        if (Array.isArray(r.items)) {
-            r.items.forEach(item => {
-                const qty = Number(item.qty) || 1;
-
-                totalDetails += qty;
-
-                detailsCount[item.name] =
-                    (detailsCount[item.name] || 0) + qty;
-            });
-        }
-    });
-
-    worksheet.addRow(['Статистика']);
-
-    worksheet.addRow([
-        'Общее количество заказов',
-        completed.length
-    ]);
-
-    worksheet.addRow([
-        'Уникальные клиенты',
-        uniqueClients
-    ]);
-
-    worksheet.addRow([
-        'Общее количество деталей',
-        totalDetails
-    ]);
-
-    worksheet.addRow([
-        'Среднее количество деталей на заказ',
-        completed.length
-            ? (totalDetails / completed.length).toFixed(2)
-            : 0
-    ]);
-
-    worksheet.addRow([]);
-
-    // Статистика по типам работ
-    worksheet.addRow(['Типы работ']);
-
-    const workTypeNames = {
-        both: 'Установка столбов и освещения',
-        repair: 'Ремонт повреждения электрических сетей'
-    };
-
-    const workStats = {};
-
-    completed.forEach(r => {
-        const type = workTypeNames[r.type] || r.type || 'Не указан';
-
-        workStats[type] = (workStats[type] || 0) + 1;
-    });
-
-    Object.entries(workStats).forEach(([type, count]) => {
-        worksheet.addRow([type, count]);
-    });
-
-    worksheet.addRow([]);
-
-    // Статистика по материалам
-    worksheet.addRow(['Использованные материалы']);
-
-    Object.entries(detailsCount)
-        .sort((a, b) => b[1] - a[1])
-        .forEach(([name, qty]) => {
-            worksheet.addRow([name, qty]);
-        });
-
-    worksheet.addRow([]);
-    worksheet.addRow(['Выполненные заявки']);
-
-    // Таблица заявок
-    const headerRow = worksheet.addRow([
+    // ===== Колонки =====
+    const header = worksheet.addRow([
         'ФИО',
         'Телефон',
         'Тип работы',
-        'Дата начала',
+        'Предметы',
         'Дата завершения',
-        'Описание',
-        'Материалы'
+        'Комментарий'
     ]);
 
-    headerRow.font = { bold: true };
+    header.eachCell(cell => {
+        cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+        cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FF4F9EE3' }
+        };
+        cell.alignment = { horizontal: 'center', vertical: 'middle' };
+        cell.border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' }
+        };
+    });
 
-    completed.forEach(r => {
+    // ===== Данные =====
+    completed.forEach((r, i) => {
+        const itemsText = (r.items || []).map(it =>
+            `${it.name} x${it.qty}`
+        ).join(', ');
 
-        const materials = (r.items || [])
-            .map(item => {
-                const info = item.info ? ` (${item.info})` : '';
-                return `${item.name} x${item.qty}${info}`;
-            })
-            .join('\n');
-
-        worksheet.addRow([
+        const row = worksheet.addRow([
             `${r.lastname || ''} ${r.firstname || ''}`,
             r.phone || '',
-            workTypeNames[r.type] || r.type || '',
-            r.callDate || '',
+            r.type || '',
+            itemsText,
             r.completionDate || '',
-            r.problemDescription || '',
-            materials
+            r.problemDescription || ''
         ]);
-    });
 
-    // Автоширина колонок
-    worksheet.columns.forEach(column => {
-        let maxLength = 15;
+        row.eachCell(cell => {
+            cell.alignment = { vertical: 'middle', wrapText: true };
+            cell.border = {
+                top: { style: 'thin' },
+                left: { style: 'thin' },
+                bottom: { style: 'thin' },
+                right: { style: 'thin' }
+            };
 
-        column.eachCell({ includeEmpty: true }, cell => {
-            const length = String(cell.value || '').length;
-
-            if (length > maxLength) {
-                maxLength = length;
+            // зебра
+            if (i % 2 === 0) {
+                cell.fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'FFF8FBFF' }
+                };
             }
         });
-
-        column.width = Math.min(maxLength + 3, 60);
     });
 
-    // Перенос строк
-    worksheet.eachRow(row => {
-        row.eachCell(cell => {
-            cell.alignment = {
-                vertical: 'top',
-                wrapText: true
-            };
+    // ===== автоширина =====
+    worksheet.columns.forEach(col => {
+        let max = 10;
+        col.eachCell({ includeEmpty: true }, cell => {
+            const len = cell.value ? cell.value.toString().length : 10;
+            if (len > max) max = len;
         });
+        col.width = Math.min(max + 5, 40);
     });
 
     const buffer = await workbook.xlsx.writeBuffer();
-
-    saveAs(
-        new Blob([
-            buffer
-        ], {
-            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        }),
-        `report_${new Date().toISOString().slice(0, 10)}.xlsx`
-    );
+    saveAs(new Blob([buffer]), 'report.xlsx');
 }
 function closeProductPopup(){ document.getElementById('productPopup').style.display='none'; }
 async function deleteProduct(i){ 
