@@ -229,9 +229,11 @@
         "img": "images/светильник Cobra 30 1.png"
       }
     ],
-    "status": "Новая",
+    "status": "В процессе",
     "createdAt": "2026-05-15T12:51:30.364Z",
-    "expectedCallTime": "2026-05-15T12:56:30.364Z"
+    "expectedCallTime": "2026-05-15T12:56:30.364Z",
+    "callDate": "2026-06-23",
+    "completionDate": "2026-06-26"
   },
   {
     "username": "Олег123",
