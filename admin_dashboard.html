@@ -781,12 +781,14 @@ async function fetchRequestsFromGitHub() {
     return data;
 }
 
-async function saveRequestsAll(requestsData = requestsCache) {
+async function saveRequestsAll(requestsData = getRequestsCache()) {
     try {
         const response = await fetch('/api/updateRequestsAll', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ requests: normalizeRequestsData(requestsData) })
+            body: JSON.stringify({
+                requests: normalizeRequestsData(requestsData)
+            })
         });
 
         const result = await response.json();
@@ -796,6 +798,7 @@ async function saveRequestsAll(requestsData = requestsCache) {
         }
 
         return result;
+
     } catch (err) {
         console.error('Ошибка сохранения заявок:', err);
         throw err;
