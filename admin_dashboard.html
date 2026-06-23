@@ -2291,7 +2291,7 @@ const worksheet = workbook.addWorksheet('Отчет');
 worksheet.insertRow(1, []);
 worksheet.mergeCells('A1:E1');
 
-worksheet.getCell('A1').value = 'Отчет за выбранный период';
+worksheet.getCell('A1').value = `Отчет за период: ${selected.join(', ')}`;
 
 worksheet.getCell('A1').font = {
     bold: true,
