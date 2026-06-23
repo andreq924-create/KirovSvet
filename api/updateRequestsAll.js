@@ -9,13 +9,13 @@ export default async function handler(req, res) {
   const BRANCH = 'main';
 
   try {
-    const { requests } = req.body;
+    const { request } = req.body; // 👈 ОДНА заявка
 
-    if (!requests || !Array.isArray(requests)) {
-      return res.status(400).json({ error: 'Invalid requests data' });
+    if (!request || typeof request !== 'object') {
+      return res.status(400).json({ error: 'Invalid request data' });
     }
 
-    // 1️⃣ Получаем SHA файла
+    // 1️⃣ читаем файл
     const getResponse = await fetch(
       `https://api.github.com/repos/${REPO}/contents/${FILE_PATH}?ref=${BRANCH}`,
       {
@@ -26,15 +26,21 @@ export default async function handler(req, res) {
       }
     );
 
-    if (!getResponse.ok) {
-      const text = await getResponse.text();
-      throw new Error(`Failed to get file info: ${text}`);
+    let requests = [];
+    let sha = null;
+
+    if (getResponse.ok) {
+      const getData = await getResponse.json();
+      sha = getData.sha;
+
+      const content = Buffer.from(getData.content, 'base64').toString();
+      requests = JSON.parse(content || "[]");
     }
 
-    const getData = await getResponse.json();
-    const sha = getData.sha;
+    // 2️⃣ ДОБАВЛЯЕМ новую заявку
+    requests.push(request);
 
-    // 2️⃣ Обновляем файл
+    // 3️⃣ записываем обратно
     const putResponse = await fetch(
       `https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`,
       {
@@ -44,18 +50,13 @@ export default async function handler(req, res) {
           Accept: 'application/vnd.github+json',
         },
         body: JSON.stringify({
-          message: 'Обновление заявок через Vercel API',
+          message: 'Добавлена новая заявка',
           content: Buffer.from(JSON.stringify(requests, null, 2)).toString('base64'),
           sha: sha,
           branch: BRANCH,
         }),
       }
     );
-
-    if (!putResponse.ok) {
-      const text = await putResponse.text();
-      throw new Error(`Failed to update file: ${text}`);
-    }
 
     const putData = await putResponse.json();
 
