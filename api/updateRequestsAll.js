@@ -35,7 +35,7 @@ export default async function handler(req, res) {
     const sha = getData.sha;
 
     // 2️⃣ Обновляем файл
-    const putResponse = await fetch(
+    let putResponse = await fetch(
       `https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`,
       {
         method: 'PUT',
@@ -51,6 +51,38 @@ export default async function handler(req, res) {
         }),
       }
     );
+
+    // 🔥 FIX 409 CONFLICT
+    if (putResponse.status === 409) {
+      const retryGet = await fetch(
+        `https://api.github.com/repos/${REPO}/contents/${FILE_PATH}?ref=${BRANCH}`,
+        {
+          headers: {
+            Authorization: `Bearer ${GITHUB_TOKEN}`,
+            Accept: 'application/vnd.github+json',
+          },
+        }
+      );
+
+      const retryData = await retryGet.json();
+
+      putResponse = await fetch(
+        `https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`,
+        {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${GITHUB_TOKEN}`,
+            Accept: 'application/vnd.github+json',
+          },
+          body: JSON.stringify({
+            message: 'Обновление заявок (retry)',
+            content: Buffer.from(JSON.stringify(requests, null, 2)).toString('base64'),
+            sha: retryData.sha,
+            branch: BRANCH,
+          }),
+        }
+      );
+    }
 
     if (!putResponse.ok) {
       const text = await putResponse.text();

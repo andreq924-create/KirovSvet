@@ -359,7 +359,7 @@
         "img": "images/светильник Cobra 30 1.png"
       }
     ],
-    "status": "Завершена",
+    "status": "В процессе",
     "createdAt": "2026-06-04T16:53:50.348Z",
     "expectedCallTime": "2026-06-04T16:58:50.348Z",
     "callDate": "2026-06-19",
@@ -376,10 +376,8 @@
     "type": "repair",
     "problemDescription": "дерево упало оборвало провод",
     "items": [],
-    "status": "Завершена",
+    "status": "Новая",
     "createdAt": "2026-06-05T08:40:49.340Z",
-    "expectedCallTime": "2026-06-05T08:45:49.340Z",
-    "callDate": "2026-06-23",
-    "completionDate": "2026-06-27"
+    "expectedCallTime": "2026-06-05T08:45:49.340Z"
   }
 ]
