@@ -756,6 +756,12 @@ function getRequestsCache() {
     return normalizeRequestsData(requestsCache).map(item => ({ ...item }));
 }
 
+
+function refreshAll(){
+    loadRequests();
+    loadWarehouse();
+}
+
 function setRequestsCache(data) {
     requestsCache = normalizeRequestsData(data).map(item => ({ ...item }));
 }
@@ -1173,7 +1179,7 @@ function deleteMonth(monthKey) {
     });
 
     setRequestsCache(requests);
-     saveAllRequests();
+     saveRequestsAll(requestsCache);
 
      loadRequests();
 }
@@ -1586,7 +1592,7 @@ function saveRequestChanges(){
     setRequestsCache(requests);
     localStorage.setItem('warehouse', JSON.stringify(warehouse));
 
-     saveAllRequests();
+     saveRequestsAll(requestsCache);
 
      closePopup();
     loadRequests();
@@ -1739,7 +1745,7 @@ function sendToCompleted() {
     saveRequestChanges();
 
   
-    saveAllRequests();
+    saveRequestsAll(requestsCache);
 }
 function closePopup(){ document.getElementById('overlay').style.display='none'; currentRequestCopy=null; }
 
@@ -2252,7 +2258,7 @@ function deleteRequest() {
      closePopup();
 
      loadRequests();
-		saveAllRequests();
+		saveRequestsAll(requestsCache);
 
 }
 async function generateExcelFromRequests(completed) {
@@ -2706,7 +2712,7 @@ function addItemToAdminRequest(item) {
     renderSelectedItems();  
 }
 
-function saveAllRequests() {
+function saveRequestsAll(requestsCache) {
   return saveRequestsAll(getRequestsCache());
 }
 function refreshAdminUI() {
