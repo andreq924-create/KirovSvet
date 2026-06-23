@@ -611,8 +611,13 @@ function confirmSubmission() {
     if (pendingRequest) {
 
        
-   localStorage.setItem('currentRequestToSave', JSON.stringify(pendingRequest));
-saveAllRequests();
+        const storedRequests = JSON.parse(localStorage.getItem("requests")) || [];
+
+        storedRequests.push(pendingRequest);
+
+        localStorage.setItem("requests", JSON.stringify(storedRequests));
+
+        saveAllRequests();
 
  
         const summary = encodeURIComponent(JSON.stringify(pendingRequest));
@@ -863,36 +868,19 @@ const request = {
     return;  
 }
 
-localStorage.setItem('currentRequestToSave', JSON.stringify(request));
+ const storedRequests = JSON.parse(localStorage.getItem("requests")) || [];
+storedRequests.push(request);
+localStorage.setItem("requests", JSON.stringify(storedRequests));
 saveAllRequests();
 
 const summary = encodeURIComponent(JSON.stringify(request));
 window.location.href = `confirmation.html?data=${summary}`;
     }
 
-   async function saveAllRequests() {
-    try {
-        const response = await fetch('/api/getRequests', {
-            cache: 'no-store'
-        });
-        const requests = await response.json();
-
-        if (!Array.isArray(requests)) {
-            throw new Error('Неверный формат заявок');
-        }
-
-        const currentRequest = JSON.parse(localStorage.getItem('currentRequestToSave'));
-        if (currentRequest) {
-            requests.push(currentRequest);
-        }
-
-        await saveRequestsAll(requests);
-        localStorage.removeItem('currentRequestToSave');
-    } catch (err) {
-        console.error('Ошибка сохранения заявок:', err);
-        alert('Не удалось сохранить заявки');
+    function saveAllRequests() {
+        const requests = JSON.parse(localStorage.getItem('requests')) || [];
+        saveRequestsAll(requests);
     }
-}
 
     async function saveRequestsAll(requestsData) {
         try {
@@ -921,22 +909,16 @@ window.location.href = `confirmation.html?data=${summary}`;
     let lastRequestTime = 0;
     let isFullscreen = false;
 
-window.addEventListener("load", function () {
-    // 1. сначала дефолт
-    initMap(58.6035, 49.6678);
-
-    // 2. потом пытаемся уточнить геолокацию
-    navigator.geolocation.getCurrentPosition(
-        function (pos) {
-            map.setView([pos.coords.latitude, pos.coords.longitude], 16);
-            marker.setLatLng([pos.coords.latitude, pos.coords.longitude]);
-            setAddress(pos.coords.latitude, pos.coords.longitude);
-        },
-        function () {
-            console.log("Геолокация недоступна — оставляем Киров");
-        }
-    );
-});
+    window.addEventListener("load", function () {
+        navigator.geolocation.getCurrentPosition(
+            function (pos) {
+                initMap(pos.coords.latitude, pos.coords.longitude);
+            },
+            function () {
+                initMap(52.52, 13.405);
+            }
+        );
+    });
 
     function initMap(lat, lng) {
         document.getElementById("mapWrapper").classList.add("ready");

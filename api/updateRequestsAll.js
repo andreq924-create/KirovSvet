@@ -9,13 +9,13 @@ export default async function handler(req, res) {
   const BRANCH = 'main';
 
   try {
-    const { requests } = req.body;
+    const { request } = req.body; // 🔥 было requests
 
-    if (!requests || !Array.isArray(requests)) {
-      return res.status(400).json({ error: 'Invalid requests data' });
+    if (!request) {
+      return res.status(400).json({ error: 'Invalid request data' });
     }
 
-    // 1️⃣ Получаем SHA файла
+    // 1️⃣ Получаем файл
     const getResponse = await fetch(
       `https://api.github.com/repos/${REPO}/contents/${FILE_PATH}?ref=${BRANCH}`,
       {
@@ -26,15 +26,20 @@ export default async function handler(req, res) {
       }
     );
 
-    if (!getResponse.ok) {
-      const text = await getResponse.text();
-      throw new Error(`Failed to get file info: ${text}`);
+    let fileContent = [];
+
+    if (getResponse.ok) {
+      const getData = await getResponse.json();
+
+      fileContent = JSON.parse(
+        Buffer.from(getData.content, 'base64').toString('utf8')
+      );
     }
 
-    const getData = await getResponse.json();
-    const sha = getData.sha;
+    // 2️⃣ ДОБАВЛЯЕМ новую заявку
+    fileContent.push(request);
 
-    // 2️⃣ Обновляем файл
+    // 3️⃣ Сохраняем обратно
     const putResponse = await fetch(
       `https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`,
       {
@@ -44,9 +49,9 @@ export default async function handler(req, res) {
           Accept: 'application/vnd.github+json',
         },
         body: JSON.stringify({
-          message: 'Обновление заявок через Vercel API',
-          content: Buffer.from(JSON.stringify(requests, null, 2)).toString('base64'),
-          sha: sha,
+          message: 'Добавление новой заявки',
+          content: Buffer.from(JSON.stringify(fileContent, null, 2)).toString('base64'),
+          sha: (await getResponse.json().catch(() => ({})))?.sha,
           branch: BRANCH,
         }),
       }
