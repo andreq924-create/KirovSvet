@@ -397,11 +397,11 @@
         "img": "images/oporaCT.png"
       }
     ],
-    "status": "Завершена",
+    "status": "В процессе",
     "createdAt": "2026-06-23T14:11:29.091Z",
     "expectedCallTime": "2026-06-23T14:16:29.091Z",
     "id": 1782223889996,
     "callDate": "2026-06-24",
-    "completionDate": ""
+    "completionDate": null
   }
 ]
