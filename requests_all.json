@@ -380,6 +380,8 @@
     "items": [],
     "status": "Новая",
     "createdAt": "2026-06-05T08:40:49.340Z",
-    "expectedCallTime": "2026-06-05T08:45:49.340Z"
+    "expectedCallTime": "2026-06-05T08:45:49.340Z",
+    "callDate": "2026-06-23",
+    "completionDate": "2026-06-26"
   }
 ]
