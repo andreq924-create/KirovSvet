@@ -611,13 +611,8 @@ function confirmSubmission() {
     if (pendingRequest) {
 
        
-        const storedRequests = JSON.parse(localStorage.getItem("requests")) || [];
-
-        storedRequests.push(pendingRequest);
-
-        localStorage.setItem("requests", JSON.stringify(storedRequests));
-
-        saveAllRequests();
+   localStorage.setItem('currentRequestToSave', JSON.stringify(pendingRequest));
+saveAllRequests();
 
  
         const summary = encodeURIComponent(JSON.stringify(pendingRequest));
@@ -868,19 +863,36 @@ const request = {
     return;  
 }
 
- const storedRequests = JSON.parse(localStorage.getItem("requests")) || [];
-storedRequests.push(request);
-localStorage.setItem("requests", JSON.stringify(storedRequests));
+localStorage.setItem('currentRequestToSave', JSON.stringify(request));
 saveAllRequests();
 
 const summary = encodeURIComponent(JSON.stringify(request));
 window.location.href = `confirmation.html?data=${summary}`;
     }
 
-    function saveAllRequests() {
-        const requests = JSON.parse(localStorage.getItem('requests')) || [];
-        saveRequestsAll(requests);
+   async function saveAllRequests() {
+    try {
+        const response = await fetch('/api/getRequests', {
+            cache: 'no-store'
+        });
+        const requests = await response.json();
+
+        if (!Array.isArray(requests)) {
+            throw new Error('Неверный формат заявок');
+        }
+
+        const currentRequest = JSON.parse(localStorage.getItem('currentRequestToSave'));
+        if (currentRequest) {
+            requests.push(currentRequest);
+        }
+
+        await saveRequestsAll(requests);
+        localStorage.removeItem('currentRequestToSave');
+    } catch (err) {
+        console.error('Ошибка сохранения заявок:', err);
+        alert('Не удалось сохранить заявки');
     }
+}
 
     async function saveRequestsAll(requestsData) {
         try {
