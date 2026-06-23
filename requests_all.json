@@ -274,7 +274,7 @@
     "items": [
       {
         "name": "Опроы СТ 3",
-        "qty": 1,
+        "qty": 2,
         "img": "images/oporaCT.png"
       },
       {
@@ -285,7 +285,9 @@
     ],
     "status": "Новая",
     "createdAt": "2026-05-16T07:47:20.196Z",
-    "expectedCallTime": "2026-05-16T07:52:20.197Z"
+    "expectedCallTime": "2026-05-16T07:52:20.197Z",
+    "callDate": "",
+    "completionDate": ""
   },
   {
     "username": "Андрей1",
