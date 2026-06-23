@@ -381,5 +381,27 @@
     "expectedCallTime": "2026-06-05T08:45:49.340Z",
     "callDate": "2026-06-27",
     "completionDate": "2026-06-30"
+  },
+  {
+    "username": "дддэ8",
+    "date": "23.06.2026, 19:08:58",
+    "lastname": "Иванов",
+    "firstname": "Иван",
+    "phone": "+7(345)342-14-53",
+    "email": "Ivanov@gmail.com",
+    "address": "43, Московская улица, Дымково, Октябрьский район, Киров, городской округ Киров, Кировская область,",
+    "type": "both",
+    "problemDescription": "",
+    "items": [
+      {
+        "name": "Опроы СТ 3",
+        "qty": 1,
+        "img": "images/oporaCT.png"
+      }
+    ],
+    "status": "Новая",
+    "createdAt": "2026-06-23T16:08:58.697Z",
+    "expectedCallTime": "2026-06-23T16:13:58.697Z",
+    "id": 1782230940319
   }
 ]
