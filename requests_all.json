@@ -401,9 +401,11 @@
         "img": "images/Светильник Gelllious 50.png"
       }
     ],
-    "status": "Новая",
+    "status": "В процессе",
     "createdAt": "2026-06-23T19:16:05.770Z",
     "expectedCallTime": "2026-06-23T19:21:05.770Z",
-    "id": 1782242167150
+    "id": 1782242167150,
+    "callDate": "2026-06-23",
+    "completionDate": "2026-06-26"
   }
 ]
