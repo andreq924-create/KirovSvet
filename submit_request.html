@@ -909,16 +909,22 @@ window.location.href = `confirmation.html?data=${summary}`;
     let lastRequestTime = 0;
     let isFullscreen = false;
 
-    window.addEventListener("load", function () {
-        navigator.geolocation.getCurrentPosition(
-            function (pos) {
-                initMap(pos.coords.latitude, pos.coords.longitude);
-            },
-            function () {
-                initMap(52.52, 13.405);
-            }
-        );
-    });
+window.addEventListener("load", function () {
+    // 1. сначала дефолт
+    initMap(58.6035, 49.6678);
+
+    // 2. потом пытаемся уточнить геолокацию
+    navigator.geolocation.getCurrentPosition(
+        function (pos) {
+            map.setView([pos.coords.latitude, pos.coords.longitude], 16);
+            marker.setLatLng([pos.coords.latitude, pos.coords.longitude]);
+            setAddress(pos.coords.latitude, pos.coords.longitude);
+        },
+        function () {
+            console.log("Геолокация недоступна — оставляем Киров");
+        }
+    );
+});
 
     function initMap(lat, lng) {
         document.getElementById("mapWrapper").classList.add("ready");

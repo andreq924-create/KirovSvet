@@ -229,11 +229,9 @@
         "img": "images/светильник Cobra 30 1.png"
       }
     ],
-    "status": "Завершена",
+    "status": "Новая",
     "createdAt": "2026-05-15T12:51:30.364Z",
-    "expectedCallTime": "2026-05-15T12:56:30.364Z",
-    "callDate": "2026-06-23",
-    "completionDate": "2026-06-26"
+    "expectedCallTime": "2026-05-15T12:56:30.364Z"
   },
   {
     "username": "Олег123",
@@ -285,11 +283,9 @@
         "img": "images/светильник Cobra 30 1.png"
       }
     ],
-    "status": "В процессе",
+    "status": "Новая",
     "createdAt": "2026-05-16T07:47:20.196Z",
-    "expectedCallTime": "2026-05-16T07:52:20.197Z",
-    "callDate": "2026-06-27",
-    "completionDate": null
+    "expectedCallTime": "2026-05-16T07:52:20.197Z"
   },
   {
     "username": "Андрей1",
@@ -367,6 +363,21 @@
     "createdAt": "2026-06-04T16:53:50.348Z",
     "expectedCallTime": "2026-06-04T16:58:50.348Z",
     "callDate": "2026-06-19",
-    "completionDate": null
+    "completionDate": "2026-06-22"
+  },
+  {
+    "username": "Сергей",
+    "date": "05.06.2026, 11:40:49",
+    "lastname": "Иван",
+    "firstname": "Иванович",
+    "phone": "+7(345)345-34-53",
+    "email": "iiivvannn@yndex.ru",
+    "address": "118А, Октябрьский проспект, Ленинский район, Киров, городской округ Киров, Кировская область,",
+    "type": "repair",
+    "problemDescription": "дерево упало оборвало провод",
+    "items": [],
+    "status": "Новая",
+    "createdAt": "2026-06-05T08:40:49.340Z",
+    "expectedCallTime": "2026-06-05T08:45:49.340Z"
   }
 ]
