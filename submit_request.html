@@ -537,8 +537,7 @@
         alert('Вы не вошли в систему.');
         window.location.href = 'login.html';
     }
-    
- 
+
     function goHome() {
         window.location.href = 'index.html';
     }
@@ -564,7 +563,6 @@
             lightBtn.style.display = 'none';
             problemDiv.style.display = 'block';
 
- 
             localStorage.removeItem("selectedItems");
             render();
 
@@ -581,60 +579,77 @@
         const regex = /^[a-zA-Zа-яА-ЯёЁ]+$/;
         return regex.test(name);
     }
-	let pendingRequest = null;  
 
-function checkCompatibility(items) {
-    return items.some(item => {
-        const words = item.name.trim().split(/\s+/);
-        return words.length === 4;
-    });
-}
+    let pendingRequest = null;
 
-function showIncompatibilityModal(message, requestData) {
-    pendingRequest = requestData;  
-    const modal = document.getElementById('incompatibilityModal');
-    const modalText = document.getElementById('incompatibilityModalText');
-
-    modalText.textContent = message;
-    modal.classList.add('show');
-    document.getElementById('pageContent').classList.add('page-dim');
-    modal.setAttribute('aria-hidden', 'false');
-}
-
-function confirmSubmission() {
-    const modal = document.getElementById('incompatibilityModal');
-
-    modal.classList.remove('show');
-    document.getElementById('pageContent').classList.remove('page-dim');
-    modal.setAttribute('aria-hidden', 'true');
-
-    if (pendingRequest) {
-
-       
-        const storedRequests = JSON.parse(localStorage.getItem("requests")) || [];
-
-        storedRequests.push(pendingRequest);
-
-        localStorage.setItem("requests", JSON.stringify(storedRequests));
-
-        saveAllRequests();
-
- 
-        const summary = encodeURIComponent(JSON.stringify(pendingRequest));
-
-        window.location.href = `confirmation.html?data=${summary}`;
+    function checkCompatibility(items) {
+        return items.some(item => {
+            const words = item.name.trim().split(/\s+/);
+            return words.length === 4;
+        });
     }
-}
 
-function cancelSubmission() {
- 
-    const modal = document.getElementById('incompatibilityModal');
-    modal.classList.remove('show');
-    document.getElementById('pageContent').classList.remove('page-dim');
-    modal.setAttribute('aria-hidden', 'true');
+    function showIncompatibilityModal(message, requestData) {
+        pendingRequest = requestData;
+        const modal = document.getElementById('incompatibilityModal');
+        const modalText = document.getElementById('incompatibilityModalText');
 
-    pendingRequest = null;
-}
+        modalText.textContent = message;
+        modal.classList.add('show');
+        document.getElementById('pageContent').classList.add('page-dim');
+        modal.setAttribute('aria-hidden', 'false');
+    }
+
+    async function confirmSubmission() {
+        const modal = document.getElementById('incompatibilityModal');
+
+        modal.classList.remove('show');
+        document.getElementById('pageContent').classList.remove('page-dim');
+        modal.setAttribute('aria-hidden', 'true');
+
+        if (pendingRequest) {
+            const ok = await createRequest(pendingRequest);
+
+            if (ok) {
+                const summary = encodeURIComponent(JSON.stringify(pendingRequest));
+                window.location.href = `confirmation.html?data=${summary}`;
+            }
+        }
+    }
+
+    function cancelSubmission() {
+        const modal = document.getElementById('incompatibilityModal');
+        modal.classList.remove('show');
+        document.getElementById('pageContent').classList.remove('page-dim');
+        modal.setAttribute('aria-hidden', 'true');
+        pendingRequest = null;
+    }
+
+    async function createRequest(request) {
+        try {
+            const response = await fetch('/api/createRequest', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(request)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                console.error('Ошибка сервера:', result.error || result);
+                alert('Не удалось сохранить заявку');
+                return false;
+            }
+
+            console.log('Заявка сохранена:', result);
+            return true;
+        } catch (err) {
+            console.error('Ошибка:', err);
+            alert('Ошибка соединения с сервером');
+            return false;
+        }
+    }
+
     const phoneInput = document.getElementById("phone");
     const phoneMask = new Inputmask("+7(999)999-99-99");
     phoneMask.mask(phoneInput);
@@ -757,8 +772,6 @@ function cancelSubmission() {
         });
     }
 
-
-
     function plus(i) {
         let data = getData();
         data[i].qty++;
@@ -782,22 +795,22 @@ function cancelSubmission() {
         render();
     }
 
- window.addEventListener("focus", render);
-render();
+    window.addEventListener("focus", render);
+    render();
 
- const savedItems = JSON.parse(localStorage.getItem("selectedItems")) || [];
+    const savedItems = JSON.parse(localStorage.getItem("selectedItems")) || [];
 
-if (savedItems.length > 0) {
-    document.getElementById("workType").value = "both";
-    toggleInputs();
-}
+    if (savedItems.length > 0) {
+        document.getElementById("workType").value = "both";
+        toggleInputs();
+    }
 
     function validatePhone(phone) {
         const phonePattern = /^\+7\(\d{3}\)\d{3}-\d{2}-\d{2}$/;
         return phonePattern.test(phone);
     }
 
-    function submitRequest() {
+    async function submitRequest() {
         const items = JSON.parse(localStorage.getItem("selectedItems")) || [];
         const lastname = document.getElementById("lastname").value.trim();
         const firstname = document.getElementById("firstname").value.trim();
@@ -814,7 +827,7 @@ if (savedItems.length > 0) {
             formValid = false;
         }
         if (!firstname || !validateName(firstname)) {
-            showError("firstname", "Имя должно содержать только буквы.");
+            showError("firstname", "Имя должна содержать только буквы.");
             formValid = false;
         }
 
@@ -839,69 +852,40 @@ if (savedItems.length > 0) {
             formValid = false;
         }
 
-if (!formValid) {
-    showErrorModal("Пожалуйста, исправьте ошибки перед отправкой.");
-    return;
-}
+        if (!formValid) {
+            showErrorModal("Пожалуйста, исправьте ошибки перед отправкой.");
+            return;
+        }
 
-const request = {
-    username,
-    date: new Date().toLocaleString(),
-    lastname,
-    firstname,
-    phone,
-    email,
-    address,
-    type: workType,
-    problemDescription,
-    items,
-    status: "Новая",
-    createdAt: new Date().toISOString(),
-    expectedCallTime: new Date(Date.now() + 5 * 60 * 1000).toISOString()
-};
+        const request = {
+            username,
+            date: new Date().toLocaleString(),
+            lastname,
+            firstname,
+            phone,
+            email,
+            address,
+            type: workType,
+            problemDescription,
+            items,
+            status: "Новая",
+            createdAt: new Date().toISOString(),
+            expectedCallTime: new Date(Date.now() + 5 * 60 * 1000).toISOString()
+        };
 
- if (checkCompatibility(items)) {
-    showIncompatibilityModal(
-        "Светильник Street 30 не подходит ни к одной опоре. Он потолочный. Продолжить?",
-        request
-    );
-    return;  
-}
+        if (checkCompatibility(items)) {
+            showIncompatibilityModal(
+                "Светильник Street 30 не подходит ни к одной опоре. Он потолочный. Продолжить?",
+                request
+            );
+            return;
+        }
 
- const storedRequests = JSON.parse(localStorage.getItem("requests")) || [];
-storedRequests.push(request);
-localStorage.setItem("requests", JSON.stringify(storedRequests));
-saveAllRequests();
+        const ok = await createRequest(request);
 
-const summary = encodeURIComponent(JSON.stringify(request));
-window.location.href = `confirmation.html?data=${summary}`;
-    }
-
-    function saveAllRequests() {
-        const requests = JSON.parse(localStorage.getItem('requests')) || [];
-        saveRequestsAll(requests);
-    }
-
-    async function saveRequestsAll(requestsData) {
-        try {
-            const response = await fetch('/api/createRequest', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(requestsData)
-            });
-
-            const result = await response.json();
-
-            if (!response.ok) {
-                console.error('Ошибка сервера:', result.error || result);
-                alert('Не удалось сохранить заявки');
-                return;
-            }
-
-            console.log('Заявки обновлены:', result);
-        } catch (err) {
-            console.error('Ошибка:', err);
-            alert('Ошибка соединения с сервером');
+        if (ok) {
+            const summary = encodeURIComponent(JSON.stringify(request));
+            window.location.href = `confirmation.html?data=${summary}`;
         }
     }
 
@@ -1008,7 +992,6 @@ window.location.href = `confirmation.html?data=${summary}`;
 
             document.getElementById("address").value = address;
             document.getElementById("mapAddress").textContent = address;
-
         } catch (e) {
             const fallback = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
             document.getElementById("address").value = fallback;
