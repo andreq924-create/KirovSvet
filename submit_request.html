@@ -533,6 +533,7 @@
 <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.6/dist/inputmask.min.js"></script>
 <script>
     const username = sessionStorage.getItem('username');
+	let warehouseData = [];
     if (!username) {
         alert('Вы не вошли в систему.');
         window.location.href = 'login.html';
@@ -771,22 +772,61 @@
             result.appendChild(div);
         });
     }
+async function loadWarehouse() {
+    const res = await fetch('/api/getWarehouse');
+    const data = await res.json();
 
-    function plus(i) {
-        let data = getData();
-        data[i].qty++;
-        localStorage.setItem("selectedItems", JSON.stringify(data));
-        render();
-    }
+    warehouseData = data.warehouse || [];
 
-    function minus(i) {
-        let data = getData();
-        if (data[i].qty > 1) {
-            data[i].qty--;
+    render(); // 👈 ДОБАВЬ ЭТО
+}
+loadWarehouse();
+function plus(i) {
+    let data = getData();
+
+    const max = getMaxQty(data[i].name);
+
+    if (data[i].qty >= max) {
+        const items = document.querySelectorAll(".selectedItem");
+        if (items[i]) {
+            items[i].style.border = "1px solid #f44336";
+            items[i].style.boxShadow = "0 0 12px rgba(244,67,54,0.5)";
         }
-        localStorage.setItem("selectedItems", JSON.stringify(data));
-        render();
+
+        showErrorModal("Нельзя больше чем на складе");
+        return;
     }
+
+    data[i].qty++;
+
+    localStorage.setItem("selectedItems", JSON.stringify(data));
+    render();
+}
+
+	function getMaxQty(name) {
+    for (const item of warehouseData) {
+        const found = item.children?.find(c => c.name === name);
+        if (found) return Number(found.qty) || 0;
+    }
+    return 0;
+}
+
+   function minus(i) {
+    let data = getData();
+
+    if (data[i].qty > 1) {
+        data[i].qty--;
+    }
+
+    const items = document.querySelectorAll(".selectedItem");
+    if (items[i] && data[i].qty <= getMaxQty(data[i].name)) {
+        items[i].style.border = "";
+        items[i].style.boxShadow = "";
+    }
+
+    localStorage.setItem("selectedItems", JSON.stringify(data));
+    render();
+}
 
     function removeItem(i) {
         let data = getData();
@@ -880,6 +920,16 @@
             );
             return;
         }
+
+		for (const item of items) {
+    const max = getMaxQty(item.name);
+
+    if (item.qty > max) {
+        showErrorModal(`Ошибка: "${item.name}" максимум ${max}`);
+        return;
+    }
+}
+
 
         const ok = await createRequest(request);
 
