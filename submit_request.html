@@ -581,8 +581,32 @@
         const regex = /^[a-zA-Zа-яА-ЯёЁ]+$/;
         return regex.test(name);
     }
-	let pendingRequest = null;  
 
+	let pendingRequest = null;
+
+    async function loadRequestsAll() {
+        try {
+            const response = await fetch('/api/getRequestsAll', {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (!response.ok) {
+                throw new Error('Не удалось загрузить requests_all');
+            }
+
+            const data = await response.json();
+
+            if (Array.isArray(data)) return data;
+            if (Array.isArray(data.requests)) return data.requests;
+
+            return [];
+        } catch (err) {
+            console.error('Ошибка загрузки requests_all:', err);
+            return [];
+        }
+    }
+    
 function checkCompatibility(items) {
     return items.some(item => {
         const words = item.name.trim().split(/\s+/);
@@ -601,7 +625,7 @@ function showIncompatibilityModal(message, requestData) {
     modal.setAttribute('aria-hidden', 'false');
 }
 
-function confirmSubmission() {
+async function confirmSubmission() {
     const modal = document.getElementById('incompatibilityModal');
 
     modal.classList.remove('show');
@@ -609,22 +633,17 @@ function confirmSubmission() {
     modal.setAttribute('aria-hidden', 'true');
 
     if (pendingRequest) {
+        const storedRequests = await loadRequestsAll();
+        storedRequests.push(pendingRequest);
+        await saveRequestsAll(storedRequests);
 
-       
-    const storedRequests = JSON.parse(localStorage.getItem("requests")) || [];
-storedRequests.push(request);
-
-saveRequestsAll(storedRequests);
-
- 
         const summary = encodeURIComponent(JSON.stringify(pendingRequest));
-
+        pendingRequest = null;
         window.location.href = `confirmation.html?data=${summary}`;
     }
 }
 
 function cancelSubmission() {
- 
     const modal = document.getElementById('incompatibilityModal');
     modal.classList.remove('show');
     document.getElementById('pageContent').classList.remove('page-dim');
@@ -794,7 +813,7 @@ if (savedItems.length > 0) {
         return phonePattern.test(phone);
     }
 
-    function submitRequest() {
+    async function submitRequest() {
         const items = JSON.parse(localStorage.getItem("selectedItems")) || [];
         const lastname = document.getElementById("lastname").value.trim();
         const firstname = document.getElementById("firstname").value.trim();
@@ -865,18 +884,17 @@ const request = {
     return;  
 }
 
- const storedRequests = JSON.parse(localStorage.getItem("requests")) || [];
+ const storedRequests = await loadRequestsAll();
 storedRequests.push(request);
-localStorage.setItem("requests", JSON.stringify(storedRequests));
-saveAllRequests();
+await saveRequestsAll(storedRequests);
 
 const summary = encodeURIComponent(JSON.stringify(request));
 window.location.href = `confirmation.html?data=${summary}`;
     }
 
-    function saveAllRequests() {
-        const requests = JSON.parse(localStorage.getItem('requests')) || [];
-        saveRequestsAll(requests);
+    async function saveAllRequests(requestsData) {
+        const requests = Array.isArray(requestsData) ? requestsData : await loadRequestsAll();
+        await saveRequestsAll(requests);
     }
 
     async function saveRequestsAll(requestsData) {
