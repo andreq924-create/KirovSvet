@@ -937,16 +937,17 @@ function plus(i) {
     let lastRequestTime = 0;
     let isFullscreen = false;
 
-    window.addEventListener("load", function () {
-        navigator.geolocation.getCurrentPosition(
-            function (pos) {
-                initMap(pos.coords.latitude, pos.coords.longitude);
-            },
-            function () {
-                initMap(52.52, 13.405);
-            }
-        );
-    });
+window.addEventListener("load", function () {
+    navigator.geolocation.getCurrentPosition(
+        function (pos) {
+            initMap(pos.coords.latitude, pos.coords.longitude);
+        },
+        function () {
+            // fallback если геолокация не доступна
+            initMap(58.6035, 49.6680);
+        }
+    );
+});
 
     function initMap(lat, lng) {
         document.getElementById("mapWrapper").classList.add("ready");
@@ -989,30 +990,29 @@ function plus(i) {
         }, 250);
     }
 
-    function locateMe() {
-        if (!navigator.geolocation) {
-            alert("Геолокация не поддерживается вашим браузером.");
-            return;
-        }
-
-        navigator.geolocation.getCurrentPosition(
-            function (pos) {
-                const lat = pos.coords.latitude;
-                const lng = pos.coords.longitude;
-
-                map.setView([lat, lng], 16);
-
-                if (marker) {
-                    marker.setLatLng([lat, lng]);
-                }
-
-                setAddress(lat, lng);
-            },
-            function () {
-                alert("Не удалось определить ваше местоположение.");
-            }
-        );
+  function locateMe() {
+    if (!navigator.geolocation) {
+        initMap(58.6035, 49.6680);
+        return;
     }
+
+    navigator.geolocation.getCurrentPosition(
+        function (pos) {
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
+
+            map.setView([lat, lng], 16);
+
+            if (marker) marker.setLatLng([lat, lng]);
+
+            setAddress(lat, lng);
+        },
+        function () {
+            // если пользователь запретил
+            initMap(58.6035, 49.6680);
+        }
+    );
+}
 
     async function setAddress(lat, lng) {
         const now = Date.now();
