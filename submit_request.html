@@ -611,13 +611,10 @@ function confirmSubmission() {
     if (pendingRequest) {
 
        
-        const storedRequests = JSON.parse(localStorage.getItem("requests")) || [];
+    const storedRequests = JSON.parse(localStorage.getItem("requests")) || [];
+storedRequests.push(request);
 
-        storedRequests.push(pendingRequest);
-
-        localStorage.setItem("requests", JSON.stringify(storedRequests));
-
-        saveAllRequests(request);
+saveRequestsAll(storedRequests);
 
  
         const summary = encodeURIComponent(JSON.stringify(pendingRequest));
@@ -724,7 +721,6 @@ function cancelSubmission() {
     function getData() {
         return JSON.parse(localStorage.getItem("selectedItems")) || [];
     }
- 
 
     function render() {
         const data = getData();
@@ -878,13 +874,10 @@ const summary = encodeURIComponent(JSON.stringify(request));
 window.location.href = `confirmation.html?data=${summary}`;
     }
 
-async function saveAllRequests(newRequest) {
-    const serverRequests = await loadServerRequests();
-
-    serverRequests.push(newRequest);
-
-    await saveRequestsAll(serverRequests);
-}
+    function saveAllRequests() {
+        const requests = JSON.parse(localStorage.getItem('requests')) || [];
+        saveRequestsAll(requests);
+    }
 
     async function saveRequestsAll(requestsData) {
         try {
@@ -923,11 +916,7 @@ async function saveAllRequests(newRequest) {
             }
         );
     });
-	async function loadServerRequests() {
-    const res = await fetch('/api/getRequestsAll');
-    const data = await res.json();
-    return data || [];
-}
+
     function initMap(lat, lng) {
         document.getElementById("mapWrapper").classList.add("ready");
 
