@@ -379,21 +379,5 @@
     "status": "Новая",
     "createdAt": "2026-06-05T08:40:49.340Z",
     "expectedCallTime": "2026-06-05T08:45:49.340Z"
-  },
-  {
-    "username": "Сергей",
-    "date": "23.06.2026, 14:58:10",
-    "lastname": "Пестова",
-    "firstname": "Татьяна",
-    "phone": "+7(912)719-24-24",
-    "email": "andreq924@gmail.com",
-    "address": "153 Октябский пр",
-    "type": "repair",
-    "problemDescription": "ываыфва",
-    "items": [],
-    "status": "Новая",
-    "createdAt": "2026-06-23T11:58:10.703Z",
-    "expectedCallTime": "2026-06-23T12:03:10.703Z",
-    "id": 1782215891539
   }
 ]
