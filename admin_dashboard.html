@@ -756,12 +756,6 @@ function getRequestsCache() {
     return normalizeRequestsData(requestsCache).map(item => ({ ...item }));
 }
 
-
-function refreshAll(){
-    loadRequests();
-    loadWarehouse();
-}
-
 function setRequestsCache(data) {
     requestsCache = normalizeRequestsData(data).map(item => ({ ...item }));
 }
@@ -781,14 +775,12 @@ async function fetchRequestsFromGitHub() {
     return data;
 }
 
-async function saveRequestsAll(requestsData = getRequestsCache()) {
+async function saveRequestsAll(requestsData = requestsCache) {
     try {
         const response = await fetch('/api/updateRequestsAll', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                requests: normalizeRequestsData(requestsData)
-            })
+            body: JSON.stringify({ requests: normalizeRequestsData(requestsData) })
         });
 
         const result = await response.json();
@@ -798,7 +790,6 @@ async function saveRequestsAll(requestsData = getRequestsCache()) {
         }
 
         return result;
-
     } catch (err) {
         console.error('Ошибка сохранения заявок:', err);
         throw err;
@@ -1182,7 +1173,7 @@ function deleteMonth(monthKey) {
     });
 
     setRequestsCache(requests);
-     saveRequestsAll(requestsCache);
+     saveAllRequests();
 
      loadRequests();
 }
@@ -1595,7 +1586,7 @@ function saveRequestChanges(){
     setRequestsCache(requests);
     localStorage.setItem('warehouse', JSON.stringify(warehouse));
 
-     saveRequestsAll(requestsCache);
+     saveAllRequests();
 
      closePopup();
     loadRequests();
@@ -1687,10 +1678,9 @@ function logout() {
   sessionStorage.removeItem('username');
          window.location.href = 'index.html';
 }
-function sendToPending() {
+async function sendToPending() {
     if (!currentRequestCopy || !currentRequestCopy.items) return;
 
-    // Проверка даты
     const callDate = document.getElementById('editCallDate').value;
     if (!callDate) {
         alert('Сначала укажите дату звонка, только потом можно отправить заявку в ожидание.');
@@ -1702,13 +1692,17 @@ function sendToPending() {
     let missingItems = [];
 
     currentRequestCopy.items.forEach(requestItem => {
-        let parent = warehouse.find(w => w.children?.some(c => c.name === requestItem.name));
+        let parent = warehouse.find(w =>
+            w.children?.some(c => c.name === requestItem.name)
+        );
+
         if (!parent) {
             missingItems.push(`${requestItem.name} (родитель не найден)`);
             return;
         }
 
         let child = parent.children.find(c => c.name === requestItem.name);
+
         if (!child) {
             missingItems.push(`${requestItem.name} (не найден у родителя)`);
             return;
@@ -1724,31 +1718,48 @@ function sendToPending() {
         return;
     }
 
+    // списание со склада
     currentRequestCopy.items.forEach(requestItem => {
-        let parent = warehouse.find(w => w.children?.some(c => c.name === requestItem.name));
+        let parent = warehouse.find(w =>
+            w.children?.some(c => c.name === requestItem.name)
+        );
+
         let child = parent.children.find(c => c.name === requestItem.name);
         child.qty -= requestItem.qty || 0;
     });
 
     localStorage.setItem('warehouse', JSON.stringify(warehouse));
+
     currentRequestCopy.status = 'В процессе';
-    saveRequestChanges();
-    loadWarehouse();
+
+    try {
+        await saveRequestChanges();  // 🔥 главное сохранение
+        await loadWarehouse();       // 🔥 обновить склад
+        await loadRequests();        // 🔥 обновить заявки
+        closePopup();
+    } catch (err) {
+        console.error(err);
+        alert('Ошибка обновления заявки');
+    }
 }
-function sendToCompleted() {
- 
+async function sendToCompleted() {
     currentRequestCopy.status = 'Завершена';
 
- 
     if (!currentRequestCopy.completionDate) {
-        currentRequestCopy.completionDate = new Date().toISOString().split('T')[0];
+        currentRequestCopy.completionDate =
+            new Date().toISOString().split('T')[0];
     }
 
-   
-    saveRequestChanges();
+    try {
+        await saveRequestChanges(); // если она уже сохраняет + обновляет склад
+        await saveAllRequests();    // если это реально отдельный API sync
 
-  
-    saveRequestsAll(requestsCache);
+        await loadRequests();       // 🔥 главное — принудительный refresh UI
+        closePopup();
+    } catch (err) {
+        console.error(err);
+        alert('Ошибка обновления заявки');
+    }
 }
 function closePopup(){ document.getElementById('overlay').style.display='none'; currentRequestCopy=null; }
 
@@ -2235,7 +2246,7 @@ function checkItemsBeforeAction(onConfirm) {
 }
 function removeProductChild(i){ productChildren.splice(i,1); renderProductChildren(); }
  
-function deleteRequest() {
+async function deleteRequest() {
     if (!currentRequestCopy) {
         alert('Нет заявки для удаления');
         return;
@@ -2249,20 +2260,22 @@ function deleteRequest() {
         return;
     }
 
-     if (!confirm('Вы уверены, что хотите удалить эту заявку?')) {
+    if (!confirm('Вы уверены, что хотите удалить эту заявку?')) {
         return;
     }
 
-     requests.splice(index, 1);
+    requests.splice(index, 1);
     setRequestsCache(requests);
 
-    alert('Заявка удалена');
+    try {
+        await saveAllRequests();   // 🔥 сначала сохраняем на сервер
+        closePopup();
 
-     closePopup();
-
-     loadRequests();
-		saveRequestsAll(requestsCache);
-
+        await loadRequests();      // 🔥 потом обновляем UI
+    } catch (err) {
+        console.error(err);
+        alert('Ошибка сохранения');
+    }
 }
 async function generateExcelFromRequests(completed) {
   
@@ -2715,7 +2728,7 @@ function addItemToAdminRequest(item) {
     renderSelectedItems();  
 }
 
-function saveRequestsAll(requestsCache) {
+function saveAllRequests() {
   return saveRequestsAll(getRequestsCache());
 }
 function refreshAdminUI() {
