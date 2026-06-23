@@ -9,13 +9,13 @@ export default async function handler(req, res) {
   const BRANCH = 'main';
 
   try {
-    const { requests } = req.body;
+    const { request } = req.body;
 
-    if (!requests || !Array.isArray(requests)) {
-      return res.status(400).json({ error: 'Invalid requests data' });
+    if (!request) {
+      return res.status(400).json({ error: 'Invalid request data' });
     }
 
-    // 1️⃣ Получаем SHA файла
+    // 1. Получаем текущий файл
     const getResponse = await fetch(
       `https://api.github.com/repos/${REPO}/contents/${FILE_PATH}?ref=${BRANCH}`,
       {
@@ -27,14 +27,21 @@ export default async function handler(req, res) {
     );
 
     if (!getResponse.ok) {
-      const text = await getResponse.text();
-      throw new Error(`Failed to get file info: ${text}`);
+      throw new Error(await getResponse.text());
     }
 
-    const getData = await getResponse.json();
-    const sha = getData.sha;
+    const fileData = await getResponse.json();
 
-    // 2️⃣ Обновляем файл
+    const currentContent = JSON.parse(
+      Buffer.from(fileData.content, 'base64').toString('utf-8')
+    );
+
+    // 2. Добавляем новую запись
+    const updatedContent = Array.isArray(currentContent)
+      ? [...currentContent, request]
+      : [request];
+
+    // 3. Обновляем файл
     const putResponse = await fetch(
       `https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`,
       {
@@ -44,22 +51,21 @@ export default async function handler(req, res) {
           Accept: 'application/vnd.github+json',
         },
         body: JSON.stringify({
-          message: 'Обновление заявок через Vercel API',
-          content: Buffer.from(JSON.stringify(requests, null, 2)).toString('base64'),
-          sha: sha,
+          message: 'Добавлена новая заявка',
+          content: Buffer.from(JSON.stringify(updatedContent, null, 2)).toString('base64'),
+          sha: fileData.sha,
           branch: BRANCH,
         }),
       }
     );
 
     if (!putResponse.ok) {
-      const text = await putResponse.text();
-      throw new Error(`Failed to update file: ${text}`);
+      throw new Error(await putResponse.text());
     }
 
-    const putData = await putResponse.json();
+    const result = await putResponse.json();
 
-    return res.status(200).json(putData);
+    return res.status(200).json(result);
 
   } catch (err) {
     console.error(err);
