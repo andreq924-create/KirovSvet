@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="ru">
 <head>
 <link rel="icon" href="favicon.png" type="image/png">
@@ -797,7 +796,7 @@ if (savedItems.length > 0) {
         return phonePattern.test(phone);
     }
 
-    function submitRequest() {
+    async function submitRequest() {
         const items = JSON.parse(localStorage.getItem("selectedItems")) || [];
         const lastname = document.getElementById("lastname").value.trim();
         const firstname = document.getElementById("firstname").value.trim();
@@ -868,41 +867,32 @@ const request = {
     return;  
 }
 
- const storedRequests = JSON.parse(localStorage.getItem("requests")) || [];
-storedRequests.push(request);
-localStorage.setItem("requests", JSON.stringify(storedRequests));
-saveAllRequests();
+ try {
+    await sendRequestToServer(request);
 
-const summary = encodeURIComponent(JSON.stringify(request));
-window.location.href = `confirmation.html?data=${summary}`;
+    const summary = encodeURIComponent(JSON.stringify(request));
+    window.location.href = `confirmation.html?data=${summary}`;
+} catch (err) {
+    console.error(err);
+    showErrorModal('Не удалось отправить заявку на сервер.');
+}
     }
 
-    function saveAllRequests() {
-        const requests = JSON.parse(localStorage.getItem('requests')) || [];
-        saveRequestsAll(requests);
-    }
+    async function sendRequestToServer(request) {
+        const response = await fetch('/api/createRequest', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ request })
+        });
 
-    async function saveRequestsAll(requestsData) {
-        try {
-            const response = await fetch('/api/updateRequestsAll', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ requests: requestsData })
-            });
+        const result = await response.json();
 
-            const result = await response.json();
-
-            if (!response.ok) {
-                console.error('Ошибка сервера:', result.error || result);
-                alert('Не удалось сохранить заявки');
-                return;
-            }
-
-            console.log('Заявки обновлены:', result);
-        } catch (err) {
-            console.error('Ошибка:', err);
-            alert('Ошибка соединения с сервером');
+        if (!response.ok) {
+            throw new Error(result.error || 'Не удалось отправить заявку');
         }
+
+        console.log('Заявка отправлена:', result);
+        return result;
     }
 
     let map, marker;
