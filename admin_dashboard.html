@@ -984,7 +984,7 @@ req.items.forEach(item => {
      await saveRequestsAll(requests);
 
     loadWarehouse();
-    loadRequests();
+    await  loadRequests();
 }
 
 
@@ -1508,7 +1508,7 @@ function removeSelected(index){
   currentRequestCopy.items.splice(index,1); 
   renderSelectedItems(); 
 }
-function saveRequestChanges(){
+async function saveRequestChanges(){
 
     const problemText = document.getElementById('editProblemDescription').value.trim();
 
@@ -1586,11 +1586,12 @@ function saveRequestChanges(){
     setRequestsCache(requests);
     localStorage.setItem('warehouse', JSON.stringify(warehouse));
 
-     saveAllRequests();
+    await saveAllRequests();
+	    await  loadRequests();
+    await  loadWarehouse();
 
      closePopup();
-    loadRequests();
-    loadWarehouse();
+
 }
 
 

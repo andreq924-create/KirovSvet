@@ -1043,23 +1043,18 @@ function plus(i) {
         }
     }
 	function applyMaxValidation() {
+    // логика оставлена, но визуальная подсветка отключена
     const data = getData();
-    const items = document.querySelectorAll(".selectedItem");
 
-    data.forEach((item, i) => {
+    data.forEach((item) => {
         const max = getMaxQty(item.name);
 
-        if (items[i]) {
-            if (item.qty >= max && max > 0) {
-                items[i].style.border = "1px solid #f44336";
-                items[i].style.boxShadow = "0 0 12px rgba(244,67,54,0.5)";
-            } else {
-                items[i].style.border = "";
-                items[i].style.boxShadow = "";
-            }
+        if (item.qty > max && max > 0) {
+            console.warn(`Превышен лимит: ${item.name}`);
         }
     });
 }
+
 </script>
 </body>
 </html>
