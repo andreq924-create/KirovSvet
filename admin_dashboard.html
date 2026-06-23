@@ -2285,8 +2285,24 @@ async function generateExcelFromRequests(completed) {
         return;
     }
 
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Отчет');
+   const workbook = new ExcelJS.Workbook();
+const worksheet = workbook.addWorksheet('Отчет');
+
+worksheet.insertRow(1, []);
+worksheet.mergeCells('A1:E1');
+
+worksheet.getCell('A1').value = 'Отчет за выбранный период';
+
+worksheet.getCell('A1').font = {
+    bold: true,
+    size: 16
+};
+
+worksheet.getCell('A1').alignment = {
+    horizontal: 'center'
+};
+
+worksheet.addRow([]);
 
  
     const uniqueClients = new Set(completed.map(r => r.lastname + r.firstname)).size;
@@ -2501,7 +2517,16 @@ async function generateExcelFromRequests(completed) {
  
     const buf = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-    saveAs(blob, "styled_completed_requests_report.xlsx");
+    const selectedMonths = Array.from(
+    document.querySelectorAll('#monthsList input:checked')
+).map(cb => cb.value);
+
+const reportPeriod = selectedMonths.sort().join('_');
+
+saveAs(
+    blob,
+    `Отчет_${reportPeriod}.xlsx`
+);
 }
 function closeProductPopup(){ document.getElementById('productPopup').style.display='none'; }
 async function deleteProduct(i){ 
