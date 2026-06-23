@@ -745,9 +745,9 @@ let currentRequestCopy = null;
 let editIndex = null;
 let productChildren = [];  
 let productName, productCategory, productQty;
-let lastTable = 'new';
-let requestsCache = [];
 
+let requestsCache = [];
+let activeRequestsTab = 'new'; // new | pending | completed
 function normalizeRequestsData(data) {
     return Array.isArray(data) ? data : [];
 }
@@ -847,8 +847,7 @@ function showMainTab(tab) {
     showTable('new', document.getElementById('newRequestsBtn'));  
 });
 function showTable(name, btn) {
-
-lastTable = name;
+activeRequestsTab = name; // ✅ запоминаем вкладку
     // 🔥 СБРОС ДАТ ФИЛЬТРОВ ПРИ ПЕРЕКЛЮЧЕНИИ ТАБЛИЦ
     const callDate = document.getElementById('callDateFilter');
     const compDate = document.getElementById('completionDateFilter');
@@ -872,10 +871,7 @@ lastTable = name;
  window.onload = function() {
   document.getElementById('newRequestsBtn').classList.add('active');
 };
- async function refreshRequests() {
-    await loadRequests();
-    showTable(lastTable);
-}
+ 
 async function loadRequests() {
     try {
         const requests = await fetchRequestsFromGitHub();
@@ -927,7 +923,7 @@ async function loadRequests() {
             'completedRequestsTable'
         );
 
-        showTable('new');
+         showTable(activeRequestsTab);
     } catch (err) {
         console.error('Ошибка загрузки заявок:', err);
         setRequestsCache([]);
@@ -1739,7 +1735,7 @@ async function sendToPending() {
     try {
         await saveRequestChanges();  // 🔥 главное сохранение
         await loadWarehouse();       // 🔥 обновить склад
-        await refreshRequests();        // 🔥 обновить заявки
+        await loadRequests();        // 🔥 обновить заявки
         closePopup();
     } catch (err) {
         console.error(err);
@@ -1758,7 +1754,7 @@ async function sendToCompleted() {
         await saveRequestChanges(); // если она уже сохраняет + обновляет склад
         await saveAllRequests();    // если это реально отдельный API sync
 
-       await refreshRequests();      // 🔥 главное — принудительный refresh UI
+        await loadRequests();       // 🔥 главное — принудительный refresh UI
         closePopup();
     } catch (err) {
         console.error(err);
@@ -2275,7 +2271,7 @@ async function deleteRequest() {
         await saveAllRequests();   // 🔥 сначала сохраняем на сервер
         closePopup();
 
-       await refreshRequests();      // 🔥 потом обновляем UI
+        await loadRequests();      // 🔥 потом обновляем UI
     } catch (err) {
         console.error(err);
         alert('Ошибка сохранения');
@@ -2632,11 +2628,11 @@ async function loadRequestsFromJSON() {
          try {
         const data = await fetchRequestsFromGitHub();
         setRequestsCache(data);
-       await refreshRequests();
+        await loadRequests();
     } catch (err) {
         alert('Ошибка загрузки заявок: ' + err.message);
         setRequestsCache([]);
-        await refreshRequests();
+        await loadRequests();
     }
 }
 window.addEventListener('DOMContentLoaded', function() {
@@ -2675,11 +2671,11 @@ async function loadRequestsFromFile() {
     try {
         const requests = await fetchRequestsFromGitHub();
         setRequestsCache(requests);
-     await refreshRequests();
+        await loadRequests();
     } catch (err) {
         alert('Ошибка загрузки заявок: ' + err.message);
         setRequestsCache([]);
-        await refreshRequests();
+        await loadRequests();
     }
 }
 
