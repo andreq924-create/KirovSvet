@@ -9,13 +9,13 @@ export default async function handler(req, res) {
   const BRANCH = 'main';
 
   try {
-    const { request } = req.body;
+    const { requests } = req.body;
 
-    if (!request) {
-      return res.status(400).json({ error: 'Invalid request data' });
+    if (!requests || !Array.isArray(requests)) {
+      return res.status(400).json({ error: 'Invalid requests data' });
     }
 
-    // 1. Получаем текущий файл
+    // 1️⃣ Получаем SHA файла
     const getResponse = await fetch(
       `https://api.github.com/repos/${REPO}/contents/${FILE_PATH}?ref=${BRANCH}`,
       {
@@ -27,21 +27,14 @@ export default async function handler(req, res) {
     );
 
     if (!getResponse.ok) {
-      throw new Error(await getResponse.text());
+      const text = await getResponse.text();
+      throw new Error(`Failed to get file info: ${text}`);
     }
 
-    const fileData = await getResponse.json();
+    const getData = await getResponse.json();
+    const sha = getData.sha;
 
-    const currentContent = JSON.parse(
-      Buffer.from(fileData.content, 'base64').toString('utf-8')
-    );
-
-    // 2. Добавляем новую запись
-    const updatedContent = Array.isArray(currentContent)
-      ? [...currentContent, request]
-      : [request];
-
-    // 3. Обновляем файл
+    // 2️⃣ Обновляем файл
     const putResponse = await fetch(
       `https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`,
       {
@@ -51,21 +44,22 @@ export default async function handler(req, res) {
           Accept: 'application/vnd.github+json',
         },
         body: JSON.stringify({
-          message: 'Добавлена новая заявка',
-          content: Buffer.from(JSON.stringify(updatedContent, null, 2)).toString('base64'),
-          sha: fileData.sha,
+          message: 'Обновление заявок через Vercel API',
+          content: Buffer.from(JSON.stringify(requests, null, 2)).toString('base64'),
+          sha: sha,
           branch: BRANCH,
         }),
       }
     );
 
     if (!putResponse.ok) {
-      throw new Error(await putResponse.text());
+      const text = await putResponse.text();
+      throw new Error(`Failed to update file: ${text}`);
     }
 
-    const result = await putResponse.json();
+    const putData = await putResponse.json();
 
-    return res.status(200).json(result);
+    return res.status(200).json(putData);
 
   } catch (err) {
     console.error(err);

@@ -617,7 +617,7 @@ function confirmSubmission() {
 
         localStorage.setItem("requests", JSON.stringify(storedRequests));
 
-        saveAllRequests();
+        saveAllRequests(request);
 
  
         const summary = encodeURIComponent(JSON.stringify(pendingRequest));
@@ -724,6 +724,7 @@ function cancelSubmission() {
     function getData() {
         return JSON.parse(localStorage.getItem("selectedItems")) || [];
     }
+ 
 
     function render() {
         const data = getData();
@@ -877,10 +878,13 @@ const summary = encodeURIComponent(JSON.stringify(request));
 window.location.href = `confirmation.html?data=${summary}`;
     }
 
-    function saveAllRequests() {
-        const requests = JSON.parse(localStorage.getItem('requests')) || [];
-        saveRequestsAll(requests);
-    }
+async function saveAllRequests(newRequest) {
+    const serverRequests = await loadServerRequests();
+
+    serverRequests.push(newRequest);
+
+    await saveRequestsAll(serverRequests);
+}
 
     async function saveRequestsAll(requestsData) {
         try {
@@ -919,7 +923,11 @@ window.location.href = `confirmation.html?data=${summary}`;
             }
         );
     });
-
+	async function loadServerRequests() {
+    const res = await fetch('/api/getRequestsAll');
+    const data = await res.json();
+    return data || [];
+}
     function initMap(lat, lng) {
         document.getElementById("mapWrapper").classList.add("ready");
 
