@@ -381,28 +381,6 @@
     "expectedCallTime": "2026-06-05T08:45:49.340Z"
   },
   {
-    "username": "Adminn",
-    "date": "23.06.2026, 16:09:26",
-    "lastname": "Пестова",
-    "firstname": "Татьяна",
-    "phone": "+7(912)719-24-24",
-    "email": "andreq924@gmail.com",
-    "address": "153 Октябский пр",
-    "type": "both",
-    "problemDescription": "",
-    "items": [
-      {
-        "name": "Опроы СТ 3",
-        "qty": 10,
-        "img": "images/oporaCT.png"
-      }
-    ],
-    "status": "Новая",
-    "createdAt": "2026-06-23T13:09:26.422Z",
-    "expectedCallTime": "2026-06-23T13:14:26.422Z",
-    "id": 1782220167295
-  },
-  {
     "username": "nin",
     "date": "23.06.2026, 17:11:29",
     "lastname": "Гусева",
