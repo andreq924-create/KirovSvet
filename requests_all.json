@@ -283,11 +283,9 @@
         "img": "images/светильник Cobra 30 1.png"
       }
     ],
-    "status": "В процессе",
+    "status": "Новая",
     "createdAt": "2026-05-16T07:47:20.196Z",
-    "expectedCallTime": "2026-05-16T07:52:20.197Z",
-    "callDate": "2026-06-23",
-    "completionDate": "2026-06-25"
+    "expectedCallTime": "2026-05-16T07:52:20.197Z"
   },
   {
     "username": "Андрей1",
@@ -361,7 +359,7 @@
         "img": "images/светильник Cobra 30 1.png"
       }
     ],
-    "status": "Завершена",
+    "status": "В процессе",
     "createdAt": "2026-06-04T16:53:50.348Z",
     "expectedCallTime": "2026-06-04T16:58:50.348Z",
     "callDate": "2026-06-19",
@@ -378,34 +376,8 @@
     "type": "repair",
     "problemDescription": "дерево упало оборвало провод",
     "items": [],
-    "status": "В процессе",
+    "status": "Новая",
     "createdAt": "2026-06-05T08:40:49.340Z",
-    "expectedCallTime": "2026-06-05T08:45:49.340Z",
-    "callDate": "2026-06-23",
-    "completionDate": "2026-06-29"
-  },
-  {
-    "username": "nin",
-    "date": "23.06.2026, 17:11:29",
-    "lastname": "Гусева",
-    "firstname": "Екатерина",
-    "phone": "+7(435)345-34-53",
-    "email": "Ekaterina@gmail.com",
-    "address": "Вятский колледж управления и новых технологий, 56, Пятницкая улица, Дымково, Октябрьский район, Киров, городской округ Киров, Кировская область,",
-    "type": "both",
-    "problemDescription": "",
-    "items": [
-      {
-        "name": "Опоры СТ 12",
-        "qty": 1,
-        "img": "images/oporaCT.png"
-      }
-    ],
-    "status": "Завершена",
-    "createdAt": "2026-06-23T14:11:29.091Z",
-    "expectedCallTime": "2026-06-23T14:16:29.091Z",
-    "id": 1782223889996,
-    "callDate": "2026-06-24",
-    "completionDate": "2026-06-27"
+    "expectedCallTime": "2026-06-05T08:45:49.340Z"
   }
 ]
