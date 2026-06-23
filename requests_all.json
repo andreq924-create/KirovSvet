@@ -376,9 +376,11 @@
     "type": "repair",
     "problemDescription": "дерево упало оборвало провод",
     "items": [],
-    "status": "Новая",
+    "status": "В процессе",
     "createdAt": "2026-06-05T08:40:49.340Z",
-    "expectedCallTime": "2026-06-05T08:45:49.340Z"
+    "expectedCallTime": "2026-06-05T08:45:49.340Z",
+    "callDate": "2026-06-23",
+    "completionDate": "2026-06-29"
   },
   {
     "username": "nin",
@@ -402,6 +404,6 @@
     "expectedCallTime": "2026-06-23T14:16:29.091Z",
     "id": 1782223889996,
     "callDate": "2026-06-24",
-    "completionDate": "2026-06-28"
+    "completionDate": "2026-06-27"
   }
 ]
